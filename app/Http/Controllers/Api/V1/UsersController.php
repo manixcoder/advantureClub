@@ -900,7 +900,6 @@ class UsersController extends MyController
     {
         //$country_code,$phone;
         require base_path('public/twilio-php-main/src/Twilio/autoload.php');
-
         /*$country_code = $request->country_code;
         $phone = $request->phone;*/
         $sid = env('SID');
