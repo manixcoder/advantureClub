@@ -1,0 +1,271 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Users;
+use Session;
+use Response;
+use App\Category;
+use App\Brand;
+use App\User;
+use DB;
+use Hash;
+use Auth;
+
+class AdventurePartnersController extends Controller
+{
+  public function __construct()
+  {
+    $this->middleware('auth');
+    $this->middleware('role');
+  }
+
+  /* Users Listing Starts */
+  function list_adventure_partners()
+  {
+    $usersdata = DB::table('users')->select('users.*', 'countries.country')
+      ->join('countries', 'users.country_id', '=', 'countries.id')
+      ->where('users.users_role', 2)
+      ->where(['users.deleted_at' => NULL])
+      ->get();
+    $data['content'] = 'admin.adventure_partners.list_adventure_partners';
+    return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
+  }
+  /* Adventure Users listing ends */
+  /* Add new Adventure user starts */
+  public function add_adventure_partner(Request $request)
+  { //echo"<pre>";print_r($request->all());exit;
+    if ($request->post()) {
+      $rules1 = [];
+      $rules =  [
+        'name'                    => 'required|min:3|max:50|unique:users',
+        'email'                   => 'required|email:filter|unique:users',
+        'country'                 => 'required',
+        'region'                  => 'required',
+        'mobile_code'             => 'required|numeric',
+        'mobile'                  => 'required|numeric|digits:10|unique:users',
+        'dob'                     => 'required|date_format:Y-m-d',
+        'weight'                  => 'required|numeric',
+        'height'                  => 'required|numeric',
+        'image'                   => 'required',
+        'health_condition'        => 'required',
+        'company_name'            => 'required',
+        'company_address'         => 'required',
+        'company_location'        => 'required',
+        'payment_mode'            => 'required'
+      ];
+      if ($request->license_status == 1) {
+        $rules1 = [
+          'crName' => 'required',
+          'crNumber' => 'required',
+          'crCopy' => 'required',
+        ];
+      }
+      $rules += $rules1;
+      $validator = Validator::make($request->all(), $rules);
+
+      if ($validator->fails()) {
+        $validation = array();
+        foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+          $validation[$field_name] = $messages[0];
+        }
+        $data['content'] = 'admin.adventure_partners.add_adventure_partners';
+        return view('layouts.content', compact('data'))->with([
+          'validation' => $validation ?? []
+        ]);
+      } else {
+        if ($files = $request->image) {
+          $destinationPath = public_path('/profile_image/');
+
+          $profileImage = date('YmdHis') . "-" . $files->getClientOriginalName();
+          $path =  $files->move($destinationPath, $profileImage);
+          $image = $insert['photo'] = "$profileImage";
+        }
+        if ($files = $request->crCopy) {
+          $destinationPath = public_path('/crCopy/');
+
+          $crCopy = date('YmdHis') . "-" . $files->getClientOriginalName();
+          $path =  $files->move($destinationPath, $crCopy);
+          $crCopy = $insert['photo'] = "$crCopy";
+        }
+
+        $request->merge([
+          'health_conditions' => implode(',', (array) $request->get('health_condition')),
+          'payment_modes' => implode(',', (array) $request->get('payment_mode'))
+        ]);
+        $data = array(
+          'name'              => $request->name,
+          'email'             => $request->email,
+          'mobile'            => $request->mobile,
+          'mobile_code'       => $request->mobile_code,
+          'status'            => $request->status,
+          'country_id'        => $request->country,
+          'city_id'           => $request->region,
+          'dob'               => date('Y-m-d', strtotime($request->dob)),
+          'weight'            => $request->weight,
+          'height'            => $request->height,
+          'profile_image'     => !empty($request->image) ? $image : '',
+          'health_conditions' => implode(',', (array) $request->health_condition),
+          'users_role'        => 2,
+        );
+
+        if ($request->edit_id != '') {
+          Session::flash('success', 'Updated successfully..!');
+          $updateData = DB::table('users')->where('id', $request->ids)->update($data);
+          return redirect('users');
+        } else { //echo"ww";exit;
+
+          $insertId = DB::table('users')->insertGetId($data);
+
+          $companyData = array(
+            'user_id'               => $insertId,
+            'company_name'          => $request->company_name,
+            'company_address'       => $request->company_address,
+            'geo_location'          => $request->company_location,
+            'license_status'        => $request->license_status,
+            'cr_name'               => !empty($request->crName) ? $request->crName : '',
+            'cr_number'             => !empty($request->crNumber) ? $request->crNumber : '',
+            'cr_copy'               => !empty($request->crCopy) ? $crCopy : '',
+            'payment_mode'          => $request->payment_modes,
+            'subscription_id'       => !empty($request->subscription_id) ? $request->subscription_id : '1',
+            'created_date'          => date('Y-m-d H:i:s'),
+          );
+
+          if (count($request->all()) > 0) {
+            Session::flash('success', 'Inserted successfully..!');
+            $insertData1 = DB::table('vendors_details')->insert($companyData);
+            return redirect('/add-adventure-partners');
+          }
+        }
+      }
+    }
+  }
+  /* Add New Adventure User ends */
+
+  /* View Adventure users starts */
+  public function view_adventure_partner($id)
+  {
+    //$editdata = User::where('id', $id)->first();
+    $healthConditionData = '';
+    $pModeData = '';
+    $editdata = DB::table('users')
+      ->select('users.*', 'countries.country', 'cities.city', 'vendors_details.*')
+      ->rightjoin('countries', 'users.country_id', '=', 'countries.id')
+      ->rightjoin('cities', 'users.country_id', '=', 'cities.country_id')
+      ->rightjoin('vendors_details', 'users.id', '=', 'vendors_details.user_id')
+      ->where('users.id', $id)->first();
+    if (!empty($editdata->health_conditions)) {
+      $hCondition = explode(",", $editdata->health_conditions);
+      $healthConditionData = DB::table('health_conditions')->select('health_conditions.*')
+        ->wherein('health_conditions.id', $hCondition)->get();
+    }
+    $subscriptionData = '';
+    if (!empty($editdata->subscription_id)) {
+      $subscriptionData = DB::table('packages')->select('packages.*')
+        ->where('packages.id', $editdata->subscription_id)->get();
+    }
+    if (!empty($editdata->payment_mode)) {
+      $pMode = explode(",", $editdata->payment_mode);
+      $pModeData = DB::table('get_all_paymentmode')->select('get_all_paymentmode.*')
+        ->wherein('get_all_paymentmode.id', $pMode)->get();
+    }
+    $services = DB::table('services as srvc')
+      ->select([
+        'srvc.*', 'usr.name as provided_by',
+        DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+        'scat.category as service_category',
+        'ssec.sector as service_sector',
+        'styp.type as service_type',
+        'slvl.level as service_level',
+        'cntri.country',
+        'crnci.sign as currency_sign',
+        'rgns.region'
+      ])
+      ->join('users as usr', 'usr.id', '=', 'srvc.owner')
+      ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
+      ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
+      ->leftJoin('service_categories as scat', 'scat.id', '=', 'srvc.service_category')
+      ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
+      ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
+      ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
+      ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
+      ->where(['srvc.deleted_at' => NULL])
+      ->orderBy('srvc.id', 'DESC')
+      ->get();
+    $service_ids = array_column($services->toArray(), 'id');
+    $participants = DB::table('bookings')
+      ->select(['service_id', DB::raw("COUNT(id) AS service_count")])
+      ->whereIn('service_id', $service_ids)
+      ->groupBy('service_id')
+      ->get();
+    $parti_array = [];
+    if (!$participants->isEmpty()) {
+      foreach ($participants as $key => $part) {
+        $parti_array[$part->service_id] = $part->service_count;
+      }
+    }
+    foreach ($services as $key => $ser) {
+      $services[$key]->participants = $parti_array[$ser->id] ?? 0;
+    }
+    $data['content'] = 'admin.adventure_partners.view_adventure_partner';
+    return view('layouts.content', compact('data'))->with([
+      'editdata' => $editdata,
+      'healthConditionData' => $healthConditionData, 'pModeData' => $pModeData,
+      'services' => $services, 'subscriptionData' => $subscriptionData
+    ]);
+  }
+
+  /* View Adventure users ends */
+
+  // public function getService() {
+  //     $services = DB::table('services as srvc')
+  //     ->select(['srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type', 'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region'])
+  //     ->join('users as usr', 'usr.id', '=', 'srvc.owner')
+  //     ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
+  //     ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
+  //     ->leftJoin('service_categories as scat', 'scat.id', '=', 'srvc.service_category')
+  //     ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
+  //     ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
+  //     ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
+  //     ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
+  //     ->where(['srvc.deleted_at' => NULL])
+  //     ->orderBy('srvc.id', 'DESC')
+  //     ->get();
+  //   $service_ids = array_column($services->toArray(), 'id');
+  //   $data['content'] = 'admin.adventure_partners.view_adventure_partner';
+  //   return view('layouts.content', compact('data'))->with(['editdata' => $editdata ,'healthConditionData'=>$healthConditionData,'pModeData'=>$pModeData]);
+  // }
+
+  /* Update status in db from ajax request starts */
+  public function update_user_status($id)
+  {
+    $Data = array(
+      'id' => $_GET['id'],
+      'status' => $_GET['status'],
+    );
+    $edituserData = DB::table('users')->where('id', $id)->update($Data);
+    return response()->json(array('msg' => $edituserData), 200);
+  }
+  /* Update status ends */
+  /* soft delete starts */
+  public function deleteUser(Request $request, $id)
+  {
+    $user = Users::find($id);
+    if ($user) {
+      $destroy = Users::destroy($id);
+      $request->session()->flash('success', 'Partner has been deleted successfully.');
+    } else {
+      $request->session()->flash('error', 'Something went wrong. Please try again.');
+    }
+    return redirect()->back();
+  }
+  /* soft delete ends */
+}
