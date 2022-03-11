@@ -1,4 +1,3 @@
-
 <?php
 $segment = Request::segment(3);
 $base_url = URL::to('/');
@@ -10,10 +9,21 @@ $base_url = URL::to('/');
                 <h4 class="pull-left page-title">My Services > #{{$segment}}</h4>
             </div>
         </div>
+        <?php
+        //dd($service->service_id);
+        $serviceImagesData = DB::table('service_images')->where('service_id', $service->service_id)->orderBy('id', 'ASC')->get();
+       // dd($serviceImagesData);
+        ?>
         <div class="row">
+            @forelse ($serviceImagesData as $serviceImages)
+            <div class="col-md-3 booking-detail-banner">
+                <img class="img-responsive" src="{{ URL::asset('/public/uploads/') }}/{{ $serviceImages->image_url }}" alt="Photo">
+            </div>
+            @empty
             <div class="col-md-3 booking-detail-banner">
                 <img class="img-responsive" src="{{asset('public/walls/1.jpg')}}" alt="Photo">
             </div>
+
             <div class="col-md-3 booking-detail-banner">
                 <img class="img-responsive" src="{{asset('public/walls/2.jpg')}}" alt="Photo">
             </div>
@@ -23,7 +33,9 @@ $base_url = URL::to('/');
             <div class="col-md-3 booking-detail-banner">
                 <img class="img-responsive" src="{{asset('public/walls/4.jpg')}}" alt="Photo">
             </div>
+            @endforelse
         </div>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="box">
@@ -130,7 +142,9 @@ $base_url = URL::to('/');
                         </div>
                         <div class="box">
                             <?php foreach ($service->programs as $prg) { ?>
-                                <h3 class="box-title service-program-detail"><?php echo date('h:i A', strtotime($prg->start_datetime)) . ' - ' . date('h:i A', strtotime($prg->end_datetime)) . ' - ' . $prg->title; ?></h3>
+                                <h3 class="box-title service-program-detail">
+                                    <?php echo date('h:i A', strtotime($prg->start_datetime)) . ' - ' . date('h:i A', strtotime($prg->end_datetime)) . ' - ' . $prg->title; ?>
+                                </h3>
                                 <p class="prg-desc"><?php echo $prg->description; ?></p>
                             <?php } ?>
                             <div class="box-body">
@@ -165,15 +179,15 @@ $base_url = URL::to('/');
                                     $blank_star = 5;
                                     for ($i = 1; $i <= floor($service->stars); $i++) {
                                         $blank_star = 5 - $i;
-                                        ?>
+                                    ?>
                                         <span><i class="fa fa-star"></i></span>
                                         <?php
                                     }
                                     if ($blank_star > 0) {
                                         for ($j = 1; $j <= $blank_star; $j++) {
-                                            ?>
+                                        ?>
                                             <span><i class="fa fa-star-o"></i></span>
-                                            <?php
+                                    <?php
                                         }
                                     }
                                     ?>
@@ -195,28 +209,28 @@ $base_url = URL::to('/');
         </div>
         <div class="row">
             <div class="col-md-12">
-                <table id="datatable-responsive" class="table table-striped table-bordered" style="border: none;"> 
-                    <thead> 
-                        <tr> 
-                            <th>Booking ID</th> 
-                            <th>User Name</th> 
-                            <th>Nationality</th> 
-                            <th>Service Date</th> 
+                <table id="datatable-responsive" class="table table-striped table-bordered" style="border: none;">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>User Name</th>
+                            <th>Nationality</th>
+                            <th>Service Date</th>
                             <th>Registrations</th>
                             <th>Total Cost</th>
                             <th>Status</th>
                             <th>Actions</th>
-                        </tr> 
-                    </thead> 
+                        </tr>
+                    </thead>
                     <tbody>
                         <?php
                         $services = $bookings;
                         if (count($services)) {
                             foreach ($services as $bkng) {
-                                ?>
-                                <tr> 
-                                    <td>#{{$bkng->booking_id}}</td> 
-                                    <td>{{$bkng->customer}}</td> 
+                        ?>
+                                <tr>
+                                    <td>#{{$bkng->booking_id}}</td>
+                                    <td>{{$bkng->customer}}</td>
                                     <td>{{$bkng->country}}</td>
                                     <td>{{date('d M, Y',strtotime($bkng->booking_date))}}</td>
                                     <td>{{$bkng->adult}} Adults, <br> {{$bkng->kids}} Youngsters</td>
@@ -238,7 +252,7 @@ $base_url = URL::to('/');
                                         </ul>
                                     </td>
                                 </tr>
-                                <?php
+                        <?php
                             }
                         }
                         ?>
