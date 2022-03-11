@@ -35,7 +35,11 @@ class LoginController extends Controller
 
   public function update_user_newpassword(Request $request)
   {
-    $updatedata = DB::table('users')->where('id', $request->ids)->update(['password' => Hash::make($request->new_password)]);
+    $updatedata = DB::table('users')
+      ->where('id', $request->ids)
+      ->update([
+        'password' => Hash::make($request->new_password)
+      ]);
     Session::flash('success', 'Password Update successfully..!');
     return back();
   }
@@ -50,7 +54,11 @@ class LoginController extends Controller
       $image = $insert['photo'] = "$profileImage";
     }
 
-    $updatedata = DB::table('users')->where('id', $request->ids)->update(['profile_image' => $image]);
+    $updatedata = DB::table('users')
+      ->where('id', $request->ids)
+      ->update([
+        'profile_image' => $image
+      ]);
     Session::flash('success', 'Image Update successfully..!');
     return back();
   }

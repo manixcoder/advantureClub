@@ -27,7 +27,9 @@ class AdventureController extends Controller
   /* Shop adventure program Functions start */
   public function manage_adventure_program()
   {
-    $adventure_program = DB::table('adventure_programs')->orderBy('id', 'Desc')->get();
+    $adventure_program = DB::table('adventure_programs')
+      ->orderBy('id', 'Desc')
+      ->get();
     $data['content'] = 'admin.adventure_program.manage_adventure_program';
     return view('layouts.content', compact('data'))->with(['adventure_program' => $adventure_program]);
   }
@@ -48,34 +50,42 @@ class AdventureController extends Controller
         $imageinsert = DB::table('programs')->where('id', $request->program_titles)->update(['title' => $item, 'status' => 1, 'created_at' => date('Y-m-d H:i:s')]);
       }
 
-      $insertdata = DB::table('adventure_programs')->where('id', $request->adventure_program_editid)->update([
-        'title' => $request->adventure_title_desc,
-        'description' => $request->adventure_title_desc,
-        'start_datetime' => $request->start_datetime,
-        'end_datetime' => $request->end_datetime,
-        'status' => 1,
-        'created_at' => date('Y-m-d H:i:s'),
-        'updated_at' => date('Y-m-d H:i:s'),
-      ]);
+      $insertdata = DB::table('adventure_programs')
+        ->where('id', $request->adventure_program_editid)
+        ->update([
+          'title' => $request->adventure_title_desc,
+          'description' => $request->adventure_title_desc,
+          'start_datetime' => $request->start_datetime,
+          'end_datetime' => $request->end_datetime,
+          'status' => 1,
+          'created_at' => date('Y-m-d H:i:s'),
+          'updated_at' => date('Y-m-d H:i:s'),
+        ]);
       session()->flash('success', 'Data Update Successfully..!');
     } else {
       foreach ($request->program_titles ?? '' as $item) {
-        $imageinsert = DB::table('programs')->insertGetId(['title' => $item, 'status' => 1, 'created_at' => date('Y-m-d H:i:s')]);
+        $imageinsert = DB::table('programs')
+          ->insertGetId([
+            'title' => $item,
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s')
+          ]);
         $array[] = $imageinsert;
       }
 
       $programsIds = implode(',', $array);
 
-      $insertdata = DB::table('adventure_programs')->insert([
-        'title' => $request->adventure_title_desc,
-        'description' => $request->adventure_title_desc,
-        'program_ids' => $programsIds,
-        'start_datetime' => $request->start_datetime,
-        'end_datetime' => $request->end_datetime,
-        'status' => 1,
-        'created_at' => date('Y-m-d H:i:s'),
-        'updated_at' => date('Y-m-d H:i:s'),
-      ]);
+      $insertdata = DB::table('adventure_programs')
+        ->insert([
+          'title' => $request->adventure_title_desc,
+          'description' => $request->adventure_title_desc,
+          'program_ids' => $programsIds,
+          'start_datetime' => $request->start_datetime,
+          'end_datetime' => $request->end_datetime,
+          'status' => 1,
+          'created_at' => date('Y-m-d H:i:s'),
+          'updated_at' => date('Y-m-d H:i:s'),
+        ]);
       session()->flash('success', 'Data Insert Successfully..!');
     }
 
@@ -88,15 +98,23 @@ class AdventureController extends Controller
     $view_adventure_program = DB::table('adventure_programs')->where('id', $id)->first();
 
     $data['content'] = 'admin.adventure_program.view_adventure_program';
-    return view('layouts.content', compact('data'))->with(['view_adventure_program' => $view_adventure_program]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'view_adventure_program' => $view_adventure_program
+      ]);
   }
 
   public function edit_adventure_program($id)
   {
-    $edit_adventure_program = DB::table('adventure_programs')->where('id', $id)->first();
+    $edit_adventure_program = DB::table('adventure_programs')
+      ->where('id', $id)
+      ->first();
 
     $data['content'] = 'admin.adventure_program.edit_adventure_program';
-    return view('layouts.content', compact('data'))->with(['edit_adventure_program' => $edit_adventure_program]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'edit_adventure_program' => $edit_adventure_program
+      ]);
   }
 
   public function delete_adventure_program($id)

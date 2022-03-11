@@ -61,9 +61,15 @@ class LocationController extends Controller
                 $countries->short_name = strtoupper($request->short_name);
                 $countries->currency = $request->currency;
                 if ($countries->save()) {
-                    $request->session()->flash('success', "Record has been added successfully.");
+                    $request->session()->flash(
+                        'success',
+                        "Record has been added successfully."
+                    );
                 } else {
-                    $request->session()->flash('error', 'Something went wrong. Please try again.');
+                    $request->session()->flash(
+                        'error',
+                        'Something went wrong. Please try again.'
+                    );
                 }
                 return redirect()->back();
             }
@@ -76,7 +82,11 @@ class LocationController extends Controller
 
     public function deleteCountries($id)
     {
-        $delete = DB::table('countries')->where('id', $id)->update(['deleted_at' => date('Y-m-d H:i:s')]);
+        $delete = DB::table('countries')
+            ->where('id', $id)
+            ->update([
+                'deleted_at' => date('Y-m-d H:i:s')
+            ]);
         session()->flash('error', 'Deleted Successfully..!');
         return redirect()->back();
     }
@@ -123,17 +133,25 @@ class LocationController extends Controller
                 }
             }
         }
-        $countries = DB::table('countries')->where(['deleted_at' => NULL])->get();
+        $countries = DB::table('countries')->where([
+            'deleted_at' => NULL
+        ])
+            ->get();
         $data['content'] = 'admin.locations.add_city';
-        return view('layouts.content', compact('data'))->with([
-            'validation' => $validation ?? [],
-            'countries' => $countries
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'validation' => $validation ?? [],
+                'countries' => $countries
+            ]);
     }
 
     public function deleteCities($id)
     {
-        $delete = DB::table('cities')->where('id', $id)->update(['deleted_at' => date('Y-m-d H:i:s')]);
+        $delete = DB::table('cities')
+            ->where('id', $id)
+            ->update([
+                'deleted_at' => date('Y-m-d H:i:s')
+            ]);
         session()->flash('error', 'Deleted Successfully..!');
         return redirect()->back();
     }
@@ -171,7 +189,10 @@ class LocationController extends Controller
                 if (!$region_exist->isEmpty()) {
                     $validation = array('region' => 'This region already created.');
                 } else {
-                    if (DB::table('regions')->insert(['country_id' => $request->country, 'region' => $request->region])) {
+                    if (DB::table('regions')->insert([
+                        'country_id' => $request->country,
+                        'region' => $request->region
+                    ])) {
                         $request->session()->flash('success', "Record has been added successfully.");
                     } else {
                         $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -190,7 +211,11 @@ class LocationController extends Controller
 
     public function deleteRegions($id)
     {
-        $delete = DB::table('regions')->where('id', $id)->update(['deleted_at' => date('Y-m-d H:i:s')]);
+        $delete = DB::table('regions')
+            ->where('id', $id)
+            ->update([
+                'deleted_at' => date('Y-m-d H:i:s')
+            ]);
         session()->flash('error', 'Deleted Successfully..!');
         return redirect()->back();
     }

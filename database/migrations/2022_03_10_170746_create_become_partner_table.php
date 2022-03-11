@@ -15,6 +15,7 @@ class CreateBecomePartnerTable extends Migration
     {
         Schema::create('become_partner', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('user_id');
             $table->string('company_name')->nullable();
             $table->longText('address')->nullable();
             $table->longText('location')->nullable();
@@ -30,6 +31,11 @@ class CreateBecomePartnerTable extends Migration
             $table->string('bankname')->nullable();
             $table->string('account_holdername')->nullable();
             $table->string('account_number')->nullable();
+            $table->enum('is_online', ['0', '1'])->default(1)->comment('1 Active , 0 Inactive');
+            $table->enum('is_approved', ['0', '1'])->default(0)->comment('1 Active , 0 Inactive');
+            $table->integer('packages_id');
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
             $table->timestamps();
         });
     }

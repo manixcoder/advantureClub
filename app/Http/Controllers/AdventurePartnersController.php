@@ -157,7 +157,12 @@ class AdventurePartnersController extends Controller
     $healthConditionData = '';
     $pModeData = '';
     $editdata = DB::table('users')
-      ->select('users.*', 'countries.country', 'cities.city', 'vendors_details.*')
+      ->select(
+        'users.*',
+        'countries.country',
+        'cities.city',
+        'vendors_details.*'
+      )
       ->rightjoin('countries', 'users.country_id', '=', 'countries.id')
       ->rightjoin('cities', 'users.country_id', '=', 'cities.country_id')
       ->rightjoin('vendors_details', 'users.id', '=', 'vendors_details.user_id')
@@ -179,7 +184,8 @@ class AdventurePartnersController extends Controller
     }
     $services = DB::table('services as srvc')
       ->select([
-        'srvc.*', 'usr.name as provided_by',
+        'srvc.*', 
+        'usr.name as provided_by',
         DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
         'scat.category as service_category',
         'ssec.sector as service_sector',

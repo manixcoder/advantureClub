@@ -27,37 +27,46 @@ use DB;
 use Hash;
 use Auth;
 
-class ServiceOffersController extends MyController {
+class ServiceOffersController extends MyController
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth');
         $this->middleware('role');
     }
 
-    public function listServiceOffers(Request $request){
-        $usersdata = DB::table('service_offers')
-        ->select(['service_offers.*', 'services.adventure_name'])
-        ->leftjoin('services', 'services.id', '=', 'service_offers.service_id')
-        ->where('services.id', '<>', NULL)
-        ->where(['service_offers.deleted_at' => NULL])
-        ->get();
-       //  echo "<pre>";print_r( $usersdata);exit;
+    public function listServiceOffers(Request $request)
+    {
+        $usersdata = DB::table(
+            'service_offers'
+        )
+            ->select([
+                'service_offers.*',
+                'services.adventure_name'
+            ])
+            ->leftjoin('services', 'services.id', '=', 'service_offers.service_id')
+            ->where('services.id', '<>', NULL)
+            ->where(['service_offers.deleted_at' => NULL])
+            ->get();
+        //  echo "<pre>";print_r( $usersdata);exit;
         $data['content'] = 'admin.service_offers.list_service_offers';
         return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
     }
 
     /* Add new Adventure user starts */
 
-    public function addServiceOffers(Request $request) { // echo"<pre>";print_r($request->all());exit;
+    public function addServiceOffers(Request $request)
+    { // echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
-                        'adventure_name' => 'required|min:3|max:50|unique:services',
-                        'name'=>'required|unique:service_offers',
-                        'start_date' => 'required|date_format:Y-m-d|before:end_date',
-                        'end_date' => 'required|date_format:Y-m-d',
-                        'discount_amount' => 'required',
-                        'banner' =>'required',
-                        'description'=>'required'
+                'adventure_name' => 'required|min:3|max:50|unique:services',
+                'name' => 'required|unique:service_offers',
+                'start_date' => 'required|date_format:Y-m-d|before:end_date',
+                'end_date' => 'required|date_format:Y-m-d',
+                'discount_amount' => 'required',
+                'banner' => 'required',
+                'description' => 'required'
             ]);
             if ($validator->fails()) {
                 $errors = array();
@@ -103,36 +112,39 @@ class ServiceOffersController extends MyController {
                 }
             }
         }
-        
-        $adv_names = DB::table('services as srvc')
-        ->select(['srvc.id','srvc.adventure_name'])
-        ->where('srvc.adventure_name', '<>', NULL)
-        ->orderBy('srvc.id', 'DESC')
-        ->get()->toArray();
+
+        $adv_names = DB::table(
+            'services as srvc'
+        )
+            ->select(['srvc.id', 'srvc.adventure_name'])
+            ->where('srvc.adventure_name', '<>', NULL)
+            ->orderBy('srvc.id', 'DESC')
+            ->get()->toArray();
 
         $data['content'] = 'admin.service_offers.add_service_offer';
         return view('layouts.content', compact('data'))->with([
-                    'validation' => $data['validation'] ?? [],
-                    'adv_names' => $adv_names
+            'validation' => $data['validation'] ?? [],
+            'adv_names' => $adv_names
         ]);
     }
 
     /* Add New Adventure User ends */
 
     /* Update status in db from ajax request starts */
-    public function update_offer_status($id){
-        $Data = array
-                  (
-                      'id' => $_GET['id'],
-                      'status' => $_GET['status'],
-              );
-              
-            $edituserData = DB::table('service_offers')->where('id', $id)->update($Data);
-            return response()->json(array('msg'=> $edituserData), 200);
-        }
+    public function update_offer_status($id)
+    {
+        $Data = array(
+            'id' => $_GET['id'],
+            'status' => $_GET['status'],
+        );
+
+        $edituserData = DB::table('service_offers')->where('id', $id)->update($Data);
+        return response()->json(array('msg' => $edituserData), 200);
+    }
     /* Update status ends */
 
-    public function deleteServiceOffer(Request $request, $id) {
+    public function deleteServiceOffer(Request $request, $id)
+    {
         //echo $id; die;
         $service = Service_offers::find($id);
         if ($service->delete()) {
@@ -141,10 +153,10 @@ class ServiceOffersController extends MyController {
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');
         }
-        
-       
-        
-        
+
+
+
+
         return redirect()->back();
     }
 }
