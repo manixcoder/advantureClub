@@ -31,11 +31,11 @@ class CreateBecomePartnerTable extends Migration
             $table->string('bankname')->nullable();
             $table->string('account_holdername')->nullable();
             $table->string('account_number')->nullable();
-            $table->enum('is_online', ['0', '1'])->default(1)->comment('1 Active , 0 Inactive');
-            $table->enum('is_approved', ['0', '1'])->default(0)->comment('1 Active , 0 Inactive');
+            $table->enum('is_online',['0','1'])->default(1)->comment('1 Active , 0 Inactive');
+            $table->enum('is_approved',['0','1'])->default(0)->comment('1 Active , 0 Inactive');
             $table->integer('packages_id');
             $table->dateTime('start_date');
-            $table->dateTime('end_date');
+            $table->dateTime('start_date');
             $table->timestamps();
         });
     }
