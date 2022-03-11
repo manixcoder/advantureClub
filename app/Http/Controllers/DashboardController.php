@@ -38,26 +38,33 @@ class DashboardController extends MyController
 
         if ($userRole == '1') {
             $where = ' 1 ';
-            $total_partner = DB::table('users')->where(['users_role' => 2])->count();
-            $new_partner = DB::table('users')->where(['users_role' => 2])
+            $total_partner = DB::table('users')
+                ->where(['users_role' => 2])
+                ->count();
+            $new_partner = DB::table('users')
+                ->where(['users_role' => 2])
                 ->whereRaw('DATE_FORMAT(created_at, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
                 ->count();
-            $total_customer = DB::table('users')->where('users_role', 3)
+            $total_customer = DB::table('users')
+                ->where('users_role', 3)
                 ->where('users.email', '<>', NULL)
                 ->where('users.name', '<>', NULL)
                 ->count();
             //            DB::enableQueryLog();
-            $new_customer = DB::table('users')->where(['users_role' => 3])
+            $new_customer = DB::table('users')
+                ->where(['users_role' => 3])
                 ->whereRaw('DATE_FORMAT(created_at, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
                 ->where('users.email', '<>', NULL)
                 ->where('users.name', '<>', NULL)
                 ->count();
             //            dd(DB::getQueryLog());
-            $total_booking = DB::table('bookings')->count();
+            $total_booking = DB::table('bookings')
+                ->count();
             $new_booking = DB::table('bookings')
                 ->whereRaw('DATE_FORMAT(created_at, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
                 ->count();
-            $total_subscription = DB::table('packages')->count();
+            $total_subscription = DB::table('packages')
+                ->count();
             $new_subscription = DB::table('packages')
                 ->whereRaw('DATE_FORMAT(created_at, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
                 ->count();

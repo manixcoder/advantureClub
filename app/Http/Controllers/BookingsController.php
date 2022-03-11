@@ -74,7 +74,16 @@ class BookingsController extends MyController
             ]);
         } else { // Service list
             $services = DB::table('services as srvc')
-                ->select(['srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type', 'slvl.level as service_level', 'cntri.country'])
+                ->select([
+                    'srvc.*',
+                    'usr.name as provided_by',
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    'scat.category as service_category',
+                    'ssec.sector as service_sector',
+                    'styp.type as service_type',
+                    'slvl.level as service_level',
+                    'cntri.country'
+                ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('service_categories as scat', 'scat.id', '=', 'srvc.service_category')

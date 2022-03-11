@@ -36,7 +36,8 @@ class HomeController extends Controller
 
     public function update_user_newpassword(Request $request)
     {
-        $updatedata = DB::table('users')->where('id', $request->ids)->update(['password' => Hash::make($request->new_password)]);
+        $updatedata = DB::table('users')->where('id', $request->ids)
+            ->update(['password' => Hash::make($request->new_password)]);
         Session::flash('success', 'Password Update successfully..!');
         return back();
     }
@@ -52,14 +53,17 @@ class HomeController extends Controller
             $image = $insert['photo'] = "$profileImage";
         }
 
-        $updatedata = DB::table('users')->where('id', $request->ids)->update(['profile_image' => $image]);
+        $updatedata = DB::table('users')->where('id', $request->ids)
+            ->update(['profile_image' => $image]);
         Session::flash('success', 'Image Update successfully..!');
         return back();
     }
 
     public function update_profile_image($id)
     {
-        $data = DB::table('users')->Where('id', $id)->first();
+        $data = DB::table('users')
+            ->Where('id', $id)
+            ->first();
         return Response::json($data);
     }
 
@@ -74,19 +78,27 @@ class HomeController extends Controller
             ->get();
 
         $data['content'] = 'admin.user.vendor_requests';
-        return view('layouts.content', compact('data'))->with(['userdata' => $userdata]);
+        return view('layouts.content', compact('data'))
+            ->with(['userdata' => $userdata]);
     }
 
     public function vendor_approve($id)
     {
-        $approvedata = User::where('id', $id)->update(['status' => '1', 'users_role' => '2']);
+        $approvedata = User::where('id', $id)
+            ->update([
+                'status' => '1',
+                'users_role' => '2'
+            ]);
         Session::flash('success', 'Vendor approved successfully..!');
         return back();
     }
 
     public function vendor_notapprove($id)
     {
-        $approvedata = User::where('id', $id)->update(['status' => '2']);
+        $approvedata = User::where('id', $id)
+            ->update([
+                'status' => '2'
+            ]);
         Session::flash('error', 'Vendor Declined ..!');
         return back();
     }
@@ -101,7 +113,9 @@ class HomeController extends Controller
 
             $data = $request->all();
 
-            if (!\Hash::check($data['password'], auth()->user()->password)) {
+            if (!\Hash::check($data['password'], auth()
+                ->user()
+                ->password)) {
                 Session::flash('error', 'Please Enter valid Current password');
                 return back();
             } else {
@@ -121,8 +135,6 @@ class HomeController extends Controller
             if ($request->name) {
                 $udata['name'] = $request->name;
             }
-
-
             User::where('id', $request->u_ids)->update($udata);
             Session::flash('success', 'Profile updated successfully');
             return back();
@@ -131,8 +143,10 @@ class HomeController extends Controller
 
     public function UserProfile(Request $request)
     {
-        $companydata = User::where('id', Session::get('user_id'))->first();
-        $profileData = Auth()->user();
+        $companydata = User::where('id', Session::get('user_id'))
+            ->first();
+        $profileData = Auth()
+            ->user();
 
         $data['content'] = 'admin.user.user-profile';
         return view('layouts.content', compact('data'))->with(['companydata' => $companydata]);
@@ -143,11 +157,17 @@ class HomeController extends Controller
 
         $userRole = Session::get('userRole');
         $id = Session::get('user_id');
-        $OrgData = DB::table('users')->where('id', $id)->first();
+        $OrgData = DB::table('users')
+            ->where('id', $id)
+            ->first();
 
         if ($userRole == '1') {
-            $usredata = DB::table('users')->where('users_role', 2)->count();
-            $customerdata = DB::table('users')->where('users_role', 3)->count();
+            $usredata = DB::table('users')
+                ->where('users_role', 2)
+                ->count();
+            $customerdata = DB::table('users')
+                ->where('users_role', 3)
+                ->count();
             //      $categorydata = DB::table('home_categories')->count();
             $vendor_requests = DB::table('users')->Where('status', '0')->Where('users_role', '3')->count();
             $countrydata = DB::table('countries')->count();
@@ -155,11 +175,19 @@ class HomeController extends Controller
             //      $productdata = DB::table('home_products')->orderBy('id', 'desc')->count();
 
             $data['content'] = 'admin.home';
-            return view('layouts.content', compact('data'))->with(['usredata' => $usredata, 'customerdata' => $customerdata, 'vendor_requests' => $vendor_requests, 'countrydata' => $countrydata, 'adventure_programdata' => $adventure_programdata]);
+            return view('layouts.content', compact('data'))
+                ->with([
+                    'usredata' => $usredata,
+                    'customerdata' => $customerdata,
+                    'vendor_requests' => $vendor_requests,
+                    'countrydata' => $countrydata,
+                    'adventure_programdata' => $adventure_programdata
+                ]);
         } elseif ($userRole == '2') {
             $usredata = DB::table('users')->count();
             $data['content'] = 'admin.home';
-            return view('layouts.content', compact('data'))->with(['usredata' => $usredata]);
+            return view('layouts.content', compact('data'))
+                ->with(['usredata' => $usredata]);
         } else {
             echo "customer login not allowed";
             die;
@@ -179,7 +207,9 @@ class HomeController extends Controller
         $total_users = User::all();
 
         $data['content'] = 'admin.user';
-        return view('layouts.content', compact('data'))->with(['usredata' => $usredata]);
+        return view('layouts.content', compact('data'))->with([
+            'usredata' => $usredata
+        ]);
     }
 
     public function user_view()
@@ -187,7 +217,9 @@ class HomeController extends Controller
         $usredata = User::where('users_role', 2)->get();
 
         $data['content'] = 'admin.user.user';
-        return view('layouts.content', compact('data'))->with(['usredata' => $usredata]);
+        return view('layouts.content', compact('data'))->with([
+            'usredata' => $usredata
+        ]);
     }
 
     public function add_user(Request $request)
@@ -222,7 +254,9 @@ class HomeController extends Controller
         }
         if ($request->ids != '') {
             Session::flash('success', 'Updated successfully..!');
-            $updateData = DB::table('users')->where('id', $request->ids)->update($data);
+            $updateData = DB::table('users')
+                ->where('id', $request->ids)
+                ->update($data);
             return redirect('users');
         } else {
             Session::flash('success', 'Inserted successfully..!');
@@ -235,7 +269,10 @@ class HomeController extends Controller
     {
         $editdata = User::where('id', $id)->first();
         $data['content'] = 'admin.user.edit_user';
-        return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'editdata' => $editdata
+            ]);
     }
 
     public function view_user($id)

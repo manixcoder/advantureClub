@@ -127,7 +127,11 @@ class AdminUsersController extends MyController
     {
         // echo $id.'---------'; die;
         $editdata = DB::table('users')
-            ->select(['users.*', 'countries.country', 'regions.region'])
+            ->select([
+                'users.*',
+                'countries.country',
+                'regions.region'
+            ])
             ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
             ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
             ->where('users.id', $id)->first();

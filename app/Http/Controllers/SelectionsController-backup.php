@@ -27,39 +27,72 @@ use DB;
 use Hash;
 use Auth;
 
-class SelectionsController extends MyController {
+class SelectionsController extends MyController
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth');
         $this->middleware('role');
     }
 
     /* Service Functions start */
 
-    public function get(Request $request, $id = 1) {
+    public function get(Request $request, $id = 1)
+    {
         $result = array();
         $active_tab = '';
         switch ($id) {
             case 1:
-                $result = Service_sector::select(['id', 'sector as name', DB::raw("'Service Sector' as under"), 'created_at'])->get()->toArray();
+                $result = Service_sector::select([
+                    'id',
+                    'sector as name',
+                    DB::raw("'Service Sector' as under"),
+                    'created_at'
+                ])->get()
+                    ->toArray();
                 $active_tab = 'service_sector';
                 break;
             case 2:
-                $result = Service_categorie::select(['id', 'category as name', DB::raw("'Service Category' as under"), 'created_at'])->get()->toArray();
+                $result = Service_categorie::select([
+                    'id',
+                    'category as name',
+                    DB::raw("'Service Category' as under"),
+                    'created_at'
+                ])
+                    ->get()
+                    ->toArray();
                 $active_tab = 'service_category';
                 break;
             case 3:
-                $result = Service_type::select(['id', 'type as name', DB::raw("'Service Type' as under"), 'created_at'])->get()->toArray();
+                $result = Service_type::select([
+                    'id',
+                    'type as name',
+                    DB::raw("'Service Type' as under"),
+                    'created_at'
+                ])
+                    ->get()->toArray();
                 $active_tab = 'service_type';
                 break;
             case 4:
-                $result = Service_level::select(['id', 'level as name', DB::raw("'Service Level' as under"), 'created_at'])->get()->toArray();
+                $result = Service_level::select([
+                    'id',
+                    'level as name',
+                    DB::raw("'Service Level' as under"),
+                    'created_at'
+                ])->get()->toArray();
                 $active_tab = 'service_level';
                 break;
             case 5:
                 $response = DB::table('durations')
-                                ->select('id', 'duration as name', DB::raw("'Duration' as under"), 'created_at')
-                                ->get()->toArray();
+                    ->select(
+                        'id',
+                        'duration as name',
+                        DB::raw("'Duration' as under"),
+                        'created_at'
+                    )
+                    ->get()
+                    ->toArray();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -69,8 +102,8 @@ class SelectionsController extends MyController {
                 break;
             case 6:
                 $response = DB::table('activities')
-                                ->select('id', 'activity as name', DB::raw("'Activities' as under"), 'created_at')
-                                ->get()->toArray();
+                    ->select('id', 'activity as name', DB::raw("'Activities' as under"), 'created_at')
+                    ->get()->toArray();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -80,8 +113,8 @@ class SelectionsController extends MyController {
                 break;
             case 7:
                 $response = DB::table('service_for')
-                        ->select('id', 'sfor as name', DB::raw("'Aimed' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'sfor as name', DB::raw("'Aimed' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -91,8 +124,8 @@ class SelectionsController extends MyController {
                 break;
             case 8:
                 $response = DB::table('dependency')
-                        ->select('id', 'dependency_name as name', DB::raw("'Dependency' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'dependency_name as name', DB::raw("'Dependency' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -102,8 +135,8 @@ class SelectionsController extends MyController {
                 break;
             case 9:
                 $response = DB::table('currencies')
-                        ->select('id', 'name', DB::raw("'Currency' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'name', DB::raw("'Currency' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -115,14 +148,15 @@ class SelectionsController extends MyController {
         }
 
 
-//        $this->prx($result);
+        //        $this->prx($result);
         $data['content'] = 'admin.selections.selections';
         return view('layouts.content', compact('data'))->with([
-                    'records' => (array) $result, 'active_tab' => $active_tab
+            'records' => (array) $result, 'active_tab' => $active_tab
         ]);
     }
 
-    public function add(Request $request) {
+    public function add(Request $request)
+    {
         $under = array(
             1 => 'Service Sectors',
             2 => 'Service Category',
@@ -137,8 +171,8 @@ class SelectionsController extends MyController {
         if ($request->post()) {
 
             $validator = Validator::make($request->all(), [
-                        'selection_name' => 'required|min:3|max:50',
-                        'comes_under' => 'required|numeric|digits:1'
+                'selection_name' => 'required|min:3|max:50',
+                'comes_under' => 'required|numeric|digits:1'
             ]);
             if ($validator->fails()) {
                 $validation = array();
@@ -194,9 +228,8 @@ class SelectionsController extends MyController {
                     case 5:
 
                         if (DB::table('durations')->insert([
-                                    'duration' => $request->selection_name
-                                ])
-                        ) {
+                            'duration' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -205,9 +238,8 @@ class SelectionsController extends MyController {
                         break;
                     case 6:
                         if (DB::table('activities')->insert([
-                                    'activity' => $request->selection_name
-                                ])
-                        ) {
+                            'activity' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -216,9 +248,8 @@ class SelectionsController extends MyController {
                         break;
                     case 7:
                         if (DB::table('service_for')->insert([
-                                    'sfor' => $request->selection_name
-                                ])
-                        ) {
+                            'sfor' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -227,9 +258,8 @@ class SelectionsController extends MyController {
                         break;
                     case 8:
                         if (DB::table('dependency')->insert([
-                                    'dependency_name' => $request->selection_name
-                                ])
-                        ) {
+                            'dependency_name' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -238,9 +268,8 @@ class SelectionsController extends MyController {
                         break;
                     case 9:
                         if (DB::table('currencies')->insert([
-                                    'name' => $request->selection_name
-                                ])
-                        ) {
+                            'name' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -253,11 +282,12 @@ class SelectionsController extends MyController {
         }
         $data['content'] = 'admin.selections.update_selections';
         return view('layouts.content', compact('data'))->with([
-                    'under' => $under, 'validation' => $validation ?? []
+            'under' => $under, 'validation' => $validation ?? []
         ]);
     }
 
-    public function delete(Request $request, $tab_id = 1, $item_id) {
+    public function delete(Request $request, $tab_id = 1, $item_id)
+    {
 
         switch ($tab_id) {
             case 1:
@@ -301,40 +331,35 @@ class SelectionsController extends MyController {
                 }
                 break;
             case 5:
-                if (DB::table('durations')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('durations')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 6:
-                if (DB::table('activities')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('activities')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 7:
-                if (DB::table('service_for')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('service_for')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 8:
-                if (DB::table('dependency')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('dependency')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 9:
-                if (DB::table('currencies')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('currencies')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -344,5 +369,4 @@ class SelectionsController extends MyController {
         }
         return redirect('/selections/' . $tab_id);
     }
-
 }

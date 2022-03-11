@@ -30,8 +30,10 @@ class CategoryController extends Controller
 
   /* Product Functions start */
   public function add_category(Request $request)
-  {/*
-    print_r($request->all()); die;*/
+  {
+    /*
+    print_r($request->all()); die;
+    */
     if ($files = $request->image) {
       $destinationPath = public_path('/category_image/');
       $profileImage = date('YmdHis') . "-" . $files->getClientOriginalName();
@@ -54,7 +56,9 @@ class CategoryController extends Controller
     }
     if ($request->ids != '') {
       Session::flash('success', 'Updated successfully..!');
-      $updateData = DB::table('home_categories')->where('id', $request->ids)->update($data);
+      $updateData = DB::table('home_categories')
+        ->where('id', $request->ids)
+        ->update($data);
       return redirect('category');
     } else {
       Session::flash('success', 'Inserted successfully..!');
@@ -68,14 +72,20 @@ class CategoryController extends Controller
     $categorydata = DB::table('home_categories')->get();
 
     $data['content'] = 'admin.category.manage_category';
-    return view('layouts.content', compact('data'))->with(['categorydata' => $categorydata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'categorydata' => $categorydata
+      ]);
   }
 
   public function category_edit($id)
   {
     $editdata = DB::table('home_categories')->where('id', $id)->first();
     $data['content'] = 'admin.category.edit_category';
-    return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'editdata' => $editdata
+      ]);
   }
 
   public function product_view($id)
@@ -88,16 +98,26 @@ class CategoryController extends Controller
 
   public function delete_category($id)
   {
-    $delete = DB::table('home_categories')->where('id', $id)->delete();
-    $productdelete = DB::table('home_products')->where('home_cat_id', $id)->get();
-    $Service_Category_ActivityType = DB::table('Service_Category_ActivityType')->where('Service_Category_Id', $id)->get();
+    $delete = DB::table('home_categories')
+      ->where('id', $id)
+      ->delete();
+    $productdelete = DB::table('home_products')
+      ->where('home_cat_id', $id)
+      ->get();
+    $Service_Category_ActivityType = DB::table('Service_Category_ActivityType')
+      ->where('Service_Category_Id', $id)
+      ->get();
 
     foreach ($Service_Category_ActivityType as $data2) {
-      $deleteproduct = DB::table('Service_Category_ActivityType')->where('Service_Category_Id', $id)->delete();
+      $deleteproduct = DB::table('Service_Category_ActivityType')
+        ->where('Service_Category_Id', $id)
+        ->delete();
     }
 
     foreach ($productdelete as $data) {
-      $deleteproduct = DB::table('home_products')->where('home_cat_id', $id)->delete();
+      $deleteproduct = DB::table('home_products')
+        ->where('home_cat_id', $id)
+        ->delete();
     }
 
     session()->flash('error', 'Deleted Successfully..!');

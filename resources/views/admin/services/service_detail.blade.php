@@ -10,9 +10,7 @@ $base_url = URL::to('/');
             </div>
         </div>
         <?php
-        //dd($service->service_id);
         $serviceImagesData = DB::table('service_images')->where('service_id', $service->service_id)->orderBy('id', 'ASC')->get();
-       // dd($serviceImagesData);
         ?>
         <div class="row">
             @forelse ($serviceImagesData as $serviceImages)

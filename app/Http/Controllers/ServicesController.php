@@ -588,11 +588,14 @@ class ServicesController extends MyController
         if ($service) {
             $service->status = 2;
             $service->save();
-            $request->session()->flash('success', 'Service has been rejected successfully.');
+            $request->session()
+                ->flash('success', 'Service has been rejected successfully.');
         } else {
-            $request->session()->flash('error', 'Something went wrong. Please try again.');
+            $request->session()
+                ->flash('error', 'Something went wrong. Please try again.');
         }
-        return redirect()->back();
+        return redirect()
+            ->back();
     }
 
     public function participant(Request $request, $id)
@@ -653,7 +656,18 @@ class ServicesController extends MyController
             $where .= ' && srvc.id = ' . $id;
         }
         $services = DB::table('services as srvc')
-            ->select(['srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type', 'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region'])
+            ->select([
+                'srvc.*',
+                'usr.name as provided_by',
+                DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                'scat.category as service_category',
+                'ssec.sector as service_sector',
+                'styp.type as service_type',
+                'slvl.level as service_level',
+                'cntri.country',
+                'crnci.sign as currency_sign',
+                'rgns.region'
+            ])
             ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
             ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
             ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
@@ -682,7 +696,12 @@ class ServicesController extends MyController
         $result = array();
 
         $regions = DB::table('regions as rg')
-            ->select('cnt.id as country_id', 'cnt.country', 'rg.id as region_id', 'rg.region')
+            ->select(
+                'cnt.id as country_id',
+                'cnt.country',
+                'rg.id as region_id',
+                'rg.region'
+            )
             ->leftJoin('countries as cnt', 'cnt.id', '=', 'rg.country_id')
             ->where(['rg.country_id' => $id, 'rg.deleted_at' => NULL])->orderBy('rg.region', 'ASC')->get();
         $options = '';
@@ -706,9 +725,21 @@ class ServicesController extends MyController
 
         $reviewData = DB::table('services as srvc')
             ->select([
-                'srvc.id', 'srvc.adventure_name', 'sercat.category', 'sersec.sector', 'sertype.type', 'rev.service_id', 'rev.user_id', DB::raw("AVG(star) AS stars"),
-                DB::raw("COUNT(user_id) AS reviewd_by"), DB::raw("COUNT(service_id) AS likes"), 'rev.remark',
-                'usr.name', 'usr.users_role', 'cntri.country', DB::raw("MAX(srvc.updated_at)as date")
+                'srvc.id',
+                'srvc.adventure_name',
+                'sercat.category',
+                'sersec.sector',
+                'sertype.type',
+                'rev.service_id',
+                'rev.user_id',
+                DB::raw("AVG(star) AS stars"),
+                DB::raw("COUNT(user_id) AS reviewd_by"),
+                DB::raw("COUNT(service_id) AS likes"),
+                'rev.remark',
+                'usr.name',
+                'usr.users_role',
+                'cntri.country',
+                DB::raw("MAX(srvc.updated_at)as date")
             ])
             ->join('service_reviews as rev', 'rev.service_id', '=', 'srvc.id')
             ->join('service_categories as sercat', 'srvc.service_category', '=', 'sercat.id')

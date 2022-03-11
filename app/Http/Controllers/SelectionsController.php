@@ -27,21 +27,26 @@ use DB;
 use Hash;
 use Auth;
 
-class SelectionsController extends MyController {
+class SelectionsController extends MyController
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth');
         $this->middleware('role');
     }
 
     /* Service Functions start */
 
-    public function get(Request $request, $id = 1) {
+    public function get(Request $request, $id = 1)
+    {
         $result = array();
         $active_tab = '';
         switch ($id) {
             case 1:
-                $result = Service_sector::select(['id', 'sector as name', DB::raw("'Service Sector' as under"), 'created_at'])->get()->toArray();
+                $result = Service_sector::select([
+                    'id', 'sector as name', DB::raw("'Service Sector' as under"), 'created_at'
+                ])->get()->toArray();
                 $active_tab = 'service_sector';
                 break;
             case 2:
@@ -58,8 +63,8 @@ class SelectionsController extends MyController {
                 break;
             case 5:
                 $response = DB::table('durations')
-                                ->select('id', 'duration as name', DB::raw("'Duration' as under"), 'created_at')
-                                ->get()->toArray();
+                    ->select('id', 'duration as name', DB::raw("'Duration' as under"), 'created_at')
+                    ->get()->toArray();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -69,8 +74,8 @@ class SelectionsController extends MyController {
                 break;
             case 6:
                 $response = DB::table('activities')
-                                ->select('id', 'activity as name', DB::raw("'Activities' as under"), 'created_at')
-                                ->get()->toArray();
+                    ->select('id', 'activity as name', DB::raw("'Activities' as under"), 'created_at')
+                    ->get()->toArray();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -80,8 +85,8 @@ class SelectionsController extends MyController {
                 break;
             case 7:
                 $response = DB::table('aimed')
-                        ->select('id', 'AimedName as name', DB::raw("'Aimed' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'AimedName as name', DB::raw("'Aimed' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -91,8 +96,8 @@ class SelectionsController extends MyController {
                 break;
             case 8:
                 $response = DB::table('dependency')
-                        ->select('id', 'dependency_name as name', DB::raw("'Dependency' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'dependency_name as name', DB::raw("'Dependency' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -102,8 +107,8 @@ class SelectionsController extends MyController {
                 break;
             case 9:
                 $response = DB::table('currencies')
-                        ->select('id', 'name', DB::raw("'Currency' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'name', DB::raw("'Currency' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -111,11 +116,11 @@ class SelectionsController extends MyController {
                 $result = $resss;
                 $active_tab = 'currency';
                 break;
-				
-				case 10:
+
+            case 10:
                 $response = DB::table('health_conditions')
-                        ->select('id', 'name', DB::raw("'name' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'name', DB::raw("'name' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -123,11 +128,11 @@ class SelectionsController extends MyController {
                 $result = $resss;
                 $active_tab = 'healthconditionName';
                 break;
-				
-				case 11:
+
+            case 11:
                 $response = DB::table('heights')
-                        ->select('id', 'heightName as name', DB::raw("'heightName' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'heightName as name', DB::raw("'heightName' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -135,11 +140,11 @@ class SelectionsController extends MyController {
                 $result = $resss;
                 $active_tab = 'height';
                 break;
-				
-				case 12:
+
+            case 12:
                 $response = DB::table('weights')
-                        ->select('id', 'weightName as name', DB::raw("'weightName' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'weightName as name', DB::raw("'weightName' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -147,11 +152,11 @@ class SelectionsController extends MyController {
                 $result = $resss;
                 $active_tab = 'weight';
                 break;
-				
-				case 13:
+
+            case 13:
                 $response = DB::table('contactuspurposes')
-                        ->select('id', 'contactuspurposeName as name', DB::raw("'contactuspurposeName' as under"), 'created_at')
-                        ->get();
+                    ->select('id', 'contactuspurposeName as name', DB::raw("'contactuspurposeName' as under"), 'created_at')
+                    ->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -159,21 +164,17 @@ class SelectionsController extends MyController {
                 $result = $resss;
                 $active_tab = 'contactuspurposes';
                 break;
-				
-				
-				
             default:
         }
-
-
-//        $this->prx($result);
+        //        $this->prx($result);
         $data['content'] = 'admin.selections.selections';
         return view('layouts.content', compact('data'))->with([
-                    'records' => (array) $result, 'active_tab' => $active_tab
+            'records' => (array) $result, 'active_tab' => $active_tab
         ]);
     }
 
-    public function add(Request $request) {
+    public function add(Request $request)
+    {
         $under = array(
             1 => 'Service Sectors',
             2 => 'Service Category',
@@ -184,17 +185,17 @@ class SelectionsController extends MyController {
             7 => 'Aimed',
             8 => 'Dependency',
             9 => 'Currency',
-			10 => 'Health Condition',
-			11 => 'Hieght',
-			12 => 'Weight',
-			13 => 'Contact Us Purpose'
-			
+            10 => 'Health Condition',
+            11 => 'Hieght',
+            12 => 'Weight',
+            13 => 'Contact Us Purpose'
+
         );
         if ($request->post()) {
             //unique:posts,title,{$this->post->id} // |digits:1
             $validator = Validator::make($request->all(), [
-                        'selection_name' => 'required|min:3|max:50',
-                        'comes_under' => 'required|numeric'
+                'selection_name' => 'required|min:3|max:50',
+                'comes_under' => 'required|numeric'
             ]);
             if ($validator->fails()) {
                 $validation = array();
@@ -250,9 +251,8 @@ class SelectionsController extends MyController {
                     case 5:
 
                         if (DB::table('durations')->insert([
-                                    'duration' => $request->selection_name
-                                ])
-                        ) {
+                            'duration' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -261,9 +261,8 @@ class SelectionsController extends MyController {
                         break;
                     case 6:
                         if (DB::table('activities')->insert([
-                                    'activity' => $request->selection_name
-                                ])
-                        ) {
+                            'activity' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -272,9 +271,8 @@ class SelectionsController extends MyController {
                         break;
                     case 7:
                         if (DB::table('aimed')->insert([
-                                    'AimedName' => $request->selection_name
-                                ])
-                        ) {
+                            'AimedName' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -283,9 +281,8 @@ class SelectionsController extends MyController {
                         break;
                     case 8:
                         if (DB::table('dependency')->insert([
-                                    'dependency_name' => $request->selection_name
-                                ])
-                        ) {
+                            'dependency_name' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -294,77 +291,73 @@ class SelectionsController extends MyController {
                         break;
                     case 9:
                         if (DB::table('currencies')->insert([
-                                    'name' => $request->selection_name
-                                ])
-                        ) {
+                            'name' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
                         }
                         return redirect('/selections/9');
                         break;
-						
-						
-						 case 10:
+
+
+                    case 10:
                         if (DB::table('health_conditions')->insert([
-                                    'name' => $request->selection_name
-                                ])
-                        ) {
+                            'name' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
                         }
                         return redirect('/selections/10');
                         break;
-						
-						case 11:
+
+                    case 11:
                         if (DB::table('heights')->insert([
-                                    'heightname' => $request->selection_name
-                                ])
-                        ) {
+                            'heightname' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
                         }
                         return redirect('/selections/11');
                         break;
-						
-						case 12:
+
+                    case 12:
                         if (DB::table('weights')->insert([
-                                    'weightName' => $request->selection_name
-                                ])
-                        ) {
+                            'weightName' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
                         }
                         return redirect('/selections/12');
                         break;
-						
-						case 13:
+
+                    case 13:
                         if (DB::table('contactuspurposes')->insert([
-                                    'contactuspurposeName' => $request->selection_name
-                                ])
-                        ) {
+                            'contactuspurposeName' => $request->selection_name
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
                         }
                         return redirect('/selections/13');
                         break;
-						
-						
+
+
                     default:
                 }
             }
         }
         $data['content'] = 'admin.selections.update_selections';
         return view('layouts.content', compact('data'))->with([
-                    'under' => $under, 'validation' => $validation ?? []
+            'under' => $under, 'validation' => $validation ?? []
         ]);
     }
 
-    public function delete(Request $request, $tab_id = 1, $item_id) {
+    public function delete(Request $request, $tab_id = 1, $item_id)
+    {
 
         switch ($tab_id) {
             case 1:
@@ -408,85 +401,75 @@ class SelectionsController extends MyController {
                 }
                 break;
             case 5:
-                if (DB::table('durations')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('durations')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 6:
-                if (DB::table('activities')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('activities')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 7:
-                if (DB::table('aimed')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('aimed')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 8:
-                if (DB::table('dependency')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('dependency')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 9:
-                if (DB::table('currencies')->where('id', '=', $item_id)->delete()
-                ) {
+                if (DB::table('currencies')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
-				
-				case 10:
-                if (DB::table('health_conditions')->where('id', '=', $item_id)->delete()
-                ) {
+
+            case 10:
+                if (DB::table('health_conditions')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
-				
-				case 11:
-                if (DB::table('heights')->where('id', '=', $item_id)->delete()
-                ) {
+
+            case 11:
+                if (DB::table('heights')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
-				
-				case 12:
-                if (DB::table('weights')->where('id', '=', $item_id)->delete()
-                ) {
+
+            case 12:
+                if (DB::table('weights')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
-				
-				case 13:
-                if (DB::table('contactuspurposes')->where('id', '=', $item_id)->delete()
-                ) {
+
+            case 13:
+                if (DB::table('contactuspurposes')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
-				
+
             default:
         }
         return redirect('/selections/' . $tab_id);
     }
-
 }
