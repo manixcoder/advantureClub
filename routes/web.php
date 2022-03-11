@@ -148,7 +148,7 @@ Route::get('requests/adventures/{id?}', 'ServicesController@adventures')->where(
 /*Service Offer starts*/
 Route::get('list-service-offers/{id?}', 'ServiceOffersController@listServiceOffers');
 Route::any('add-service-offer/{id?}', 'ServiceOffersController@addServiceOffers');
-Route::get('list-reviews','ServicesController@listServiceReviews');
+Route::get('list-reviews', 'ServicesController@listServiceReviews');
 Route::get('delete-review/{id}', 'ServicesController@deleteServiceReviews')->where(['id' => '[0-9]+']);
 Route::any('update-offer-status/{id}', 'ServiceOffersController@update_offer_status');
 Route::get('service-offer/delete/{id}', 'ServiceOffersController@deleteServiceOffer')->where(['id' => '[0-9]+']);
@@ -157,8 +157,8 @@ Route::get('service-offer/delete/{id}', 'ServiceOffersController@deleteServiceOf
 /*Promocode starts */
 Route::any('list-promocode', 'PromocodeController@list_promocode');
 Route::get('add-promocodes', function () {
-	$data['content'] = 'admin.promocode.add_promocodes';
-	return view('layouts.content', compact('data'));
+    $data['content'] = 'admin.promocode.add_promocodes';
+    return view('layouts.content', compact('data'));
 });
 Route::any('add-promocode', 'PromocodeController@add_promocode');
 Route::any('add-promocode/{id}', 'PromocodeController@edit_promocode');
@@ -194,6 +194,3 @@ Route::any('update-pkg-status/{id}', 'PackagesController@update_pkg_status');
 Route::get('sub-packages/delete/{id}', 'PackagesController@delete_sub_pkg')->where(['id' => '[0-9]+']);
 
 Route::post('/get_regions/{id}', 'ServicesController@getRegions')->where(['id' => '[0-9]+']);
-
-
-

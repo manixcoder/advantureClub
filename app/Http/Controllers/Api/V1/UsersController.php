@@ -861,54 +861,72 @@ class UsersController extends MyController
     public function becomepartner(Request $request)
     {
 
-        if ($request->file('cr_copy')) {
-            $extension = $request->file('cr_copy')->extension();
-            $filepath = Storage::disk('public')->putFileAs('profile_pictures', $request->file('cr_copy'), time() . '.' . $extension);
-        } else {
-            $filepath = null;
+        $validator = Validator::make($request->all(), [
+            'packages_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendResponse('error', $validator->errors(), 404);
+            return response()->json(['error' => $validator->errors()], 404);
         }
-
-        $insertData = array(
-            'company_name' => $request->company_name,
-            'address' => $request->address,
-            'location' => $request->location,
-            'description' => $request->description,
-            'license' => $request->license,
-            'cr_name' => $request->cr_name,
-            'cr_number' => $request->cr_number,
-            'cr_copy' => $filepath,
-            'debit_card' => $request->debit_card,
-            'visa_card' => $request->visa_card,
-            'payon_arrival' => $request->payon_arrival,
-            'paypal' => $request->paypal,
-            'bankname' => $request->bankname,
-            'account_holdername' => $request->account_holdername,
-            'account_number' => $request->account_number
-        );
-
-        $like = DB::table('become_partner')
-            ->insert($insertData);
-
-        if ($like) {
-            return $this->sendResponse('Data Inserted Successfully', [], 200);
-        } else {
+        try {
+            $become_partnerData = DB::table('become_partner')->where('user_id', $request->user_id)->orderBy('id', 'DESC')->first();
+            if ($become_partnerData) {
+                return $this->sendResponse('Your request allready send', [], 404);
+            } else {
+                if ($request->file('cr_copy')) {
+                    $extension = $request->file('cr_copy')->extension();
+                    $filepath = Storage::disk('public')->putFileAs('profile_pictures', $request->file('cr_copy'), time() . '.' . $extension);
+                } else {
+                    $filepath = null;
+                }
+                $packageData = DB::table('packages')->where('id', $request->packages_id)->orderBy('id', 'DESC')->first();
+                $day = $packageData->days - 1;
+                $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
+                $insertData = array(
+                    'user_id' => $request->user_id,
+                    'company_name' => $request->company_name,
+                    'address' => $request->address,
+                    'location' => $request->location,
+                    'description' => $request->description,
+                    'license' => $request->license,
+                    'cr_name' => $request->cr_name,
+                    'cr_number' => $request->cr_number,
+                    'cr_copy' => $filepath,
+                    'debit_card' => $request->debit_card,
+                    'visa_card' => $request->visa_card,
+                    'payon_arrival' => $request->payon_arrival,
+                    'paypal' => $request->paypal,
+                    'bankname' => $request->bankname,
+                    'account_holdername' => $request->account_holdername,
+                    'account_number' => $request->account_number,
+                    'is_online' => $request->is_online,
+                    'packages_id' => $request->packages_id,
+                    'start_date' => date("Y-m-d H:i:s"),
+                    'end_date' => $enddate,
+                    'created_at' => date("Y-m-d H:i:s")
+                );
+                $like = DB::table('become_partner')->insert($insertData);
+                if ($like) {
+                    return $this->sendResponse('Data Inserted Successfully', [], 200);
+                } else {
+                    return $this->sendResponse('Somethingwent wrong', [], 404);
+                }
+            }
+        } catch (\Exception $e) {
             return $this->sendResponse('Somethingwent wrong', [], 404);
         }
     }
 
     public function sendSms_mobile($country_code, $phone, $otp)
     {
-        //$country_code,$phone;
         require base_path('public/twilio-php-main/src/Twilio/autoload.php');
-        /*$country_code = $request->country_code;
-        $phone = $request->phone;*/
         $sid = env('SID');
         $token = env('TWILIO_TOKEN');
         $twilio = new Client($sid, $token);
         $message = $twilio->messages->create(
             $country_code . $phone, // to
             array(
-                "messagingServiceSid" => env('MessageID'),
+                "messagingServiceSid" => env('TWILIO_FROM'),
                 //"from" =>"Duradrive",
                 "body" => 'Otp code from Adventure is:' . $otp
             )
