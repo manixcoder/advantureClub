@@ -15,6 +15,8 @@ class CreateServicePlanTable extends Migration
     {
         Schema::create('service_plan', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('plan')->nullable();
+            $table->string('title')->nullable();
             $table->timestamps();
         });
     }

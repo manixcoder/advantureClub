@@ -15,6 +15,8 @@ class CreateServiceLevelsTable extends Migration
     {
         Schema::create('service_levels', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('level')->nullable();
+            $table->integer('status')->nullable();
             $table->timestamps();
         });
     }

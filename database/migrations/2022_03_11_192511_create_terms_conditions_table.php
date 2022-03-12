@@ -15,6 +15,8 @@ class CreateTermsConditionsTable extends Migration
     {
         Schema::create('terms_conditions', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('title')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

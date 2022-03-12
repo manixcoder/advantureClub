@@ -15,6 +15,8 @@ class CreateServiceForTable extends Migration
     {
         Schema::create('service_for', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('sfor')->nullable();
+            $table->tinyinteger('status')->nullable();
             $table->timestamps();
         });
     }

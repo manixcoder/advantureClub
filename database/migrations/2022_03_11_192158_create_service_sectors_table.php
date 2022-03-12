@@ -15,6 +15,8 @@ class CreateServiceSectorsTable extends Migration
     {
         Schema::create('service_sectors', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('sector')->nullable();
+            $table->integer('status')->nullable();
             $table->timestamps();
         });
     }

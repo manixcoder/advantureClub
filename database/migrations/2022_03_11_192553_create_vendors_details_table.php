@@ -15,6 +15,17 @@ class CreateVendorsDetailsTable extends Migration
     {
         Schema::create('vendors_details', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('user_id');
+            $table->string('company_name')->nullable();
+            $table->string('company_address')->nullable();
+            $table->string('geo_location')->nullable();
+            $table->enum('license_status',['0','1'])->default(1)->nullable();
+            $table->string('cr_name')->nullable();
+            $table->integer('cr_number')->nullable();
+            $table->string('cr_copy')->nullable();
+            $table->string('payment_mode')->nullable();
+            $table->integer('subscription_id')->nullable();
+            $table->datetime('created_date');
             $table->timestamps();
         });
     }

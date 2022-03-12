@@ -18,7 +18,7 @@ class CreatePromocodeTable extends Migration
             $table->string('promocode_name')->nullable();
             $table->string('code')->nullable();
             $table->enum('status',['0','1'])->default(1)->nullable()->comment('0=>InActive,1=>Active');
-            $table->enum('discount_type',['A','B'])->default(A)->nullable()->comment('A=>Amount, P=>Percentage');
+            $table->enum('discount_type',['1','2'])->default(1)->nullable()->comment('1=>Amount, 2=>Percentage');
             $table->integer('discount_amount')->nullable();
             $table->integer('redeemed_count')->nullable();
             $table->date('start_date')->nullable();

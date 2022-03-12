@@ -35,7 +35,7 @@ class CreateBecomePartnerTable extends Migration
             $table->enum('is_approved',['0','1'])->default(0)->comment('1 Active , 0 Inactive');
             $table->integer('packages_id');
             $table->dateTime('start_date');
-            $table->dateTime('start_date');
+            $table->dateTime('end_date');
             $table->timestamps();
         });
     }

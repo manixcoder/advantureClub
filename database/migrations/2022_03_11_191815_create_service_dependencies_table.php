@@ -15,6 +15,8 @@ class CreateServiceDependenciesTable extends Migration
     {
         Schema::create('service_dependencies', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('service_id')->nullable();
+            $table->integer('dependency_id')->nullable();
             $table->timestamps();
         });
     }

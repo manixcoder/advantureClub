@@ -15,6 +15,11 @@ class CreateServiceReviewsTable extends Migration
     {
         Schema::create('service_reviews', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('service_id');
+            $table->integer('user_id');
+            $table->integer('star');
+            $table->integer('remark');
+            $table->integer('status');
             $table->timestamps();
         });
     }

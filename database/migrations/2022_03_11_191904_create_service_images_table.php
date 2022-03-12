@@ -15,6 +15,10 @@ class CreateServiceImagesTable extends Migration
     {
         Schema::create('service_images', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('service_id');
+            $table->integer('is_default');
+            $table->string('image_url')->nullable();
+            $table->string('thumbnail')->nullable();
             $table->timestamps();
         });
     }

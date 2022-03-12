@@ -46,7 +46,7 @@ class UpdateToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
+        
             Schema::table('users', function (Blueprint $table) {
                 $table->dropColumn('user_role')->nullable();
                 $table->dropColumn('profile_image')->nullable();
