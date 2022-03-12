@@ -15,6 +15,9 @@ class CreateServicePlanDayDateTable extends Migration
     {
         Schema::create('service_plan_day_date', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('service_id');
+            $table->integer('day');
+            $table->date('date');
             $table->timestamps();
         });
     }

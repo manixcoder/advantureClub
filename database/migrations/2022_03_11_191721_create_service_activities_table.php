@@ -15,6 +15,8 @@ class CreateServiceActivitiesTable extends Migration
     {
         Schema::create('service_activities', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('service_id')->nullable();
+            $table->integer('activity_id')->nullable();
             $table->timestamps();
         });
     }

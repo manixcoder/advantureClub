@@ -15,6 +15,15 @@ class CreateWalletsTable extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('user_id');
+            $table->integer('payment_id');
+            $table->integer('booking_id');
+            $table->integer('amount_type');
+            $table->string('credit_amt')->nullable();
+            $table->string('debit_amt')->nullable();
+            $table->string('current_amt')->nullable();
+            $table->string('note')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

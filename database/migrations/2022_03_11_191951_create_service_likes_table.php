@@ -15,6 +15,9 @@ class CreateServiceLikesTable extends Migration
     {
         Schema::create('service_likes', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('service_id');
+            $table->integer('user_id');
+            $table->integer('is_like');
             $table->timestamps();
         });
     }
