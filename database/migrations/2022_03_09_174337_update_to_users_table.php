@@ -14,8 +14,8 @@ class UpdateToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('user_role')->after('id')->nullable()->comment = '1 = Admin, 2 = Merchant 3 = Users ';
-            $table->string('profile_image')->after('user_role')->nullable();
+            $table->string('users_role')->after('id')->nullable()->comment = '1 = Admin, 2 = Merchant 3 = Users ';
+            $table->string('profile_image')->after('users_role')->nullable();
             $table->string('height')->after('profile_image')->nullable();
             $table->string('weight')->after('height')->nullable();
             $table->string('country_id')->after('weight')->nullable();
@@ -48,7 +48,7 @@ class UpdateToUsersTable extends Migration
     {
         
             Schema::table('users', function (Blueprint $table) {
-                $table->dropColumn('user_role')->nullable();
+                $table->dropColumn('users_role')->nullable();
                 $table->dropColumn('profile_image')->nullable();
                 $table->dropColumn('height')->nullable();
                 $table->dropColumn('weight')->nullable();

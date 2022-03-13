@@ -7,13 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Packages extends Authenticatable {
+class Packages extends Authenticatable
+{
 
     use SoftDeletes;
     use Notifiable;
 
     protected $fillable = [
-        'title', 'symbol', 'duration', 'cost', 'offer_cost', 'status', 'created_at','updated_at'
+        'title',
+        'symbol',
+        'duration',
+        'cost',
+        'offer_cost',
+        'status',
+        'created_at',
+        'updated_at'
     ];
 
     /**
@@ -30,8 +38,8 @@ class Packages extends Authenticatable {
      *
      * @var array
      */
-//    protected $casts = [
-//        'email_verified_at' => 'datetime',
-//    ];
+    //    protected $casts = [
+    //        'email_verified_at' => 'datetime',
+    //    ];
 
 }
