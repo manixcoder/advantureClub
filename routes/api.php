@@ -71,7 +71,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/profilePhotoUpdate', 'Api\V1\UsersController@profilePhotoUpdate');
     Route::get('/scheduled_session', 'Api\V1\ServicesController@scheduledSession');
     Route::post('/future_plan', 'Api\V1\ServicesController@planForFuture');
-    Route::get('/get_notification_list', 'Api\V1\UsersController@getNotificationList');
+    Route::post('/get_notification_list', 'Api\V1\UsersController@getNotificationList');
     Route::post('/createnotification', 'Api\V1\UsersController@createnotification');
 });
 

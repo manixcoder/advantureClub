@@ -19,7 +19,7 @@ class VendorsController extends MyController
 
     public function getPackages(Request $request)
     {
-        $result = DB::table('packages')->select(['id as package_id', 'title', 'duration', 'status'])
+        $result = DB::table('packages')->select(['*'])
             ->where(['deleted_at' => NULL])
             ->get();
         if (!$result->isEmpty()) {

@@ -806,6 +806,7 @@ class UsersController extends MyController
 
     public function getNotificationList(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric',
         ]);
@@ -820,7 +821,9 @@ class UsersController extends MyController
             $result = DB::table('notifications as noti')
                 ->select(['noti.*', DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS sender_image")])
                 ->leftJoin('users as usr', 'usr.id', '=', 'noti.sender_id')
-                ->where(['user_id' => $request->user_id])->get();
+                ->where(['user_id' => $request->user_id])
+                ->orderBy('id', 'DESC')
+                ->get();
             if ($result->isEmpty()) {
                 return $this->sendError('Data not found.', [], 404);
             }
@@ -913,7 +916,7 @@ class UsersController extends MyController
                 }
             }
         } catch (\Exception $e) {
-            return $this->sendResponse('Somethingwent wrong', [], 404);
+            return $this->sendResponse($e->getMessage(), [], 404);
         }
     }
 
