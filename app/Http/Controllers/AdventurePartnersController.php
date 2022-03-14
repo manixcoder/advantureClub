@@ -36,6 +36,37 @@ class AdventurePartnersController extends Controller
       ->where('users.users_role', 2)
       ->where(['users.deleted_at' => NULL])
       ->get();
+
+    $usersdata = DB::table('users as u')
+      ->select(
+        'u.*',
+        'bp.user_id',
+        'bp.company_name',
+        'bp.address',
+        'bp.location',
+        'bp.description',
+        'bp.license',
+        'bp.cr_name',
+        'bp.cr_number',
+        'bp.cr_copy',
+        'bp.debit_card',
+        'bp.visa_card',
+        'bp.payon_arrival',
+        'bp.paypal',
+        'bp.bankname',
+        'bp.account_holdername',
+        'bp.account_number',
+        'bp.is_online',
+        'bp.is_approved',
+        'bp.packages_id',
+        'bp.start_date',
+        'bp.end_date'
+      )
+      ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
+      //->where('users.users_role', 2)
+      //->where(['u.deleted_at' => NULL])
+      ->get();
+    // dd($usersdata);
     $data['content'] = 'admin.adventure_partners.list_adventure_partners';
     return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
   }
@@ -156,17 +187,47 @@ class AdventurePartnersController extends Controller
     //$editdata = User::where('id', $id)->first();
     $healthConditionData = '';
     $pModeData = '';
-    $editdata = DB::table('users')
+    // $editdata = DB::table('users')
+    //   ->select(
+    //     'users.*',
+    //     'countries.country',
+    //     'cities.city',
+    //     'vendors_details.*'
+    //   )
+    //   ->rightjoin('countries', 'users.country_id', '=', 'countries.id')
+    //   ->rightjoin('cities', 'users.country_id', '=', 'cities.country_id')
+    //   ->rightjoin('vendors_details', 'users.id', '=', 'vendors_details.user_id')
+    //   ->where('users.id', $id)->first();
+    $editdata =  DB::table('users as u')
       ->select(
-        'users.*',
-        'countries.country',
-        'cities.city',
-        'vendors_details.*'
+        'u.*',
+        'bp.user_id',
+        'bp.company_name',
+        'bp.address',
+        'bp.location',
+        'bp.description',
+        'bp.license',
+        'bp.cr_name',
+        'bp.cr_number',
+        'bp.cr_copy',
+        'bp.debit_card',
+        'bp.visa_card',
+        'bp.payon_arrival',
+        'bp.paypal',
+        'bp.bankname',
+        'bp.account_holdername',
+        'bp.account_number',
+        'bp.is_online',
+        'bp.is_approved',
+        'bp.packages_id',
+        'bp.start_date',
+        'bp.end_date'
       )
-      ->rightjoin('countries', 'users.country_id', '=', 'countries.id')
-      ->rightjoin('cities', 'users.country_id', '=', 'cities.country_id')
-      ->rightjoin('vendors_details', 'users.id', '=', 'vendors_details.user_id')
-      ->where('users.id', $id)->first();
+      ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
+      ->where('u.id', $id)
+      //->where(['u.deleted_at' => NULL])
+      ->first();
+    //dd($editdata);
     if (!empty($editdata->health_conditions)) {
       $hCondition = explode(",", $editdata->health_conditions);
       $healthConditionData = DB::table('health_conditions')->select('health_conditions.*')
@@ -184,7 +245,7 @@ class AdventurePartnersController extends Controller
     }
     $services = DB::table('services as srvc')
       ->select([
-        'srvc.*', 
+        'srvc.*',
         'usr.name as provided_by',
         DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
         'scat.category as service_category',
@@ -251,8 +312,14 @@ class AdventurePartnersController extends Controller
   // }
 
   /* Update status in db from ajax request starts */
-  public function update_user_status($id)
+  public function update_user_status($id, $status)
   {
+    //dd($request->all());
+
+
+
+
+
     $Data = array(
       'id' => $_GET['id'],
       'status' => $_GET['status'],
@@ -260,13 +327,48 @@ class AdventurePartnersController extends Controller
     $edituserData = DB::table('users')->where('id', $id)->update($Data);
     return response()->json(array('msg' => $edituserData), 200);
   }
+
+  public function update_partner_status($id)
+  {
+    //dd($id);
+
+    if ($_GET['status'] === '1') {
+      $statusMsg = 'approved';
+    } else {
+      $statusMsg = 'Unapproved';
+    }
+    // $partnerData = DB::table('become_partner')->where('user_id', $id)->get();
+    // //  dd($partnerData);
+    // if (!$partnerData->isEmpty()) {
+      $update = array(
+        'is_approved' => $_GET['status']
+      );
+      $approveData = DB::table('become_partner')->where('user_id', $id)->update($update);
+
+      $editpartnerData =DB::table('notifications')->insert([
+        'sender_id' => Auth::user()->id,
+        'user_id' => $_GET['id'],
+        'title' => 'Your request has bee ' . $statusMsg,
+        'message' => 'Now you may proceed to buy subscription package & will be able to provide your service.'
+      ]);
+   // }
+    // $Data = array(
+    //   'id' => $_GET['id'],
+    //   'status' => $_GET['status'],
+    // );
+    // $edituserData = DB::table('users')->where('id', $id)->update($Data);
+    return response()->json(array('msg' => $editpartnerData), 200);
+  }
   /* Update status ends */
+
   /* soft delete starts */
   public function deleteUser(Request $request, $id)
   {
     $user = Users::find($id);
     if ($user) {
-      $destroy = Users::destroy($id);
+     // dd($id);
+     DB::table('become_partner')->where('user_id',$id)->delete();
+      //$destroy = Users::destroy($id);
       $request->session()->flash('success', 'Partner has been deleted successfully.');
     } else {
       $request->session()->flash('error', 'Something went wrong. Please try again.');
