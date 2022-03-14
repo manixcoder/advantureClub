@@ -30,10 +30,10 @@
                     <tbody>
                         <?php
                         if (count($packages)) {
-                            foreach ($packages as $pkg) {
+                            foreach ($packages as $key=> $pkg) {
                                 ?>
                                 <tr class="gradeX">
-                                    <td>#{{ $pkg->id }}</td>
+                                    <td>#{{ $key+1 }}</td>
                                     <td>{{ $pkg->title }}</td>
                                     <td>includes</td>
                                     <td>Not includes</td>

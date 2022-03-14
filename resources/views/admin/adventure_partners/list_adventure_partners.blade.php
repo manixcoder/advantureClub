@@ -26,6 +26,7 @@
                         </tr>
                      </thead>
                      <tbody>
+                        <?php $i = 1; ?>
                         @foreach($usersdata as $key => $data)
                         <?php
                         // echo "<pre>";
@@ -34,7 +35,7 @@
                         ?>
 
                         <tr class="gradeX">
-                           <td>#{{ $data->id }}</td>
+                           <td>#{{ $key+1 }}</td>
                            <td>{{ $data->name }}</td>
                            <td>{{ $data->email }}</td>
                            <td>{{ $data->mobile }}</td>
@@ -47,7 +48,7 @@
                            </td>
 
                            <?php
-                           if ($data->status == 1) {
+                           if ($data->is_approved == 1) {
                               $status = 'Active';
                               $class = 'badge-success';
                            } else {
@@ -70,7 +71,7 @@
                                  <li>
                                     <label class="switch">
                                        <?php
-                                       if ($data->status == 1) {
+                                       if ($data->is_approved == 1) {
                                           $statVal = 1;
                                           $checked = 'checked = checked';
                                        } else {
@@ -88,7 +89,7 @@
                               </ul>
                            </td>
                         </tr>
-
+                        <?php $i++; ?>
                         @endforeach
                      </tbody>
                   </table>

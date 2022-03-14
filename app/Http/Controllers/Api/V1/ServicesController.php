@@ -250,7 +250,7 @@ class ServicesController extends MyController
                     'styp.type as service_type', 'slvl.level as service_level', 'cntri.country',
                     'rgn.region', 'curr.code as currency', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 'srvc.cost_inc as including_gerea_and_other_taxes', 'srvc.cost_exc as excluding_gerea_and_other_taxes'
                 ])
-                ->join('users1 as usr', 'usr.id', '=', 'srvc.owner')
+                ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('service_images as simg', 'srvc.id', '=', 'simg.service_id')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')

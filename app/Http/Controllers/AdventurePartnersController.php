@@ -334,7 +334,9 @@ class AdventurePartnersController extends Controller
 
     if ($_GET['status'] === '1') {
       $statusMsg = 'approved';
+      $is_approved='1';
     } else {
+      $is_approved='0';
       $statusMsg = 'Unapproved';
     }
     // $partnerData = DB::table('become_partner')->where('user_id', $id)->get();
@@ -348,7 +350,8 @@ class AdventurePartnersController extends Controller
       $editpartnerData =DB::table('notifications')->insert([
         'sender_id' => Auth::user()->id,
         'user_id' => $_GET['id'],
-        'title' => 'Your request has bee ' . $statusMsg,
+        'is_approved'=>$is_approved,
+        'title' => 'Your request has been ' . $statusMsg,
         'message' => 'Now you may proceed to buy subscription package & will be able to provide your service.'
       ]);
    // }
