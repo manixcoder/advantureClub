@@ -43,7 +43,12 @@ class AdventureUsersController extends MyController
             ->orderBy('users.id', 'desc')
             ->get();
         $data['content'] = 'admin.adventure_users.list_adventure_users';
-        return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
+        return view(
+            'layouts.content',
+            compact('data')
+        )->with([
+            'usersdata' => $usersdata
+        ]);
     }
 
     /* Adventure Users listing ends */

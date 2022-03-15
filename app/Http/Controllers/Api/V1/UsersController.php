@@ -1061,6 +1061,42 @@ class UsersController extends MyController
         }
     }
 
+
+    public function updateSubscription(Request $request)
+    {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'packages_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendResponse('error', $validator->errors(), 404);
+            return response()->json(['error' => $validator->errors()], 404);
+        }
+        try {
+            $packageData = DB::table('packages')
+                ->where('id', $request->packages_id)
+                ->orderBy('id', 'DESC')
+                ->first();
+            $day = $packageData->days - 1;
+            $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
+            $updatetData = array(
+                'packages_id' => $request->packages_id,
+                'start_date' => date("Y-m-d H:i:s"),
+                'end_date' => $enddate,
+            );
+            $like = DB::table('become_partner')->where('user_id', $request->user_id)->update($updatetData);
+            $like = DB::table('become_partner')->where('user_id', $request->user_id)->get();
+            if ($like) {
+                return $this->sendResponse('Data updated Successfully', $like, 200);
+            } else {
+                return $this->sendResponse('Somethingwent wrong', [], 404);
+            }
+        } catch (\Exception $e) {
+            return $this->sendResponse($e->getMessage(), [], 404);
+        }
+    }
+
     public function sendSms_mobile($country_code, $phone, $otp)
     {
         require base_path('public/twilio-php-main/src/Twilio/autoload.php');

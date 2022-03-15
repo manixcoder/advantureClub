@@ -30,7 +30,7 @@
                          <!-- echo"<pre>";{{print_r($data)}};exit;  -->
                         @if($data->users_role > 1) 
                         <tr class="gradeX">
-                           <td>#{{ $data->id }}</td>
+                           <td>#{{ $key+1 }}</td>
                            <td>{{ $data->name }}</td>
                            <td>{{ $data->email }}</td>
                            <td>{{ $data->mobile }}</td>
