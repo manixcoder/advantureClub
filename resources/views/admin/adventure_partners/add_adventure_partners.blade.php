@@ -26,7 +26,7 @@
                <div class="card">
                   <div class="card-body">
                      <div class="row">
-                   <!--    <div class="col-md-12">
+                        <!--    <div class="col-md-12">
                            <h5>Add New Partner</h5>
                         </div>
                         
@@ -281,7 +281,7 @@
                            <h5>Add New Partner</h5>
                         </div>
                         <div class="col-md-6">
-                           @php 
+                           @php
                            $userData = DB::table('users')->where('users_role','!=',1)->get();
                            @endphp
                            <div class="form-group">
@@ -454,9 +454,9 @@
                            ?>
                               <div class="col-md-3">
                                  <div class="form-group">
-                                    <input type="checkbox" id="chk_{{$value->id}}" value="{{$value->id}}" <?php if (request('payment_mode') && in_array($value->id, $payment_mode)) {
-                                                                                                               echo 'checked';
-                                                                                                            } ?> name="payment_mode[]">
+                                    <input type="checkbox" id="chk_{{$value->id}}" value="{{$value->payment_name}}" <?php if (request('payment_mode') && in_array($value->id, $payment_mode)) {
+                                                                                                                        echo 'checked';
+                                                                                                                     } ?> name="payment_mode[]">
                                     <span for="chk_{{$value->id}}"> {{$value->payment_name}}</span>
                                  </div>
                               </div>

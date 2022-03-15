@@ -150,7 +150,7 @@ class AdventureUsersController extends MyController
     /* Update status in db from ajax request starts */
     public function update_user_status($id)
     {
-           
+
         $Data = array(
             'id' => $_GET['id'],
             'status' => $_GET['status'],

@@ -29,7 +29,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/create_forgot_password', 'Api\V1\UsersController@createNewPassword');
     Route::post('/change_password', 'Api\V1\UsersController@changePassword');
     Route::post('/become_partner', 'Api\V1\UsersController@becomepartner');
-    Route::get('/get_profile/{id?}', 'Api\V1\UsersController@userProfile')->where(['id' => '[0-9]+']);
+    Route::post('/remaining_days', 'Api\V1\UsersController@remainingDays');
+    Route::post('/get_profile', 'Api\V1\UsersController@userProfile');
     Route::get('/serviceProviderProfile/{id?}', 'Api\V1\UsersController@serviceProviderProfile')->where(['id' => '[0-9]+']);
 
     Route::get('/banners/{id?}', 'Api\V1\BannersController@get')->where(['id' => '[0-9]+']);
