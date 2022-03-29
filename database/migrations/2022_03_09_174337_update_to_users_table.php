@@ -46,32 +46,31 @@ class UpdateToUsersTable extends Migration
      */
     public function down()
     {
-        
-            Schema::table('users', function (Blueprint $table) {
-                $table->dropColumn('users_role')->nullable();
-                $table->dropColumn('profile_image')->nullable();
-                $table->dropColumn('height')->nullable();
-                $table->dropColumn('weight')->nullable();
-                $table->dropColumn('country_id')->nullable();
-                $table->dropColumn('city_id')->nullable();
-                $table->dropColumn('now_in')->nullable();
-                $table->dropColumn('mobile')->nullable();
-                $table->dropColumn('dob')->nullable();
-                $table->dropColumn('gender')->nullable();
-                $table->dropColumn('language_id')->nullable();
-                $table->dropColumn('currency_id')->nullable();
-                $table->dropColumn('app_notification')->nullable();
-                $table->dropColumn('points')->nullable();
-                $table->dropColumn('health_conditions')->nullable();
-                $table->dropColumn('health_conditions_id')->nullable();
-                $table->dropColumn('status')->nullable();
-                $table->dropColumn('mobile_code')->nullable();
-                $table->dropColumn('added_from')->nullable();
-                $table->dropColumn('username')->nullable();
-                $table->dropColumn('first_name')->nullable();
-                $table->dropColumn('last_name')->nullable();
-                $table->softDeletes();
 
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('users_role')->nullable();
+            $table->dropColumn('profile_image')->nullable();
+            $table->dropColumn('height')->nullable();
+            $table->dropColumn('weight')->nullable();
+            $table->dropColumn('country_id')->nullable();
+            $table->dropColumn('city_id')->nullable();
+            $table->dropColumn('now_in')->nullable();
+            $table->dropColumn('mobile')->nullable();
+            $table->dropColumn('dob')->nullable();
+            $table->dropColumn('gender')->nullable();
+            $table->dropColumn('language_id')->nullable();
+            $table->dropColumn('currency_id')->nullable();
+            $table->dropColumn('app_notification')->nullable();
+            $table->dropColumn('points')->nullable();
+            $table->dropColumn('health_conditions')->nullable();
+            $table->dropColumn('health_conditions_id')->nullable();
+            $table->dropColumn('status')->nullable();
+            $table->dropColumn('mobile_code')->nullable();
+            $table->dropColumn('added_from')->nullable();
+            $table->dropColumn('username')->nullable();
+            $table->dropColumn('first_name')->nullable();
+            $table->dropColumn('last_name')->nullable();
+            $table->softDeletes();
         });
     }
 }
