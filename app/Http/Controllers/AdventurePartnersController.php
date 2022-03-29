@@ -36,27 +36,50 @@ class AdventurePartnersController extends Controller
       ->where('users.users_role', 2)
       ->where(['users.deleted_at' => NULL])
       ->get();
+
+    $usersdata = DB::table('users as u')
+      ->select(
+        'u.*',
+        'bp.user_id',
+        'bp.company_name',
+        'bp.address',
+        'bp.location',
+        'bp.description',
+        'bp.license',
+        'bp.cr_name',
+        'bp.cr_number',
+        'bp.cr_copy',
+        'bp.debit_card',
+        'bp.visa_card',
+        'bp.payon_arrival',
+        'bp.paypal',
+        'bp.bankname',
+        'bp.account_holdername',
+        'bp.account_number',
+        'bp.is_online',
+        'bp.is_approved',
+        'bp.packages_id',
+        'bp.start_date',
+        'bp.end_date'
+      )
+      ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
+      //->where('users.users_role', 2)
+      //->where(['u.deleted_at' => NULL])
+      ->get();
+    // dd($usersdata);
     $data['content'] = 'admin.adventure_partners.list_adventure_partners';
     return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
   }
   /* Adventure Users listing ends */
   /* Add new Adventure user starts */
   public function add_adventure_partner(Request $request)
-  { //echo"<pre>";print_r($request->all());exit;
+  {
+    //dd($request->all());
     if ($request->post()) {
       $rules1 = [];
       $rules =  [
-        'name'                    => 'required|min:3|max:50|unique:users',
-        'email'                   => 'required|email:filter|unique:users',
-        'country'                 => 'required',
-        'region'                  => 'required',
-        'mobile_code'             => 'required|numeric',
-        'mobile'                  => 'required|numeric|digits:10|unique:users',
-        'dob'                     => 'required|date_format:Y-m-d',
-        'weight'                  => 'required|numeric',
-        'height'                  => 'required|numeric',
-        'image'                   => 'required',
-        'health_condition'        => 'required',
+        'user_id'                 => 'required',
+        'subscription_id'        => 'required',
         'company_name'            => 'required',
         'company_address'         => 'required',
         'company_location'        => 'required',
@@ -82,68 +105,65 @@ class AdventurePartnersController extends Controller
           'validation' => $validation ?? []
         ]);
       } else {
-        if ($files = $request->image) {
-          $destinationPath = public_path('/profile_image/');
 
-          $profileImage = date('YmdHis') . "-" . $files->getClientOriginalName();
-          $path =  $files->move($destinationPath, $profileImage);
-          $image = $insert['photo'] = "$profileImage";
-        }
-        if ($files = $request->crCopy) {
-          $destinationPath = public_path('/crCopy/');
+        $packageData = DB::table('packages')->where('id', $request->packages_id)->orderBy('id', 'DESC')->first();
+        if ($packageData) {
+          $day = $packageData->days - 1;
+          $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
 
-          $crCopy = date('YmdHis') . "-" . $files->getClientOriginalName();
-          $path =  $files->move($destinationPath, $crCopy);
-          $crCopy = $insert['photo'] = "$crCopy";
-        }
-
-        $request->merge([
-          'health_conditions' => implode(',', (array) $request->get('health_condition')),
-          'payment_modes' => implode(',', (array) $request->get('payment_mode'))
-        ]);
-        $data = array(
-          'name'              => $request->name,
-          'email'             => $request->email,
-          'mobile'            => $request->mobile,
-          'mobile_code'       => $request->mobile_code,
-          'status'            => $request->status,
-          'country_id'        => $request->country,
-          'city_id'           => $request->region,
-          'dob'               => date('Y-m-d', strtotime($request->dob)),
-          'weight'            => $request->weight,
-          'height'            => $request->height,
-          'profile_image'     => !empty($request->image) ? $image : '',
-          'health_conditions' => implode(',', (array) $request->health_condition),
-          'users_role'        => 2,
-        );
-
-        if ($request->edit_id != '') {
-          Session::flash('success', 'Updated successfully..!');
-          $updateData = DB::table('users')->where('id', $request->ids)->update($data);
-          return redirect('users');
-        } else { //echo"ww";exit;
-
-          $insertId = DB::table('users')->insertGetId($data);
-
-          $companyData = array(
-            'user_id'               => $insertId,
-            'company_name'          => $request->company_name,
-            'company_address'       => $request->company_address,
-            'geo_location'          => $request->company_location,
-            'license_status'        => $request->license_status,
-            'cr_name'               => !empty($request->crName) ? $request->crName : '',
-            'cr_number'             => !empty($request->crNumber) ? $request->crNumber : '',
-            'cr_copy'               => !empty($request->crCopy) ? $crCopy : '',
-            'payment_mode'          => $request->payment_modes,
-            'subscription_id'       => !empty($request->subscription_id) ? $request->subscription_id : '1',
-            'created_date'          => date('Y-m-d H:i:s'),
-          );
-
-          if (count($request->all()) > 0) {
-            Session::flash('success', 'Inserted successfully..!');
-            $insertData1 = DB::table('vendors_details')->insert($companyData);
-            return redirect('/add-adventure-partners');
+          if ($files = $request->image) {
+            $destinationPath = public_path('/profile_image/');
+            $profileImage = date('YmdHis') . "-" . $files->getClientOriginalName();
+            $path =  $files->move($destinationPath, $profileImage);
+            $image = $insert['photo'] = "$profileImage";
           }
+          if ($files = $request->crCopy) {
+            $destinationPath = public_path('/crCopy/');
+            $crCopy = date('YmdHis') . "-" . $files->getClientOriginalName();
+            $path =  $files->move($destinationPath, $crCopy);
+            $crCopy = $insert['photo'] = "$crCopy";
+          }
+
+          // $request->merge([
+          //   // 'health_conditions' => implode(',', (array) $request->get('health_condition')),
+          //   'payment_modes' => implode(',', (array) $request->get('payment_mode'))
+          // ]);
+
+          $updateData = DB::table('users')->where('id', $request->user_id)->update([
+            'users_role'        => '2',
+          ]);
+          if ($request->payment_mode == 'Bank Muskat') {
+            $is_online = '1';
+          } else {
+            $is_online = '0';
+          }
+          if ($request->payment_mode == 'pay on arrival') {
+            $payon_arrival = '1';
+          } else {
+            $payon_arrival = '0';
+          }
+          $companyData = array(
+            'user_id'         => $request->user_id,
+            'company_name'    => $request->company_name,
+            'address'         => $request->company_address,
+            'location'        => $request->company_location,
+            'license'         => $request->license_status,
+            'cr_name'         => !empty($request->crName) ? $request->crName : '',
+            'cr_number'       => !empty($request->crNumber) ? $request->crNumber : '',
+            'cr_copy'         => !empty($request->crCopy) ? $crCopy : '',
+            'is_online'       => $is_online,
+            'payon_arrival'   => $payon_arrival,
+            'packages_id'     => !empty($request->subscription_id) ? $request->subscription_id : '1',
+            'start_date'      => date("Y-m-d H:i:s"),
+            'end_date'        => $enddate,
+            'created_at'      => date('Y-m-d H:i:s'),
+          );
+          $insertData1 = DB::table('become_partner')->insert($companyData);
+          Session::flash('success', 'Inserted successfully..!');
+          return redirect('/add-adventure-partners');
+        } else {
+          Session::flash('error', 'Select a valid package !');
+          return redirect('/add-adventure-partners');
         }
       }
     }
@@ -156,17 +176,47 @@ class AdventurePartnersController extends Controller
     //$editdata = User::where('id', $id)->first();
     $healthConditionData = '';
     $pModeData = '';
-    $editdata = DB::table('users')
+    // $editdata = DB::table('users')
+    //   ->select(
+    //     'users.*',
+    //     'countries.country',
+    //     'cities.city',
+    //     'vendors_details.*'
+    //   )
+    //   ->rightjoin('countries', 'users.country_id', '=', 'countries.id')
+    //   ->rightjoin('cities', 'users.country_id', '=', 'cities.country_id')
+    //   ->rightjoin('vendors_details', 'users.id', '=', 'vendors_details.user_id')
+    //   ->where('users.id', $id)->first();
+    $editdata =  DB::table('users as u')
       ->select(
-        'users.*',
-        'countries.country',
-        'cities.city',
-        'vendors_details.*'
+        'u.*',
+        'bp.user_id',
+        'bp.company_name',
+        'bp.address',
+        'bp.location',
+        'bp.description',
+        'bp.license',
+        'bp.cr_name',
+        'bp.cr_number',
+        'bp.cr_copy',
+        'bp.debit_card',
+        'bp.visa_card',
+        'bp.payon_arrival',
+        'bp.paypal',
+        'bp.bankname',
+        'bp.account_holdername',
+        'bp.account_number',
+        'bp.is_online',
+        'bp.is_approved',
+        'bp.packages_id',
+        'bp.start_date',
+        'bp.end_date'
       )
-      ->rightjoin('countries', 'users.country_id', '=', 'countries.id')
-      ->rightjoin('cities', 'users.country_id', '=', 'cities.country_id')
-      ->rightjoin('vendors_details', 'users.id', '=', 'vendors_details.user_id')
-      ->where('users.id', $id)->first();
+      ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
+      ->where('u.id', $id)
+      //->where(['u.deleted_at' => NULL])
+      ->first();
+    //dd($editdata);
     if (!empty($editdata->health_conditions)) {
       $hCondition = explode(",", $editdata->health_conditions);
       $healthConditionData = DB::table('health_conditions')->select('health_conditions.*')
@@ -184,7 +234,7 @@ class AdventurePartnersController extends Controller
     }
     $services = DB::table('services as srvc')
       ->select([
-        'srvc.*', 
+        'srvc.*',
         'usr.name as provided_by',
         DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
         'scat.category as service_category',
@@ -251,8 +301,14 @@ class AdventurePartnersController extends Controller
   // }
 
   /* Update status in db from ajax request starts */
-  public function update_user_status($id)
+  public function update_user_status($id, $status)
   {
+    //dd($request->all());
+
+
+
+
+
     $Data = array(
       'id' => $_GET['id'],
       'status' => $_GET['status'],
@@ -260,13 +316,51 @@ class AdventurePartnersController extends Controller
     $edituserData = DB::table('users')->where('id', $id)->update($Data);
     return response()->json(array('msg' => $edituserData), 200);
   }
+
+  public function update_partner_status($id)
+  {
+    //dd($id);
+
+    if ($_GET['status'] === '1') {
+      $statusMsg = 'approved';
+      $is_approved = '1';
+    } else {
+      $is_approved = '0';
+      $statusMsg = 'Unapproved';
+    }
+    // $partnerData = DB::table('become_partner')->where('user_id', $id)->get();
+    // //  dd($partnerData);
+    // if (!$partnerData->isEmpty()) {
+    $update = array(
+      'is_approved' => $_GET['status']
+    );
+    $approveData = DB::table('become_partner')->where('user_id', $id)->update($update);
+
+    $editpartnerData = DB::table('notifications')->insert([
+      'sender_id' => Auth::user()->id,
+      'user_id' => $_GET['id'],
+      'is_approved' => $is_approved,
+      'title' => 'Your request has been ' . $statusMsg,
+      'message' => 'Now you may proceed to buy subscription package & will be able to provide your service.'
+    ]);
+    // }
+    // $Data = array(
+    //   'id' => $_GET['id'],
+    //   'status' => $_GET['status'],
+    // );
+    // $edituserData = DB::table('users')->where('id', $id)->update($Data);
+    return response()->json(array('msg' => $editpartnerData), 200);
+  }
   /* Update status ends */
+
   /* soft delete starts */
   public function deleteUser(Request $request, $id)
   {
     $user = Users::find($id);
     if ($user) {
-      $destroy = Users::destroy($id);
+      // dd($id);
+      DB::table('become_partner')->where('user_id', $id)->delete();
+      //$destroy = Users::destroy($id);
       $request->session()->flash('success', 'Partner has been deleted successfully.');
     } else {
       $request->session()->flash('error', 'Something went wrong. Please try again.');

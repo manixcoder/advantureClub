@@ -64,10 +64,23 @@ class ServicesController extends MyController
         if ($id) {
             $services = DB::table('services as srvc')
                 ->select([
-                    'srvc.*', 'srvc.id as service_id', 'usr.name as provided_by', DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"), DB::raw("CONCAT('" . $s_img . "/',simg.image_url) AS image_url"), DB::raw("CONCAT('" . $s_img . "/',simg.thumbnail) AS thumbnail"),
-                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector',
-                    'styp.type as service_type', 'slvl.level as service_level', 'cntri.country',
-                    'rgn.region', 'curr.code as currency', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 'srvc.cost_inc as including_gerea_and_other_taxes', 'srvc.cost_exc as excluding_gerea_and_other_taxes'
+                    'srvc.*',
+                    'srvc.id as service_id',
+                    'usr.name as provided_by',
+                    DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
+                    DB::raw("CONCAT('" . $s_img . "/',simg.image_url) AS image_url"),
+                    DB::raw("CONCAT('" . $s_img . "/',simg.thumbnail) AS thumbnail"),
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    'scat.category as service_category',
+                    'ssec.sector as service_sector',
+                    'styp.type as service_type',
+                    'slvl.level as service_level',
+                    'cntri.country',
+                    'rgn.region',
+                    'curr.code as currency',
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
+                    'srvc.cost_inc as including_gerea_and_other_taxes',
+                    'srvc.cost_exc as excluding_gerea_and_other_taxes'
                 ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
@@ -99,13 +112,15 @@ class ServicesController extends MyController
                     ->select(['act.id', 'act.activity'])
                     ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
                     ->where('s_act.service_id', $id)
-                    ->get()->toArray();
+                    ->get()
+                    ->toArray();
                 $services[0]->included_activities = $activities ?? [];
                 $dependencies = DB::table('service_dependencies as s_dep')
                     ->select(['dep.id', 'dep.dependency_name'])
                     ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
                     ->where('s_dep.service_id', $id)
-                    ->get()->toArray();
+                    ->get()
+                    ->toArray();
                 $services[0]->dependencies = $dependencies ?? [];
                 $programs = DB::table('service_programs')
                     ->select(['id', 'service_id', 'title', 'start_datetime', 'end_datetime', 'description'])->where('service_id', $id)->get();
@@ -115,13 +130,15 @@ class ServicesController extends MyController
                         ->select(['spdd.id', 'wkd.day'])
                         ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
                         ->where('spdd.service_id', $id)
-                        ->get()->toArray();
+                        ->get()
+                        ->toArray();
                     $services[0]->availability = $availability ?? [];
                 } else if ($services[0]->service_plan == 2) {
                     $availability = DB::table('service_plan_day_date as spdd')
                         ->select(['spdd.id', 'spdd.date'])
                         ->where('spdd.service_id', $id)
-                        ->get()->toArray();
+                        ->get()
+                        ->toArray();
                     $services[0]->availability = $availability ?? [];
                 }
                 $star_ratings_res = DB::table('service_reviews')
@@ -166,10 +183,23 @@ class ServicesController extends MyController
 
             $services = DB::table('services as srvc')
                 ->select([
-                    'srvc.*', 'srvc.id as service_id', 'usr.name as provided_by', DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"), DB::raw("CONCAT('" . $s_img . "/',simag.image_url) AS image_url"), DB::raw("CONCAT('" . $s_img . "/',simag.thumbnail) AS thumbnail"),
-                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector',
-                    'styp.type as service_type', 'slvl.level as service_level', 'cntri.country',
-                    'rgn.region', 'curr.code as currency', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 'srvc.cost_inc as including_gerea_and_other_taxes', 'srvc.cost_exc as excluding_gerea_and_other_taxes'
+                    'srvc.*',
+                    'srvc.id as service_id',
+                    'usr.name as provided_by',
+                    DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
+                    DB::raw("CONCAT('" . $s_img . "/',simag.image_url) AS image_url"),
+                    DB::raw("CONCAT('" . $s_img . "/',simag.thumbnail) AS thumbnail"),
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    'scat.category as service_category',
+                    'ssec.sector as service_sector',
+                    'styp.type as service_type',
+                    'slvl.level as service_level',
+                    'cntri.country',
+                    'rgn.region',
+                    'curr.code as currency',
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
+                    'srvc.cost_inc as including_gerea_and_other_taxes',
+                    'srvc.cost_exc as excluding_gerea_and_other_taxes'
                 ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
@@ -214,7 +244,11 @@ class ServicesController extends MyController
 
         $star_ratings = [];
         $star_ratings_res = DB::table('service_reviews')
-            ->select(['service_id', DB::raw("AVG(star) AS stars"), DB::raw("COUNT(user_id) AS reviewd_by")])
+            ->select([
+                'service_id',
+                DB::raw("AVG(star) AS stars"),
+                DB::raw("COUNT(user_id) AS reviewd_by")
+            ])
             ->groupBy('service_id')
             ->get()->toArray();
         if (count($star_ratings_res)) {
@@ -246,11 +280,19 @@ class ServicesController extends MyController
                     DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
                     DB::raw("CONCAT('" . $s_img . "/',simg.image_url) AS image_url"),
                     DB::raw("CONCAT('" . $s_img . "/',simg.thumbnail) AS thumbnail"),
-                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector',
-                    'styp.type as service_type', 'slvl.level as service_level', 'cntri.country',
-                    'rgn.region', 'curr.code as currency', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 'srvc.cost_inc as including_gerea_and_other_taxes', 'srvc.cost_exc as excluding_gerea_and_other_taxes'
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    'scat.category as service_category',
+                    'ssec.sector as service_sector',
+                    'styp.type as service_type',
+                    'slvl.level as service_level',
+                    'cntri.country',
+                    'rgn.region',
+                    'curr.code as currency',
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
+                    'srvc.cost_inc as including_gerea_and_other_taxes',
+                    'srvc.cost_exc as excluding_gerea_and_other_taxes'
                 ])
-                ->join('users1 as usr', 'usr.id', '=', 'srvc.owner')
+                ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('service_images as simg', 'srvc.id', '=', 'simg.service_id')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
@@ -262,7 +304,6 @@ class ServicesController extends MyController
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->leftJoin('durations as dur', 'dur.id', '=', 'srvc.duration')
-                //->whereRaw($where)
                 ->where(['srvc.service_category' => $category->id])
                 ->where(['srvc.deleted_at' => NULL])
                 ->groupBy('ssfor.service_id')
@@ -276,19 +317,16 @@ class ServicesController extends MyController
                 //$service_array[]=$ser;
             }
             if (!$services->isEmpty()) {
-                $service_array = array('category' => $category->category, 'services' => $services);
+                $service_array = array(
+                    'category' => $category->category,
+                    'services' => $services
+                );
             }
-
             if (!empty($service_array)) {
                 array_push($serviceCategory, $service_array);
             }
         }
         return $this->sendResponse(config('constants.DATA_FOUND'), $serviceCategory, 200);
-        if (!$services->isEmpty()) {
-            //return $this->sendResponse(config('constants.DATA_FOUND'), $service_array, 200);
-        }
-        //return $this->sendError('No record found.', [], 404);
-
     }
 
     public function myServicereview(Request $request)
@@ -296,21 +334,19 @@ class ServicesController extends MyController
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric',
             'service_id' => 'required|numeric',
-
         ]);
         if ($validator->fails()) {
             $validation = array();
             foreach ($validator->messages()->getMessages() as $field_name => $messages) {
                 $validation[$field_name] = $messages[0];
-                //print_r($messages); die;
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
             //$liked = DB::table('service_likes')->where(['user_id' => $request->user_id, 'service_id' => $request->service_id])->get();
-
-            $liked = DB::table('users')->leftJoin('service_reviews', 'users.id', '=', 'service_reviews.user_id')
-                ->leftJoin('service_likes', 'users.id', '=', 'service_likes.user_id')->get();
-
+            $liked = DB::table('users')
+                ->leftJoin('service_reviews', 'users.id', '=', 'service_reviews.user_id')
+                ->leftJoin('service_likes', 'users.id', '=', 'service_likes.user_id')
+                ->get();
             return $this->sendResponse('Liked', $liked, 200);
         }
     }
@@ -330,7 +366,9 @@ class ServicesController extends MyController
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
-            $liked = DB::table('service_likes')->where(['user_id' => $request->user_id, 'service_id' => $request->service_id])->first();
+            $liked = DB::table('service_likes')
+                ->where(['user_id' => $request->user_id, 'service_id' => $request->service_id])
+                ->first();
             //dd($liked);
             if (!empty($liked)) {
                 if ($request->like == 0) {
@@ -345,7 +383,11 @@ class ServicesController extends MyController
                 }
             } else {
                 if ($request->like == 1) {
-                    DB::table('service_likes')->insert(['user_id' => $request->user_id, 'service_id' => $request->service_id, 'is_like' => $request->like]);
+                    DB::table('service_likes')->insert([
+                        'user_id' => $request->user_id,
+                        'service_id' => $request->service_id,
+                        'is_like' => $request->like
+                    ]);
                     return $this->sendResponse('Liked', [], 200);
                 } else {
                     return $this->sendError('Not Liked Please Try again', [], 401);
@@ -446,20 +488,26 @@ class ServicesController extends MyController
                 'created_at' => date('Y-m-d H:i:s'),
             ])) {
                 $booking_id = DB::getPdo()->lastInsertId();
-                $booking_data = DB::table('bookings')->select(['*', 'id as booking_id'])->where(['id' => $booking_id])->first();
+                $booking_data = DB::table('bookings')->select([
+                    '*',
+                    'id as booking_id'
+                ])
+                    ->where(['id' => $booking_id])
+                    ->first();
                 if ($flag) {
-                    DB::table('promocode_users')->insert([
-                        'booking_id' => $booking_id,
-                        'user_id' => $request->user_id,
-                        'service_id' => $request->service_id,
-                        'promocode_id' => $promocode->id,
-                        'promocode' => $promocode->code,
-                        'disc_type' => $promocode->discount_type,
-                        'disc_amt' => $disc_amt,
-                        'service_amt_befor_disc' => $total_amt,
-                        'service_amt_after_disc' => $service_disc_amt,
-                        'created_at' => date('Y-m-d H:i:s'),
-                    ]);
+                    DB::table('promocode_users')
+                        ->insert([
+                            'booking_id' => $booking_id,
+                            'user_id' => $request->user_id,
+                            'service_id' => $request->service_id,
+                            'promocode_id' => $promocode->id,
+                            'promocode' => $promocode->code,
+                            'disc_type' => $promocode->discount_type,
+                            'disc_amt' => $disc_amt,
+                            'service_amt_befor_disc' => $total_amt,
+                            'service_amt_after_disc' => $service_disc_amt,
+                            'created_at' => date('Y-m-d H:i:s'),
+                        ]);
                 }
 
                 return $this->sendResponse('Booking has been successfull.', $booking_data, 200);
@@ -483,7 +531,15 @@ class ServicesController extends MyController
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
-            $promocode = DB::table('promocode')->select(['*', DB::raw("IF(discount_type = 'A','Amount','Percentage') AS discount_type")])->where(['code' => $request->promo_code])->first();
+            $promocode = DB::table('promocode')
+                ->select([
+                    '*',
+                    DB::raw("IF(discount_type = 'A','Amount','Percentage') AS discount_type")
+                ])
+                ->where([
+                    'code' => $request->promo_code
+                ])
+                ->first();
             if ($promocode) {
                 if (strtotime($promocode->start_date) <= time() && strtotime($promocode->end_date) >= time()) {
                     return $this->sendResponse('Valid code', $promocode, 200);

@@ -21,6 +21,7 @@ class UsersController extends MyController
 
     public function add(Request $request)
     {
+        //dd($request->all());
         $validator = Validator::make($request->all(), [
             'username' => 'required|min:3|max:50|unique:users',
             'mobile_code' => 'required|numeric',
@@ -43,7 +44,9 @@ class UsersController extends MyController
             return $this->sendError(implode(',', array_values($errors)), [], 422);
         } elseif (!$this->checkPasswordStrength($request->password)) {
 
-            return $this->sendError('Validation errors', ['password' => 'Password should contain minimum 8 characters with an uppercase letter, a lowercase letter, a number and a special character'], 422);
+            return $this->sendError('Validation errors', [
+                'password' => 'Password should contain minimum 8 characters with an uppercase letter, a lowercase letter, a number and a special character'
+            ], 422);
         } else {
             $msg = 'You have been register successfully.';
             $mobile_number = $request->post('mobile');
@@ -75,20 +78,23 @@ class UsersController extends MyController
                 }
             }
 
-            $data->name = $request->post('username');
-            $data->mobile_code = $request->post('mobile_code');
-            $data->mobile = $request->post('mobile');
-            $data->email = $request->post('email');
-            $data->country_id = $request->post('nationality');
-            $data->now_in = $request->post('now_in');
-            $data->dob = $request->post('dob');
-            $data->health_conditions = $request->post('health_conditions');
+            $data->name                 = $request->post('username');
+            $data->mobile_code          = $request->post('mobile_code');
+            $data->mobile               = $request->post('mobile');
+            $data->email                = $request->post('email');
+            $data->country_id           = $request->post('nationality');
+            $data->now_in               = $request->post('now_in');
+            $data->dob                  = $request->post('dob');
+            $data->health_conditions    = $request->post('health_conditions');
             $data->health_conditions_id = $request->post('health_conditions_id');
-            $data->Height = $request->post('height');
-            $data->Weight = $request->post('weight');
-            $data->password = bcrypt($request->password);
-            $data->profile_image = '';
+            $data->Height               = $request->post('height');
+            $data->Weight               = $request->post('weight');
+            $data->password             = bcrypt($request->password);
+            $data->profile_image        = '';
             $data->save();
+
+            $data['become_partner'] = null;
+            //dd($data);
             return $this->sendResponse($msg, $data, 201);
         }
     }
@@ -347,13 +353,19 @@ class UsersController extends MyController
         $result = User::select(['*', DB::raw("CONCAT('+',mobile_code) AS mobile_code"), DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")])
             ->where($where)
             ->first();
+        // dd($result->id);
         $health = $result->health_conditions;
         //echo $health; die;
         $health_condtions = DB::table('health_conditions')->select([DB::raw("GROUP_CONCAT(name) AS healths")])
             ->whereIn('id', explode(',', $health))
             ->first();
+        $become_partner = DB::table('become_partner')->select('*')
+            ->where('user_id', $result->id)
+            ->first();
+        //dd($become_partner);
         $result['health_conditions_id'] = $health;
         $result['health_conditions'] = $health_condtions->healths;
+        $result['become_partner'] = $become_partner;
         if ($result->status == 0) {
             return $this->sendError('Account Deactivated.Please contact to admin.', [], 401, 'account_deactivated');
         }
@@ -368,10 +380,11 @@ class UsersController extends MyController
      */
     public function userProfile(Request $request)
     {
-        $data = User::where(['id' => $request->id, 'users_role' => 3, 'deleted_at' => null])->first();
-
+        $data = User::where(['id' => $request->user_id, 'users_role' => 3, 'deleted_at' => null])->first();
+        $data['become_partner'] = DB::table('become_partner')->select('*')->where('user_id', $request->user_id)->first();
         if (!empty($data)) {
-            return $this->sendResponse(config('custom.DATA_FOUND'), $data, 200);
+            $msg = "Data found successfully!";
+            return $this->sendResponse($msg, $data, 200);
         }
         return $this->sendError('Data not found.', [], 404);
     }
@@ -383,8 +396,11 @@ class UsersController extends MyController
         $url = asset('public/profile_image/');
         $result = DB::table('services as servi')
             ->select([
-                'servi.*', DB::raw("CONCAT('" . $url . "/',servi.image) AS image"), DB::raw("CONCAT('" . $url . "/',servi.favourite_image) AS favourite_image"),
-                'usr.name as name', DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS profile_image")
+                'servi.*',
+                DB::raw("CONCAT('" . $url . "/',servi.image) AS image"),
+                DB::raw("CONCAT('" . $url . "/',servi.favourite_image) AS favourite_image"),
+                'usr.name as name',
+                DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS profile_image")
             ])
             ->leftJoin('users as usr', 'usr.id', '=', 'servi.owner')
             ->where(['owner' => $request->id])->get();
@@ -426,14 +442,14 @@ class UsersController extends MyController
                 "terms_conditions" => $value->terms_conditions,
                 "recommended" => $value->recommended,
                 "status" => $value->status,
-                "image" => "https://adventuresclub.net/admin/public/profile_image/" . $value->image,
+                "image" => $url . $value->image,
                 "descreption" => $value->descreption,
-                "favourite_image" => "https://adventuresclub.net/admin/public/profile_image/" . $value->favourite_image,
+                "favourite_image" => $url . $value->favourite_image,
                 "created_at" => $value->created_at,
                 "updated_at" => $value->updated_at,
                 "deleted_at" => $value->deleted_at,
                 "name" => $value->name,
-                "profile_image" => "https://adventuresclub.net/admin/public/profile_image/" . $value->profile_image
+                "profile_image" => $url . $value->profile_image
             );
         }
 
@@ -554,19 +570,37 @@ class UsersController extends MyController
             if ($request->post('otp_for_update_mobile_number')) {
                 $otp = $request->post('otp_for_update_mobile_number');
 
-                $otp_qry = Otp::select(['user_id', 'id', 'otp'])->where(array('user_id' => $user_id, 'status' => 0, 'otp' => $otp, 'mobile' => $mobile_number))->first();
+                $otp_qry = Otp::select(['user_id', 'id', 'otp'])
+                    ->where(array('user_id' => $user_id, 'status' => 0, 'otp' => $otp, 'mobile' => $mobile_number))
+                    ->first();
                 if (!empty($otp_qry)) {
                     $update = Otp::select(['user_id', 'id', 'otp'])->find($otp_qry->id);
                     $update->status = 1;
                     $update->save();
-                    $user = User::select(['id', 'first_name', 'last_name', 'email', 'profile_picture', 'mobile', 'mobile_verified_at', 'status'])->find($user_id);
+                    $user = User::select([
+                        'id',
+                        'first_name',
+                        'last_name',
+                        'email',
+                        'profile_picture',
+                        'mobile',
+                        'mobile_verified_at',
+                        'status'
+                    ])
+                        ->find($user_id);
                     $user->mobile = $mobile_number;
                     $user->mobile_verified_at = date('Y-m-d H:i:s');
                     $user->status = 1;
                     $user->save();
                     return $this->sendResponse(config('custom.OTP_VERIFIED'), $user);
                 } else {
-                    return $this->sendError(config('custom.INCORRECT_OTP'), array('otp_for_update_mobile_number' => config('custom.INCORRECT_OTP')), 200);
+                    return $this->sendError(
+                        config('custom.INCORRECT_OTP'),
+                        array(
+                            'otp_for_update_mobile_number' => config('custom.INCORRECT_OTP')
+                        ),
+                        200
+                    );
                 }
             }
             if ($old_mobile == $mobile_number) {
@@ -604,11 +638,27 @@ class UsersController extends MyController
             return $this->sendError(config('custom.NOT_VALID'), $errors);
         } elseif (!$this->checkPasswordStrength($request->password)) {
 
-            return $this->sendError('Validation errors', ['password' => 'Password should contain minimum 8 characters with an uppercase letter, a lowercase letter, a number and a special character'], 422);
+            return $this->sendError(
+                'Validation errors',
+                [
+                    'password' => 'Password should contain minimum 8 characters with an uppercase letter, a lowercase letter, a number and a special character'
+                ],
+                422
+            );
         } else {
-            $check_otp_verify = Otp::where(array('id' => $request->otp_id, 'user_id' => $request->user_id, 'type' => 2, 'status' => 1))->first();
+            $check_otp_verify = Otp::where(array(
+                'id' => $request->otp_id,
+                'user_id' => $request->user_id,
+                'type' => 2,
+                'status' => 1
+            ))
+                ->first();
             if (empty($check_otp_verify)) {
-                return $this->sendError('Please verify your email or mobile number first for create new password.', [], 401);
+                return $this->sendError(
+                    'Please verify your email or mobile number first for create new password.',
+                    [],
+                    401
+                );
             }
             $user_id = $request->post('user_id');
             $user_res = User::where(array('id' => $user_id))->get();
@@ -621,10 +671,22 @@ class UsersController extends MyController
                     $otp_modal->delete();
                     return $this->sendResponse('Password has been updated successfully.', [], 200);
                 } else {
-                    return $this->sendError('Something went wrong. Please try again.', array('error' => 'Something went wrong. Please try again.'), 404);
+                    return $this->sendError(
+                        'Something went wrong. Please try again.',
+                        array(
+                            'error' => 'Something went wrong. Please try again.'
+                        ),
+                        404
+                    );
                 }
             }
-            return $this->sendError('User not found. Please try again.', array('error' => 'Something went wrong. Please try again.'), 404);
+            return $this->sendError(
+                'User not found. Please try again.',
+                array(
+                    'error' => 'Something went wrong. Please try again.'
+                ),
+                404
+            );
         }
     }
 
@@ -649,16 +711,38 @@ class UsersController extends MyController
                 return $this->sendError('Please enter correct old password.', [], 422);
             } elseif (!$this->checkPasswordStrength($request->password)) {
 
-                return $this->sendError('Validation errors', ['password' => 'Password should contain minimum 8 characters with an uppercase letter, a lowercase letter, a number and a special character'], 422);
+                return $this->sendError(
+                    'Validation errors',
+                    [
+                        'password' => 'Password should contain minimum 8 characters with an uppercase letter, a lowercase letter, a number and a special character'
+                    ],
+                    422
+                );
             } else {
                 $u_data = User::find($user_id);
                 $u_data->password = bcrypt($request->password);
                 if ($u_data->save()) {
-                    return $this->sendResponse('Password has been updated successfully.', [], 200);
+                    return $this->sendResponse(
+                        'Password has been updated successfully.',
+                        [],
+                        200
+                    );
                 } else {
-                    return $this->sendError('Something went wrong. Please try again.', array('error' => 'Something went wrong. Please try again.', 422));
+                    return $this->sendError(
+                        'Something went wrong. Please try again.',
+                        array(
+                            'error' => 'Something went wrong. Please try again.',
+                            422
+                        )
+                    );
                 }
-                return $this->sendError('Something went wrong. Please try again.', array('error' => 'Something went wrong. Please try again.'), 422);
+                return $this->sendError(
+                    'Something went wrong. Please try again.',
+                    array(
+                        'error' => 'Something went wrong. Please try again.'
+                    ),
+                    422
+                );
             }
         }
     }
@@ -687,13 +771,38 @@ class UsersController extends MyController
                 $u_data->Weight = $request->post('weight');
 
                 if ($u_data->save()) {
-                    return $this->sendResponse('Record has been updated successfully.', ['user_id' => $user_id, 'Height' => $u_data->Height, 'Weight' => $u_data->Weight, 'Health_conditions' => $u_data->health_conditions], 200);
+                    return $this->sendResponse(
+                        'Record has been updated successfully.',
+                        [
+                            'user_id' => $user_id,
+                            'Height' => $u_data->Height,
+                            'Weight' => $u_data->Weight,
+                            'Health_conditions' => $u_data->health_conditions
+                        ],
+                        200
+                    );
                 } else {
-                    return $this->sendError('Something went wrong. Please try again.', array('error' => 'Something went wrong. Please try again.', 422));
+                    return $this->sendError(
+                        'Something went wrong. Please try again.',
+                        array(
+                            'error' => 'Something went wrong. Please try again.',
+                            422
+                        )
+                    );
                 }
-                return $this->sendError('Something went wrong. Please try again.', array('error' => 'Something went wrong. Please try again.'), 422);
+                return $this->sendError(
+                    'Something went wrong. Please try again.',
+                    array(
+                        'error' => 'Something went wrong. Please try again.'
+                    ),
+                    422
+                );
             } else {
-                return $this->sendError('User not found', [], 422);
+                return $this->sendError(
+                    'User not found',
+                    [],
+                    422
+                );
             }
         }
     }
@@ -719,17 +828,23 @@ class UsersController extends MyController
             if (!$user_res) {
                 return $this->sendError('User not found', [], 422);
             }
-            $mobile_exist = User::where('id', '!=', $request->user_id)->where(['mobile' => $request->mobile])->first();
+            $mobile_exist = User::where('id', '!=', $request->user_id)
+                ->where(['mobile' => $request->mobile])
+                ->first();
             if ($mobile_exist) {
                 $errors = 'Mobile number has been taken already.';
                 return $this->sendError($errors, [], 422);
             }
-            $email_exist = User::where('id', '!=', $request->user_id)->where(['email' => $request->email])->first();
+            $email_exist = User::where('id', '!=', $request->user_id)
+                ->where(['email' => $request->email])
+                ->first();
             if ($email_exist) {
                 $errors = 'Email address has been taken already.';
                 return $this->sendError($errors, [], 422);
             }
-            $name_exist = User::where('id', '!=', $request->user_id)->where(['name' => $request->name])->first();
+            $name_exist = User::where('id', '!=', $request->user_id)
+                ->where(['name' => $request->name])
+                ->first();
             if ($name_exist) {
                 $errors = 'Name has been taken already.';
                 return $this->sendError($errors, [], 422);
@@ -745,11 +860,27 @@ class UsersController extends MyController
                 $u_data->email = $request->post('email');
 
                 if ($u_data->save()) {
-                    return $this->sendResponse('Record has been updated successfully.', $request->post(), 200);
+                    return $this->sendResponse(
+                        'Record has been updated successfully.',
+                        $request->post(),
+                        200
+                    );
                 } else {
-                    return $this->sendError('Something went wrong. Please try again.', array('error' => 'Something went wrong. Please try again.', 422));
+                    return $this->sendError(
+                        'Something went wrong. Please try again.',
+                        array(
+                            'error' => 'Something went wrong. Please try again.',
+                            422
+                        )
+                    );
                 }
-                return $this->sendError('Something went wrong. Please try again.', array('error' => 'Something went wrong. Please try again.'), 422);
+                return $this->sendError(
+                    'Something went wrong. Please try again.',
+                    array(
+                        'error' => 'Something went wrong. Please try again.'
+                    ),
+                    422
+                );
             } else {
                 return $this->sendError('User not found', [], 422);
             }
@@ -806,6 +937,7 @@ class UsersController extends MyController
 
     public function getNotificationList(Request $request)
     {
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric',
         ]);
@@ -820,7 +952,9 @@ class UsersController extends MyController
             $result = DB::table('notifications as noti')
                 ->select(['noti.*', DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS sender_image")])
                 ->leftJoin('users as usr', 'usr.id', '=', 'noti.sender_id')
-                ->where(['user_id' => $request->user_id])->get();
+                ->where(['user_id' => $request->user_id])
+                ->orderBy('id', 'DESC')
+                ->get();
             if ($result->isEmpty()) {
                 return $this->sendError('Data not found.', [], 404);
             }
@@ -853,7 +987,11 @@ class UsersController extends MyController
             );
             DB::table('notifications')
                 ->insert($wallet_data);
-            $responseData = $this->sendResponse('Notification Created Successfully.', [], 200);
+            $responseData = $this->sendResponse(
+                'Notification Created Successfully.',
+                [],
+                200
+            );
             return $responseData;
         }
     }
@@ -869,7 +1007,10 @@ class UsersController extends MyController
             return response()->json(['error' => $validator->errors()], 404);
         }
         try {
-            $become_partnerData = DB::table('become_partner')->where('user_id', $request->user_id)->orderBy('id', 'DESC')->first();
+            $become_partnerData = DB::table('become_partner')
+                ->where('user_id', $request->user_id)
+                ->orderBy('id', 'DESC')
+                ->first();
             if ($become_partnerData) {
                 return $this->sendResponse('Your request allready send', [], 404);
             } else {
@@ -879,7 +1020,10 @@ class UsersController extends MyController
                 } else {
                     $filepath = null;
                 }
-                $packageData = DB::table('packages')->where('id', $request->packages_id)->orderBy('id', 'DESC')->first();
+                $packageData = DB::table('packages')
+                    ->where('id', $request->packages_id)
+                    ->orderBy('id', 'DESC')
+                    ->first();
                 $day = $packageData->days - 1;
                 $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
                 $insertData = array(
@@ -913,7 +1057,43 @@ class UsersController extends MyController
                 }
             }
         } catch (\Exception $e) {
-            return $this->sendResponse('Somethingwent wrong', [], 404);
+            return $this->sendResponse($e->getMessage(), [], 404);
+        }
+    }
+
+
+    public function updateSubscription(Request $request)
+    {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'packages_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendResponse('error', $validator->errors(), 404);
+            return response()->json(['error' => $validator->errors()], 404);
+        }
+        try {
+            $packageData = DB::table('packages')
+                ->where('id', $request->packages_id)
+                ->orderBy('id', 'DESC')
+                ->first();
+            $day = $packageData->days - 1;
+            $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
+            $updatetData = array(
+                'packages_id' => $request->packages_id,
+                'start_date' => date("Y-m-d H:i:s"),
+                'end_date' => $enddate,
+            );
+            $like = DB::table('become_partner')->where('user_id', $request->user_id)->update($updatetData);
+            $like = DB::table('become_partner')->where('user_id', $request->user_id)->get();
+            if ($like) {
+                return $this->sendResponse('Data updated Successfully', $like, 200);
+            } else {
+                return $this->sendResponse('Somethingwent wrong', [], 404);
+            }
+        } catch (\Exception $e) {
+            return $this->sendResponse($e->getMessage(), [], 404);
         }
     }
 
@@ -931,5 +1111,9 @@ class UsersController extends MyController
                 "body" => 'Otp code from Adventure is:' . $otp
             )
         );
+    }
+
+    public function remainingDays(Request $request)
+    {
     }
 }

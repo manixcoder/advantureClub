@@ -43,7 +43,12 @@ class AdventureUsersController extends MyController
             ->orderBy('users.id', 'desc')
             ->get();
         $data['content'] = 'admin.adventure_users.list_adventure_users';
-        return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
+        return view(
+            'layouts.content',
+            compact('data')
+        )->with([
+            'usersdata' => $usersdata
+        ]);
     }
 
     /* Adventure Users listing ends */
@@ -150,6 +155,7 @@ class AdventureUsersController extends MyController
     /* Update status in db from ajax request starts */
     public function update_user_status($id)
     {
+
         $Data = array(
             'id' => $_GET['id'],
             'status' => $_GET['status'],
