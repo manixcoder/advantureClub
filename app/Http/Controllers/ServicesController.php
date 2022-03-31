@@ -119,37 +119,37 @@ class ServicesController extends MyController
         if ($request->post()) {
             if ($request->service_plan == 1) {
                 $validator = Validator::make($request->all(), [
-                    'owner' => 'required|numeric',
-                    'adventure_name' => 'required',
-                    'country' => 'required|numeric',
-                    'region' => 'required|numeric',
-                    'service_sector' => 'required|numeric',
-                    'service_category' => 'required|numeric',
-                    'service_type' => 'required|numeric',
-                    'service_level' => 'required|numeric',
-                    'duration' => 'required|numeric',
-                    'available_seats' => 'required|numeric',
-                    'start_date' => 'required|date_format:Y-m-d|before:end_date',
-                    'end_date' => 'required|date_format:Y-m-d',
-                    'write_information' => 'required|max:500',
-                    'service_plan' => 'required|numeric',
-                    'service_plan_days' => 'required',
-                    'service_for' => 'required',
-                    'dependency' => 'required',
-                    'schedule_title' => 'required',
-                    'gathering_date' => 'required',
-                    'gathering_start_time' => 'required',
-                    'gathering_end_time' => 'required',
-                    'program_description' => 'required',
-                    'activities' => 'required',
-                    'specific_address' => 'required|min:20',
-                    'cost_inc' => 'required|numeric',
-                    'cost_exc' => 'required|numeric',
-                    'currency' => 'required|numeric',
-                    'pre_requisites' => 'required|max:500',
-                    'minimum_requirements' => 'required|max:500',
-                    'terms_conditions' => 'required|max:500',
-                    'recommended' => 'required|numeric',
+                    'owner'                 => 'required|numeric',
+                    'adventure_name'        => 'required',
+                    'country'               => 'required|numeric',
+                    'region'                => 'required|numeric',
+                    'service_sector'        => 'required|numeric',
+                    'service_category'      => 'required|numeric',
+                    'service_type'          => 'required|numeric',
+                    'service_level'         => 'required|numeric',
+                    'duration'              => 'required|numeric',
+                    'available_seats'       => 'required|numeric',
+                    'start_date'            => 'required|date_format:Y-m-d|before:end_date',
+                    'end_date'              => 'required|date_format:Y-m-d',
+                    'write_information'     => 'required|max:500',
+                    'service_plan'          => 'required|numeric',
+                    'service_plan_days'     => 'required',
+                    'service_for'           => 'required',
+                    'dependency'            => 'required',
+                    'schedule_title'        => 'required',
+                    'gathering_date'        => 'required',
+                    'gathering_start_time'  => 'required',
+                    'gathering_end_time'    => 'required',
+                    'program_description'   => 'required',
+                    'activities'            => 'required',
+                    'specific_address'      => 'required|min:20',
+                    'cost_inc'              => 'required|numeric',
+                    'cost_exc'              => 'required|numeric',
+                    'currency'              => 'required|numeric',
+                    'pre_requisites'        => 'required|max:500',
+                    'minimum_requirements'  => 'required|max:500',
+                    'terms_conditions'      => 'required|max:500',
+                    'recommended'           => 'required|numeric',
                     'banners' => 'required'
                 ]);
             } else {
@@ -428,21 +428,21 @@ class ServicesController extends MyController
             ->get();
         $data['content'] = 'admin.services.update_services';
         return view('layouts.content', compact('data'))->with([
-            'validation' => $validation ?? [],
-            'vendors' => $result ?? [],
-            'countries' => $countries_res,
-            'sectors' => $sectors_res,
-            'categories' => $categories_res,
-            'types' => $types_res,
-            'levels' => $levels_res,
-            'durations' => $durations_list,
-            'dependencies' => $dependencies,
-            'service_for' => $service_for,
-            'currencies' => $currencies,
-            'service_plans' => $service_plans,
-            'weekdays' => $weekdays,
-            'activities_list' => $activities_list,
-            'regions_list' => $region_list
+            'validation'        => $validation ?? [],
+            'vendors'           => $result ?? [],
+            'countries'         => $countries_res,
+            'sectors'           => $sectors_res,
+            'categories'        => $categories_res,
+            'types'             => $types_res,
+            'levels'            => $levels_res,
+            'durations'         => $durations_list,
+            'dependencies'      => $dependencies,
+            'service_for'       => $service_for,
+            'currencies'        => $currencies,
+            'service_plans'     => $service_plans,
+            'weekdays'          => $weekdays,
+            'activities_list'   => $activities_list,
+            'regions_list'      => $region_list
         ]);
     }
 
@@ -694,7 +694,6 @@ class ServicesController extends MyController
     public function getRegions(Request $request, $id)
     {
         $result = array();
-
         $regions = DB::table('regions as rg')
             ->select(
                 'cnt.id as country_id',
@@ -722,7 +721,6 @@ class ServicesController extends MyController
 
     public function listServiceReviews(Request $request)
     {
-
         $reviewData = DB::table('services as srvc')
             ->select([
                 'srvc.id',
@@ -749,7 +747,6 @@ class ServicesController extends MyController
             ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
             ->groupBy('rev.service_id')
             ->get()->toArray();
-        //  echo "<pre>";print_r( $reviewData);exit;
         $likesData = DB::table('service_likes as srvclks')
             ->select(['rev.*', 'srvclks.is_like'])
             ->join('service_reviews as rev', 'rev.service_id', '=', 'srvclks.service_id')

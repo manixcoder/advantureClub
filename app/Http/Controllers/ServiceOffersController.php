@@ -57,16 +57,17 @@ class ServiceOffersController extends MyController
     /* Add new Adventure user starts */
 
     public function addServiceOffers(Request $request)
-    { // echo"<pre>";print_r($request->all());exit;
+    {
+        // echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
-                'adventure_name' => 'required|min:3|max:50|unique:services',
-                'name' => 'required|unique:service_offers',
-                'start_date' => 'required|date_format:Y-m-d|before:end_date',
-                'end_date' => 'required|date_format:Y-m-d',
-                'discount_amount' => 'required',
-                'banner' => 'required',
-                'description' => 'required'
+                'adventure_name'    => 'required|unique:services',
+                'name'              => 'required|unique:service_offers',
+                'start_date'        => 'required|date_format:Y-m-d|before:end_date',
+                'end_date'          => 'required|date_format:Y-m-d',
+                'discount_amount'   => 'required',
+                'banner'            => 'required',
+                'description'       => 'required'
             ]);
             if ($validator->fails()) {
                 $errors = array();
@@ -76,16 +77,16 @@ class ServiceOffersController extends MyController
                 $data['validation'] = $errors;
             } else {
                 $user_data = array(
-                    'service_id' => $request->adventure_name,
-                    'name' => $request->name,
-                    'start_date' => $request->start_date,
-                    'end_date' => $request->end_date,
-                    //'status' => ($request->status == 2) ? '0' : '1',
-                    'discount_type' => $request->discount_type,
-                    'discount_amount' => $request->discount_amount,
-                    'banner' => $request->banner,
-                    'description' => $request->description,
-                    'created_at' => date('Y-m-d H:i:s'),
+                    'service_id'        => $request->adventure_name,
+                    'name'              => $request->name,
+                    'start_date'        => $request->start_date,
+                    'end_date'          => $request->end_date,
+                    //'status'          => ($request->status == 2) ? '0' : '1',
+                    'discount_type'     => $request->discount_type,
+                    'discount_amount'   => $request->discount_amount,
+                    'banner'            => $request->banner,
+                    'description'       => $request->description,
+                    'created_at'        => date('Y-m-d H:i:s'),
                 );
                 if (DB::table('service_offers')->insert($user_data)) {
                     $user_id = DB::getPdo()->lastInsertId();
@@ -134,10 +135,9 @@ class ServiceOffersController extends MyController
     public function update_offer_status($id)
     {
         $Data = array(
-            'id' => $_GET['id'],
-            'status' => $_GET['status'],
+            'id'        => $_GET['id'],
+            'status'    => $_GET['status'],
         );
-
         $edituserData = DB::table('service_offers')->where('id', $id)->update($Data);
         return response()->json(array('msg' => $edituserData), 200);
     }
@@ -153,10 +153,6 @@ class ServiceOffersController extends MyController
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');
         }
-
-
-
-
         return redirect()->back();
     }
 }

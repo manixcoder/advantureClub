@@ -25,19 +25,21 @@ $base_url = URL::to('/');
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-6">
-                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="2" <?php
+                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="2" 
+                            <?php
                             if ($segment == 2) {
                                 echo 'checked';
                             }
-                            ?>  onchange="return window.location.href = '<?php echo $base_url . '/services/2' ?>'" >
+                            ?> onchange="return window.location.href = '<?php echo $base_url . '/services/2' ?>'">
                             Client Requests
                         </div>
                         <div class="col-md-6">
-                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" <?php
+                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" 
+                            <?php
                             if ($segment == 1) {
                                 echo 'checked';
                             }
-                            ?> onchange="return window.location.href = '<?php echo $base_url . '/services/1' ?>'" >
+                            ?> onchange="return window.location.href = '<?php echo $base_url . '/services/1' ?>'">
                             My Services
                         </div>
                     </div>
@@ -58,8 +60,8 @@ $base_url = URL::to('/');
                     </thead>
                     <tbody>
                         <?php foreach ($services as $key => $service) {
-                            ?>
-                            <tr class = "gradeX">
+                        ?>
+                            <tr class="gradeX">
                                 <td>{{$service->id}}</td>
                                 <td>{{$service->adventure_name}}</td>
                                 <td>{{$service->country.' / '.$service->region}}</td>
@@ -79,7 +81,7 @@ $base_url = URL::to('/');
                                         <li><a href="{{URL::to('/service/view/'.$service->id)}}" class="bg-black"><i class="fa fa-eye"></i></a></li>
                                         <!--<li><a href="{{URL::to('/')}}" onclick="return confirm('Are you sure you want to edit this item ?')" class="bg-green"><i class="fa fa-pencil"></i></a></li>-->
                                         <li><a href="{{URL::to('/service/detele/'.$service->id)}}" onclick="return confirm('Are you sure you want to delete this request ?')" class="bg-red"><i class="fa fa-trash"></i></a></li>
-                                        </ul>
+                                    </ul>
                                 </td>
                             </tr>
                         <?php } ?>
@@ -90,54 +92,63 @@ $base_url = URL::to('/');
     </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){
- //Get the total rows
- $('#datatable-responsive1_wrapper').each( function () {
-		var title = $(this).text();
-		$(this).html( '<input type="text" placeholder="'+title+' Search" />' );
-	} );
- var table =  $('table ').dataTable({
-         searching: true,
-         paging: true,
-         info: false,      // hide showing entries
-         ordering: false,  // hide sorting
-         order: [[ 0, "desc" ]],
-         columnDefs: [{
-            orderable: false,
-            targets: "no-sort"
-         }],
-         bLengthChange : false,  // hide showing entries in dropdown
-         "dom": '<"pull-left"f><"pull-right"l>tip', //align search to left
-         "language": {
-         "search": "_INPUT_",
-         "searchPlaceholder": "Search here...",
-         "paginate": {
-            previous: '&#x3c;', // or '<'
-            next: '&#x3e;' // or '>' 
-         },
-         }
-    });
+    $(document).ready(function() {
+        //Get the total rows
+        $('#datatable-responsive1_wrapper').each(function() {
+            var title = $(this).text();
+            $(this).html('<input type="text" placeholder="' + title + ' Search" />');
+        });
+        var table = $('table ').dataTable({
+            searching: true,
+            paging: true,
+            info: false, // hide showing entries
+            ordering: false, // hide sorting
+            order: [
+                [0, "desc"]
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets: "no-sort"
+            }],
+            bLengthChange: false, // hide showing entries in dropdown
+            "dom": '<"pull-left"f><"pull-right"l>tip', //align search to left
+            "language": {
+                "search": "_INPUT_",
+                "searchPlaceholder": "Search here...",
+                "paginate": {
+                    previous: '&#x3c;', // or '<'
+                    next: '&#x3e;' // or '>' 
+                },
+            }
+        });
 
-     $('#datatable-responsive1_wrapper .pull-right ').append('<div class="dataTables_length"><label for="Total Users">Total Users : '+table.fnGetData().length+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></div>');
-     $('.pull-right .dataTables_length').css({'font-size':'15px','color':'#fff'});
-    $('#datatable-responsive1_wrapper').
-    css({
-            'background': '#7CA7BB' ,
+        $('#datatable-responsive1_wrapper .pull-right ').append('<div class="dataTables_length"><label for="Total Users">Total Users : ' + table.fnGetData().length + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></div>');
+        $('.pull-right .dataTables_length').css({
+            'font-size': '15px',
+            'color': '#fff'
+        });
+        $('#datatable-responsive1_wrapper').
+        css({
+            'background': '#7CA7BB',
             'background-repeat': 'no-repeat',
-            'padding':'10px 0px 0px 0px' ,
-            'font-size':'18px',
-            'color':'#fff',
-            'border-radius':'8px 8px 0px 0px',
-         });
+            'padding': '10px 0px 0px 0px',
+            'font-size': '18px',
+            'color': '#fff',
+            'border-radius': '8px 8px 0px 0px',
+        });
 
-      $('#datatable-responsive1').css({
-         "border":"0px",
-         "margin-bottom": "0px !important",
-      });
+        $('#datatable-responsive1').css({
+            "border": "0px",
+            "margin-bottom": "0px !important",
+        });
 
-      $('#datatable-responsive1_paginate').css({'background':'#fff'});
+        $('#datatable-responsive1_paginate').css({
+            'background': '#fff'
+        });
 
-      $('.dataTables_filter input[type="search"]').
-         css({'width':'250px'});   
-   });
+        $('.dataTables_filter input[type="search"]').
+        css({
+            'width': '250px'
+        });
+    });
 </script>
