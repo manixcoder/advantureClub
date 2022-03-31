@@ -18,37 +18,43 @@ use DB;
 use Hash;
 use Auth;
 
-class PackagesController extends MyController {
+class PackagesController extends MyController
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth');
         $this->middleware('role');
     }
 
-    public function get(Request $request) {
+    public function get(Request $request)
+    {
         $packages = DB::table('packages')
-        ->where(['packages.deleted_at' => NULL])
-        ->get();
+            ->where(['packages.deleted_at' => NULL])
+            ->get();
+        // dd($packages);
         if ($packages->isEmpty()) {
             $packages = [];
         }
         $data['content'] = 'admin.pages.packages';
         return view('layouts.content', compact('data'))->with([
-                    'packages' => $packages
+            'packages' => $packages
         ]);
     }
 
-    public function add(Request $request) {
+    public function add(Request $request)
+    {
+        //dd($request->all());
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
-                        'package_duration' => 'required|numeric|min:1|max:4',
-                        'package_name' => 'required|min:3|max:200',
-                        'package_cost' => 'required|numeric',
-                        'includes.*' => 'required|string|distinct|min:10|max:200',
-                        'excludes.*' => 'string|distinct|min:10|max:200',
-                            ], [], [
-                        'includes.*' => 'include',
-                        'excludes.*' => 'exclude',
+                'package_duration' => 'required|numeric|min:1|max:4',
+                'package_name' => 'required|min:3|max:200',
+                'package_cost' => 'required|numeric',
+                'includes.*' => 'required|string|distinct|min:1|max:200',
+                'excludes.*' => 'string|distinct|min:1|max:200',
+            ], [], [
+                'includes.*' => 'include',
+                'excludes.*' => 'exclude',
             ]);
             if ($validator->fails()) {
                 $validation = array();
@@ -56,15 +62,27 @@ class PackagesController extends MyController {
                     $validation[$field_name] = $messages[0];
                 }
             } else {
-                if (DB::table('packages')->insert(['title' => $request->package_name, 'duration' => $request->package_duration,'cost'=>$request->package_cost])) {
+                if (DB::table('packages')->insert([
+                    'title' => $request->package_name,
+                    'duration' => $request->package_duration,
+                    'cost' => $request->package_cost
+                ])) {
                     $package_id = DB::getPdo()->lastInsertId();
                     DB::table('package_detail')->where(['package_id' => $package_id])->delete();
                     $pkg_det = [];
                     foreach ($request->includes as $val) {
-                        $pkg_det[] = ['package_id' => $package_id, 'title' => $val, 'type' => 1];
+                        $pkg_det[] = [
+                            'package_id' => $package_id,
+                            'title' => $val,
+                            'type' => 1
+                        ];
                     }
                     foreach ($request->excludes as $val) {
-                        $pkg_det[] = ['package_id' => $package_id, 'title' => $val, 'type' => 0];
+                        $pkg_det[] = [
+                            'package_id' => $package_id,
+                            'title' => $val,
+                            'type' => 0
+                        ];
                     }
                     DB::table('package_detail')->insert($pkg_det);
                     $request->session()->flash('success', 'Record has been added successfully.');
@@ -77,29 +95,32 @@ class PackagesController extends MyController {
         $packages = DB::table('packages')->get();
         $data['content'] = 'admin.pages.update_packages';
         return view('layouts.content', compact('data'))->with([
-                    'validation' => $validation ?? [],
-                    'packages' => $packages]);
+            'validation' => $validation ?? [],
+            'packages' => $packages
+        ]);
     }
 
-    public function privacyPolicies(Request $request) {
+    public function privacyPolicies(Request $request)
+    {
         $terms = DB::table('privacy_policy')->get();
         if ($terms->isEmpty()) {
             $terms = [];
         }
         $data['content'] = 'admin.pages.privacy_policy_list';
         return view('layouts.content', compact('data'))->with([
-                    'terms' => $terms
+            'terms' => $terms
         ]);
     }
 
-    public function addPrivacyPolicy(Request $request) {
+    public function addPrivacyPolicy(Request $request)
+    {
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
-                        'title.*' => 'required|string|distinct|min:15|max:200',
-                        'description.*' => 'required|string|distinct|min:15|max:500',
-                            ], [], [
-                        'title.*' => 'title',
-                        'description.*' => 'description',
+                'title.*' => 'required|string|distinct|min:15|max:200',
+                'description.*' => 'required|string|distinct|min:15|max:500',
+            ], [], [
+                'title.*' => 'title',
+                'description.*' => 'description',
             ]);
             if ($validator->fails()) {
                 $validation = array();
@@ -126,21 +147,25 @@ class PackagesController extends MyController {
         $terms = DB::table('privacy_policy')->get();
         $data['content'] = 'admin.pages.update_privacy_policies';
         return view('layouts.content', compact('data'))->with([
-                    'validation' => $validation ?? [],
-                    'terms' => $terms]);
+            'validation' => $validation ?? [],
+            'terms' => $terms
+        ]);
     }
 
-    public function aboutUs(Request $request) {
+    public function aboutUs(Request $request)
+    {
         $terms = DB::table('about_us')->first();
         $data['content'] = 'admin.pages.about_us_list';
         return view('layouts.content', compact('data'))->with([
-                    'terms' => $terms]);
+            'terms' => $terms
+        ]);
     }
 
-    public function addAboutUs(Request $request) {
+    public function addAboutUs(Request $request)
+    {
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
-                        'description' => 'required|string|min:15|max:1000',
+                'description' => 'required|string|min:15|max:1000',
             ]);
             if ($validator->fails()) {
                 $validation = array();
@@ -160,34 +185,38 @@ class PackagesController extends MyController {
         $terms = DB::table('about_us')->first();
         $data['content'] = 'admin.pages.update_about_us';
         return view('layouts.content', compact('data'))->with([
-                    'validation' => $validation ?? [],
-                    'terms' => $terms]);
+            'validation' => $validation ?? [],
+            'terms' => $terms
+        ]);
     }
 
-    public function transactions() {
+    public function transactions()
+    {
         $result = DB::table('payments as pmt')
-                ->select(['pmt.*', 'usr.name'])
-                ->leftJoin('users as usr', 'usr.id', '=', 'pmt.user_id')
-                ->get();
+            ->select(['pmt.*', 'usr.name'])
+            ->leftJoin('users as usr', 'usr.id', '=', 'pmt.user_id')
+            ->get();
         $data['content'] = 'admin.pages.transactions';
         return view('layouts.content', compact('data'))->with([
-                    'result' => $result]);
+            'result' => $result
+        ]);
     }
-    
-        /* Update status in db from ajax request starts */
-     public function update_pkg_status($id){
-        $Data = array
-                  (
-                      'id' => $_GET['id'],
-                      'status' => $_GET['status'],
-              );
-            $edituserData = DB::table('packages')->where('id', $id)->update($Data);
-            return response()->json(array('msg'=> $edituserData), 200);
-        }
+
+    /* Update status in db from ajax request starts */
+    public function update_pkg_status($id)
+    {
+        $Data = array(
+            'id' => $_GET['id'],
+            'status' => $_GET['status'],
+        );
+        $edituserData = DB::table('packages')->where('id', $id)->update($Data);
+        return response()->json(array('msg' => $edituserData), 200);
+    }
     /* Update status ends */
 
-     /* soft delete starts */
-     public function delete_sub_pkg(Request $request, $id) {
+    /* soft delete starts */
+    public function delete_sub_pkg(Request $request, $id)
+    {
         $pkg = Packages::find($id);
         if ($pkg) {
             $destroy = Packages::destroy($id);
@@ -197,6 +226,5 @@ class PackagesController extends MyController {
         }
         return redirect()->back();
     }
-     /* soft delete ends */
-
+    /* soft delete ends */
 }

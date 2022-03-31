@@ -396,7 +396,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="field-1" class="control-label service-plan-label">Service Plan</label>
+                                        <label for="field-1" class="control-label service-plan-label">Service Plan </label>
                                         <div class="row">
                                             <?php
                                             $service_plan = '';

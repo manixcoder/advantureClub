@@ -14,14 +14,7 @@ class Packages extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
-        'title',
-        'symbol',
-        'duration',
-        'cost',
-        'offer_cost',
-        'status',
-        'created_at',
-        'updated_at'
+        'title', 'symbol', 'duration', 'cost', 'offer_cost', 'days', 'status',
     ];
 
     /**

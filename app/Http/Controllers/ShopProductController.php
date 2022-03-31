@@ -31,11 +31,17 @@ class ShopProductController extends Controller
   /* Shop Product Functions start */
   public function admin_approvel($id)
   {
-    $productdata = DB::table('home_products')->where('id', $id)->first();
+    $productdata = DB::table('home_products')
+      ->where('id', $id)
+      ->first();
     if ($productdata->status = 1) {
-      $updateData = DB::table('home_products')->where('id', $id)->update(['status' => 0]);
+      $updateData = DB::table('home_products')
+        ->where('id', $id)
+        ->update(['status' => 0]);
     } else {
-      $updateData = DB::table('home_products')->where('id', $id)->update(['status' => 1]);
+      $updateData = DB::table('home_products')
+        ->where('id', $id)
+        ->update(['status' => 1]);
     }
     return back();
   }

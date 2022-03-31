@@ -64,10 +64,24 @@ class ServicesController extends MyController
         if ($id) {
             $services = DB::table('services as srvc')
                 ->select([
-                    'srvc.*', 'srvc.id as service_id', 'usr.name as provided_by', DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"), DB::raw("CONCAT('" . $s_img . "/',simg.image_url) AS image_url"), DB::raw("CONCAT('" . $s_img . "/',simg.thumbnail) AS thumbnail"),
-                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector',
-                    'styp.type as service_type', 'slvl.level as service_level', 'cntri.country',
-                    'rgn.region', 'curr.code as currency', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 'srvc.cost_inc as including_gerea_and_other_taxes', 'srvc.cost_exc as excluding_gerea_and_other_taxes'
+                    'srvc.*', 
+                    'srvc.id as service_id',
+                    'usr.name as provided_by',
+                    DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"), 
+                    DB::raw("CONCAT('" . $s_img . "/',simg.image_url) AS image_url"), 
+                    DB::raw("CONCAT('" . $s_img . "/',simg.thumbnail) AS thumbnail"),
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
+                    'scat.category as service_category', 
+                    'ssec.sector as service_sector',
+                    'styp.type as service_type',
+                    'slvl.level as service_level',
+                    'cntri.country',
+                    'rgn.region',
+                    'srvc.currency', 
+                    //'srvc.sfor_id as aimed_for', 
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 
+                    'srvc.cost_inc as including_gerea_and_other_taxes',
+                    'srvc.cost_exc as excluding_gerea_and_other_taxes'
                 ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
@@ -77,7 +91,7 @@ class ServicesController extends MyController
                 ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+                //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->where(['srvc.deleted_at' => NULL])
@@ -96,14 +110,14 @@ class ServicesController extends MyController
                 }
 
                 $activities = DB::table('service_activities as s_act')
-                    ->select(['act.id', 'act.activity'])
+                    ->select(['s_act.*' , 'act.activity'])
                     ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
                     ->where('s_act.service_id', $id)
                     ->get()
                     ->toArray();
                 $services[0]->included_activities = $activities ?? [];
                 $dependencies = DB::table('service_dependencies as s_dep')
-                    ->select(['dep.id', 'dep.dependency_name'])
+                    ->select(['dep.*', 'dep.dependency_name'])
                     ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
                     ->where('s_dep.service_id', $id)
                     ->get()
@@ -170,10 +184,24 @@ class ServicesController extends MyController
 
             $services = DB::table('services as srvc')
                 ->select([
-                    'srvc.*', 'srvc.id as service_id', 'usr.name as provided_by', DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"), DB::raw("CONCAT('" . $s_img . "/',simag.image_url) AS image_url"), DB::raw("CONCAT('" . $s_img . "/',simag.thumbnail) AS thumbnail"),
-                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector',
-                    'styp.type as service_type', 'slvl.level as service_level', 'cntri.country',
-                    'rgn.region', 'curr.code as currency', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 'srvc.cost_inc as including_gerea_and_other_taxes', 'srvc.cost_exc as excluding_gerea_and_other_taxes'
+                    'srvc.*', 
+                    'srvc.id as service_id',
+                    'usr.name as provided_by', 
+                    DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"), 
+                    DB::raw("CONCAT('" . $s_img . "/',simag.image_url) AS image_url"), 
+                    DB::raw("CONCAT('" . $s_img . "/',simag.thumbnail) AS thumbnail"),
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
+                    'scat.category as service_category', 
+                    'ssec.sector as service_sector',
+                    'styp.type as service_type', 
+                    'slvl.level as service_level', 
+                    'cntri.country',
+                    'rgn.region', 
+                    'srvc.currency',
+                    //'srvc.sfor_id as aimed_for', 
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 
+                    'srvc.cost_inc as including_gerea_and_other_taxes',
+                    'srvc.cost_exc as excluding_gerea_and_other_taxes'
                 ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
@@ -183,7 +211,7 @@ class ServicesController extends MyController
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+                //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->leftJoin('durations as dur', 'dur.id', '=', 'srvc.duration')
@@ -738,17 +766,9 @@ class ServicesController extends MyController
                     'slvl.level as service_level',
                     'cntri.country',
                     'curr.code as currency',
-                    DB::raw(
-                        "GROUP_CONCAT(sfor.sfor) as aimed_for"
-                    ),
-                    DB::raw(
-                        "dur.duration as duration",
-                        DB::raw(
-                            "IF(slike.is_like=1,
-                        slike.is_like,
-                        0
-                        ) AS is_liked"
-                        )
+                    DB::raw("GROUP_CONCAT(sfor.sfor ) as aimed_for"),
+                    DB::raw("dur.duration as duration",
+                    DB::raw("IF(slike.is_like=1,slike.is_like,0) AS is_liked")
                     )
                 ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
@@ -919,7 +939,7 @@ class ServicesController extends MyController
 
     public function scheduledSession(Request $request)
     {
-        $url = asset('public/profile_image/');
+        $url = asset('public');
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric',
             'date' => 'required|date_format:Y-m-d',
@@ -949,6 +969,7 @@ class ServicesController extends MyController
                 ->select([
                     'bkng.id as booking_id',
                     'srvc.id as service_id',
+                    'bkng.currency',
                     'cntri.country',
                     'rgn.region',
                     'srvc.adventure_name',
