@@ -19,6 +19,7 @@ class CreatePackagesTable extends Migration
             $table->string('symbol')->nullable();
             $table->string('duration')->nullable();
             $table->string('cost')->nullable();
+            $table->string('days')->nullable();
             $table->string('offer_cost')->nullable();
             $table->string('status')->default(1)->nullable();
             $table->timestamps();
