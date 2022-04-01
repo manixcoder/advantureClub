@@ -18,6 +18,7 @@ class CreateServiceCategoriesTable extends Migration
             $table->string('category')->nullable();
             $table->string('image')->nullable();
             $table->tinyInteger('status');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

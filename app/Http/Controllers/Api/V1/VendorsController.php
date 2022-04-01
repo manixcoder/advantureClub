@@ -19,10 +19,19 @@ class VendorsController extends MyController
 
     public function getPackages(Request $request)
     {
-        $result = DB::table('packages')->select(['*'])
+        $result = DB::table('packages')
+            ->select(['*'])
             ->where(['deleted_at' => NULL])
             ->get();
+
+        foreach ($result as $key => $res) {
+            $includes = DB::table('package_detail')->where('package_id', $res->id)->where('type', '1')->get();
+            $Exclude = DB::table('package_detail')->where('package_id', $res->id)->where('type', '1')->get();
+            $result[$key]->includes = $includes;
+            $result[$key]->Exclude = $Exclude;
+        }
         if (!$result->isEmpty()) {
+
             return $this->sendResponse(config('constants.DATA_FOUND'), $result, 200);
         }
         return $this->sendError('Data not found.', [], 404);

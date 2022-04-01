@@ -19,6 +19,7 @@ class CreateServiceImagesTable extends Migration
             $table->integer('is_default');
             $table->string('image_url')->nullable();
             $table->string('thumbnail')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

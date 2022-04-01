@@ -17,6 +17,7 @@ class CreateCitiesTable extends Migration
             $table->bigIncrements('id');
             $table->integer('country_id');
             $table->string('city')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

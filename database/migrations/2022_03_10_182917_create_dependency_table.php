@@ -16,6 +16,7 @@ class CreateDependencyTable extends Migration
         Schema::create('dependency', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('dependency_name')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

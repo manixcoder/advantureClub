@@ -17,7 +17,7 @@ class CreateAnnouncementsTable extends Migration
             $table->bigIncrements('id');
             $table->string('reach_for')->nullable();
             $table->longText('content')->nullable();
-            $table->softDeletes();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

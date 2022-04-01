@@ -17,6 +17,7 @@ class CreateServiceTypesTable extends Migration
             $table->bigIncrements('id');
             $table->string('type');
             $table->integer('status');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

@@ -17,6 +17,7 @@ class CreateServiceSectorsTable extends Migration
             $table->bigIncrements('id');
             $table->string('sector')->nullable();
             $table->integer('status')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

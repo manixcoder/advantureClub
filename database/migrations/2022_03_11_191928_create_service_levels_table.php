@@ -17,6 +17,7 @@ class CreateServiceLevelsTable extends Migration
             $table->bigIncrements('id');
             $table->string('level')->nullable();
             $table->integer('status')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

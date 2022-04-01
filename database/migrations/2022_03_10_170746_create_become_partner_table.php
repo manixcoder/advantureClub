@@ -36,6 +36,8 @@ class CreateBecomePartnerTable extends Migration
             $table->integer('packages_id');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
+            $table->enum('is_wiretransfer',['0','1'])->default(0)->comment('1 true , 0 false');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

@@ -18,6 +18,7 @@ class CreatePackageDetailTable extends Migration
             $table->integer('package_id')->nullable();
             $table->string('title')->nullable();
             $table->enum('type',['0','1'])->default(0)->comment('0=Exclude,1=Include');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

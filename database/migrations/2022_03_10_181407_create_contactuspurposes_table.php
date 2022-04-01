@@ -16,6 +16,7 @@ class CreateContactuspurposesTable extends Migration
         Schema::create('contactuspurposes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('contactuspurposeName')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

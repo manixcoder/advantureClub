@@ -17,6 +17,7 @@ class CreateFavouritesTable extends Migration
             $table->bigIncrements('id');
             $table->integer('user_id');
             $table->integer('service_id');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

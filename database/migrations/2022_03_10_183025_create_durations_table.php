@@ -18,6 +18,7 @@ class CreateDurationsTable extends Migration
             $table->string('duration')->nullable();
             $table->string('minutes')->nullable();
             $table->integer('status')->default(1);
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

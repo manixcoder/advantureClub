@@ -1000,7 +1000,7 @@ class UsersController extends MyController
     {
 
         $validator = Validator::make($request->all(), [
-            'packages_id' => 'required',
+            // 'packages_id' => 'required',
         ]);
         if ($validator->fails()) {
             return $this->sendResponse('error', $validator->errors(), 404);
@@ -1016,16 +1016,25 @@ class UsersController extends MyController
             } else {
                 if ($request->file('cr_copy')) {
                     $extension = $request->file('cr_copy')->extension();
-                    $filepath = Storage::disk('public')->putFileAs('profile_pictures', $request->file('cr_copy'), time() . '.' . $extension);
+                    $filepath = Storage::disk('public')
+                        ->putFileAs('profile_pictures', $request->file('cr_copy'), time() . '.' . $extension);
                 } else {
                     $filepath = null;
                 }
-                $packageData = DB::table('packages')
-                    ->where('id', $request->packages_id)
-                    ->orderBy('id', 'DESC')
-                    ->first();
-                $day = $packageData->days - 1;
-                $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
+                if ($request->packages_id != '') {
+                    $packageData = DB::table('packages')
+                        ->where('id', $request->packages_id)
+                        ->orderBy('id', 'DESC')
+                        ->first();
+                    $day = $packageData->days - 1;
+                    $startdate = date("Y-m-d H:i:s");
+                    $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
+                } else {
+                    $day = 0;
+                    $start_date = Null;
+                    $enddate = Null;
+                }
+
                 $insertData = array(
                     'user_id' => $request->user_id,
                     'company_name' => $request->company_name,
@@ -1045,7 +1054,8 @@ class UsersController extends MyController
                     'account_number' => $request->account_number,
                     'is_online' => $request->is_online,
                     'packages_id' => $request->packages_id,
-                    'start_date' => date("Y-m-d H:i:s"),
+                    'is_wiretransfer' => $request->is_wiretransfer,
+                    'start_date' => $startdate,
                     'end_date' => $enddate,
                     'created_at' => date("Y-m-d H:i:s")
                 );

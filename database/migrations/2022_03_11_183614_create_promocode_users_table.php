@@ -24,6 +24,7 @@ class CreatePromocodeUsersTable extends Migration
             $table->string('disc_amt')->nullable();
             $table->string('service_amt_befor_disc')->nullable();
             $table->string('service_amt_after_disc')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

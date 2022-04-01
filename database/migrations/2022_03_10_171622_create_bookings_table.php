@@ -31,6 +31,7 @@ class CreateBookingsTable extends Migration
             $table->integer('updated_by');
             $table->string('cancelled_reason')->nullable();
             $table->string('payment_status')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

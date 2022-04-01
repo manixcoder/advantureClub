@@ -17,6 +17,7 @@ class CreateProgramsTable extends Migration
             $table->bigIncrements('id');
             $table->string('title')->nullable();
             $table->enum('status',['0','1'])->default(1);
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

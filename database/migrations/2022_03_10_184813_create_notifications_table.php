@@ -19,6 +19,7 @@ class CreateNotificationsTable extends Migration
             $table->integer('user_id')->nullable();
             $table->string('title')->nullable();
             $table->string('message')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

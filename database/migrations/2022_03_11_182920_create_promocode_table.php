@@ -24,6 +24,7 @@ class CreatePromocodeTable extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->longText('description')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

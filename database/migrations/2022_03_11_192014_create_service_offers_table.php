@@ -24,6 +24,7 @@ class CreateServiceOffersTable extends Migration
             $table->string('banner');
             $table->string('description')->nullable();
             $table->enum('status',['0','1'])->default(0);
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

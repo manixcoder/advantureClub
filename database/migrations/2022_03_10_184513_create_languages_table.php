@@ -19,6 +19,7 @@ class CreateLanguagesTable extends Migration
             $table->string('name')->nullable();
             $table->string('description')->nullable();
             $table->enum('status',['0','1'])->default(1);
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

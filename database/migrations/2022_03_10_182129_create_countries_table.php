@@ -21,6 +21,7 @@ class CreateCountriesTable extends Migration
             $table->string('currency')->nullable();
             $table->longText('description')->nullable();
             $table->enum('status', ['0', '1'])->default(1);
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

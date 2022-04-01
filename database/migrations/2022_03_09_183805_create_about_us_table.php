@@ -17,7 +17,7 @@ class CreateAboutUsTable extends Migration
             $table->bigIncrements('id');
             $table->string('image')->nullable();
             $table->longText('content')->nullable();
-            $table->softDeletes();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

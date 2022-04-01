@@ -18,6 +18,7 @@ class CreateRegionsTable extends Migration
             $table->integer('country_id')->nullable();
             $table->string('region')->nullable();
             $table->tinyInteger('status');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

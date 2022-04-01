@@ -17,6 +17,7 @@ class CreateContactUsPurposeTable extends Migration
             $table->bigIncrements('id');
             $table->string('purpose')->nullable();
             $table->tinyInteger('status')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

@@ -20,6 +20,7 @@ class CreateServiceReviewsTable extends Migration
             $table->integer('star');
             $table->integer('remark');
             $table->integer('status');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

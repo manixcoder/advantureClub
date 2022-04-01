@@ -21,6 +21,7 @@ class CreatePromocodeQuestionReportsTable extends Migration
             $table->string('country')->nullable();
             $table->string('purpose')->nullable();
             $table->longText('question')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }
