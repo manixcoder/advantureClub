@@ -63,11 +63,12 @@
                      <h3 class="ellipsis">
                         <?php foreach ($healthConditionData as $val) {
                            if (count($healthConditionData) > 1) { ?>
-                           <span>{{$val->name .', '}}</span> 
+                              <span>{{$val->name .', '}}</span>
                            <?php } else { ?>
-                           <span>{{$val->name}}</span>
-                           <?php }
-                                                                                                                                                               } ?></h3>
+                              <span>{{$val->name}}</span>
+                        <?php }
+                        } ?>
+                     </h3>
                   </li>
                   <li>
                      <p>Weight in Kg :</p>
@@ -275,7 +276,8 @@
             },
             data: {
                "id": id,
-               "status": statusNew
+               "status": statusNew,
+               "become":1,
             },
             success: function(response) {
                console.log(response);

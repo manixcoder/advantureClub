@@ -201,7 +201,7 @@ class AdventurePartnersController extends Controller
         'bp.packages_id',
         'bp.start_date',
         'bp.end_date',
-        
+
       )
       ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
       ->where('u.id', $id)
@@ -310,7 +310,8 @@ class AdventurePartnersController extends Controller
   /* Update status in db from ajax request starts */
   public function update_user_status($id, $status)
   {
-    //dd($request->all());
+    dd($_GET['status']);
+    dd($request->all());
 
 
 
@@ -321,6 +322,22 @@ class AdventurePartnersController extends Controller
       'status' => $_GET['status'],
     );
     $edituserData = DB::table('users')->where('id', $id)->update($Data);
+    DB::table('become_partner')->where('user_id', $id)->update([
+      'is_approved' => '1',
+    ]);
+    if ($_GET['become'] == '1') {
+      DB::table('become_partner')->where('user_id', $id)->update([
+        'is_approved' => '1',
+      ]);
+      DB::table('notifications')->insert([
+        'sender_id' => Auth::user()->id,
+        'user_id' => $id,
+        'title' => 'Your request has been approved.',
+        'message' => 'Now you may proceed to buy your subscription package & will be able to provide your service.',
+        'is_approved' => '0'
+      ]);
+    }
+
     return response()->json(array('msg' => $edituserData), 200);
   }
 
