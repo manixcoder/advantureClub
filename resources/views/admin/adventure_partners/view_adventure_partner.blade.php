@@ -60,8 +60,13 @@
                   </li>
                   <li>
                      <p>Health Conditions :</p>
-                     <h3 class="ellipsis"><?php foreach ($healthConditionData as $val) {
-                                             if (count($healthConditionData) > 1) { ?><span>{{$val->name .', '}}</span> <?php } else { ?><span>{{$val->name}}</span><?php }
+                     <h3 class="ellipsis">
+                        <?php foreach ($healthConditionData as $val) {
+                           if (count($healthConditionData) > 1) { ?>
+                           <span>{{$val->name .', '}}</span> 
+                           <?php } else { ?>
+                           <span>{{$val->name}}</span>
+                           <?php }
                                                                                                                                                                } ?></h3>
                   </li>
                   <li>
@@ -75,7 +80,7 @@
                   <li>
                      <p>Status :</p>
                      <?php
-                     if ($editdata->status == 1) {
+                     if ($editdata->is_approved == 1) {
                         $statVal = 1;
                         $checked = 'checked = checked';
                         $stat = 'Active';

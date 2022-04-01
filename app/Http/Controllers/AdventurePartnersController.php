@@ -200,7 +200,8 @@ class AdventurePartnersController extends Controller
         'bp.is_approved',
         'bp.packages_id',
         'bp.start_date',
-        'bp.end_date'
+        'bp.end_date',
+        
       )
       ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
       ->where('u.id', $id)
