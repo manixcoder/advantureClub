@@ -38,7 +38,10 @@ class AdminUsersController extends MyController
             ->where('users.users_role', '=', 1)
             ->get();
         $data['content'] = 'admin.admin_users.list_admin_users';
-        return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'usersdata' => $usersdata
+            ]);
     }
 
     /* Adventure Users listing ends */
@@ -46,7 +49,8 @@ class AdminUsersController extends MyController
     /* Add new Adventure user starts */
 
     public function add_admin_user(Request $request)
-    {  //echo"<pre>";print_r($request->all());exit;
+    {
+        //echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|min:3|max:50|unique:users',
@@ -70,18 +74,18 @@ class AdminUsersController extends MyController
                 $data['validation'] = $errors;
             } else {
                 $user_data = array(
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'mobile' => $request->mobile,
-                    'mobile_code' => $request->mobile_code,
-                    'status' => ($request->status == 2) ? '0' : '1',
-                    'country_id' => $request->country,
-                    'city_id' => $request->region,
-                    'dob' => date('Y-m-d', strtotime($request->dob)),
-                    'weight' => $request->weight,
-                    'height' => $request->height,
+                    'name'              => $request->name,
+                    'email'             => $request->email,
+                    'mobile'            => $request->mobile,
+                    'mobile_code'       => $request->mobile_code,
+                    'status'            => ($request->status == 2) ? '0' : '1',
+                    'country_id'        => $request->country,
+                    'city_id'           => $request->region,
+                    'dob'               => date('Y-m-d', strtotime($request->dob)),
+                    'weight'            => $request->weight,
+                    'height'            => $request->height,
                     'health_conditions' => implode(',', (array) $request->health_condition),
-                    'users_role' => 3,
+                    'users_role'        => 3,
                 );
                 if (DB::table('users')->insert($user_data)) {
                     $user_id = DB::getPdo()->lastInsertId();
@@ -146,11 +150,15 @@ class AdminUsersController extends MyController
     public function update_user_status($id)
     {
         $Data = array(
-            'id' => $_GET['id'],
-            'status' => $_GET['status'],
+            'id'        => $_GET['id'],
+            'status'    => $_GET['status'],
         );
-        $edituserData = DB::table('users')->where('id', $id)->update($Data);
-        return response()->json(array('msg' => $edituserData), 200);
+        $edituserData = DB::table('users')
+            ->where('id', $id)
+            ->update($Data);
+        return response()->json(array(
+            'msg' => $edituserData
+        ), 200);
     }
     /* Update status ends */
 
