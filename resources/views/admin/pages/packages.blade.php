@@ -31,8 +31,8 @@
                         <?php
                         if (count($packages)) {
                             foreach ($packages as $key => $pkg) {
-                                $includes = DB::table('package_detail')->where('package_id', $pkg->id)->where('type', '1')->get();
-                                $excludes = DB::table('package_detail')->where('package_id', $pkg->id)->where('type', '1')->get();
+                                $includes = DB::table('package_detail')->where('package_id', $pkg->id)->where('detail_type', '1')->get();
+                                $excludes = DB::table('package_detail')->where('package_id', $pkg->id)->where('detail_type', '1')->get();
                         ?>
                                 <tr class="gradeX">
                                     <td>#{{ $key+1 }}</td>

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateNotificationsTable extends Migration
+class CreateQuestionReportsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateNotificationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        Schema::create('question_reports', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('sender_id')->nullable();
-            $table->integer('user_id')->nullable();
-            $table->string('title')->nullable();
-            $table->string('message')->nullable();
-            $table->enum('is_approved',['1','0'])->default(0);
-            $table->datetime('send_at')->nullable();
+            $table->string('username')->nullable();
+            $table->string('emailid')->nullable();
+            $table->string('mobile')->nullable();
+            $table->string('country')->nullable();
+            $table->string('purpose')->nullable();
+            $table->longText('question')->nullable();
             $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
@@ -33,6 +33,6 @@ class CreateNotificationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('question_reports');
     }
 }

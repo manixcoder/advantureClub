@@ -17,6 +17,7 @@ class CreateSubscriptionTable extends Migration
             $table->bigIncrements('id');
             $table->string('type')->nullable();
             $table->string('amount')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

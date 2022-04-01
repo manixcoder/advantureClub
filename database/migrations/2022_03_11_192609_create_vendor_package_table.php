@@ -19,6 +19,7 @@ class CreateVendorPackageTable extends Migration
             $table->integer('package_id');
             $table->date('start_date');
             $table->date('end_date');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

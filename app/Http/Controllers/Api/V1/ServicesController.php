@@ -479,11 +479,11 @@ class ServicesController extends MyController
             if ($request->promo_code) {
                 $promocode = DB::table('promocode')->where(['code' => $request->promo_code])->first();
                 if ($promocode) {
-                    if ($promocode->discount_type == 'A') {
+                    if ($promocode->discount_type == '1') {
                         $disc_typ = 1; //Direct amount
                         $disc_amt = $promocode->discount_amount;
                         $service_disc_amt = $total_amt - $disc_amt;
-                    } elseif ($promocode->discount_type == 'P') {
+                    } elseif ($promocode->discount_type == '2') {
                         $disc_typ = 2; // Percentage discount
                         $disc_amt = $promocode->discount_amount;
                         $service_disc_amt = $total_amt - (($total_amt * $disc_amt) / 100);
@@ -544,7 +544,12 @@ class ServicesController extends MyController
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
-            $promocode = DB::table('promocode')->select(['*', DB::raw("IF(discount_type = 'A','Amount','Percentage') AS discount_type")])->where(['code' => $request->promo_code])->first();
+            $promocode = DB::table('promocode')->select([
+                '*',
+                DB::raw("IF(discount_type = '1','Amount','Percentage') AS discount_type")
+            ])
+                ->where(['code' => $request->promo_code])
+                ->first();
             if ($promocode) {
                 if (strtotime($promocode->start_date) <= time() && strtotime($promocode->end_date) >= time()) {
                     return $this->sendResponse('Valid code', $promocode, 200);
@@ -1077,11 +1082,11 @@ class ServicesController extends MyController
             if ($request->promo_code) {
                 $promocode = DB::table('promocode')->where(['code' => $request->promo_code])->first();
                 if ($promocode) {
-                    if ($promocode->discount_type == 'A') {
+                    if ($promocode->discount_type == '1') {
                         $disc_typ = 1; //Direct amount
                         $disc_amt = $promocode->discount_amount;
                         $service_disc_amt = $total_amt - $disc_amt;
-                    } elseif ($promocode->discount_type == 'P') {
+                    } elseif ($promocode->discount_type == '2') {
                         $disc_typ = 2; // Percentage discount
                         $disc_amt = $promocode->discount_amount;
                         $service_disc_amt = $total_amt - (($total_amt * $disc_amt) / 100);

@@ -25,8 +25,8 @@ class VendorsController extends MyController
             ->get();
 
         foreach ($result as $key => $res) {
-            $includes = DB::table('package_detail')->where('package_id', $res->id)->where('type', '1')->get();
-            $Exclude = DB::table('package_detail')->where('package_id', $res->id)->where('type', '1')->get();
+            $includes = DB::table('package_detail')->where('package_id', $res->id)->where('detail_type', '1')->get();
+            $Exclude = DB::table('package_detail')->where('package_id', $res->id)->where('detail_type', '1')->get();
             $result[$key]->includes = $includes;
             $result[$key]->Exclude = $Exclude;
         }

@@ -72,16 +72,16 @@ class PackagesController extends MyController
                     $pkg_det = [];
                     foreach ($request->includes as $val) {
                         $pkg_det[] = [
-                            'package_id' => $package_id,
+                            'package_id' => $package_id, 
                             'title' => $val,
-                            'type' => 1
+                            'detail_type' => 1
                         ];
                     }
                     foreach ($request->excludes as $val) {
                         $pkg_det[] = [
                             'package_id' => $package_id,
                             'title' => $val,
-                            'type' => 0
+                            'detail_type' => 0
                         ];
                     }
                     DB::table('package_detail')->insert($pkg_det);
