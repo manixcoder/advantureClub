@@ -18,6 +18,7 @@ class CreateServiceLikesTable extends Migration
             $table->integer('service_id');
             $table->integer('user_id');
             $table->integer('is_like');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

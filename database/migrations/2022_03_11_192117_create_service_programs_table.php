@@ -21,6 +21,7 @@ class CreateServiceProgramsTable extends Migration
             $table->string('start_datetime')->nullable();
             $table->string('end_datetime')->nullable();
             $table->enum('status',['1','0'])->default(1);
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

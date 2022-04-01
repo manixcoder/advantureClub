@@ -26,7 +26,7 @@ class ServicesController extends MyController
     {
         $result = array();
         $url = asset('public');
-        $s_img = asset('public/uploads');
+        $s_img = asset('public/uploads') . '/';
         if ($id) {
             $where = 'srvc.id = ' . $id . ' ';
         } else {
@@ -64,22 +64,22 @@ class ServicesController extends MyController
         if ($id) {
             $services = DB::table('services as srvc')
                 ->select([
-                    'srvc.*', 
+                    'srvc.*',
                     'srvc.id as service_id',
                     'usr.name as provided_by',
-                    DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"), 
-                    DB::raw("CONCAT('" . $s_img . "/',simg.image_url) AS image_url"), 
+                    DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
+                    //DB::raw("CONCAT('" . $s_img . "/',simg.image_url) AS image_url"),
                     DB::raw("CONCAT('" . $s_img . "/',simg.thumbnail) AS thumbnail"),
-                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
-                    'scat.category as service_category', 
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    'scat.category as service_category',
                     'ssec.sector as service_sector',
                     'styp.type as service_type',
                     'slvl.level as service_level',
                     'cntri.country',
                     'rgn.region',
-                    'srvc.currency', 
+                    'srvc.currency',
                     //'srvc.sfor_id as aimed_for', 
-                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
                     'srvc.cost_inc as including_gerea_and_other_taxes',
                     'srvc.cost_exc as excluding_gerea_and_other_taxes'
                 ])
@@ -91,7 +91,7 @@ class ServicesController extends MyController
                 ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+                ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->where(['srvc.deleted_at' => NULL])
@@ -99,7 +99,10 @@ class ServicesController extends MyController
                 ->whereRaw($where)
                 ->get();
 
+
+
             if (!$services->isEmpty()) {
+                $imageData = DB::table('service_images')->where('service_id', $id)->get();
                 $services[0]->is_liked = 0;
                 if ($request->user_id >= 1) {
                     $is_liked = DB::table('service_likes')
@@ -108,9 +111,13 @@ class ServicesController extends MyController
                         ->first();
                     $services[0]->is_liked = isset($is_liked->service_id) ? 1 : 0;
                 }
-
+                $services[0]->baseurl = $s_img;
+                $services[0]->images =  $imageData;
                 $activities = DB::table('service_activities as s_act')
-                    ->select(['s_act.*' , 'act.activity'])
+                    ->select([
+                        's_act.*',
+                        'act.activity'
+                    ])
                     ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
                     ->where('s_act.service_id', $id)
                     ->get()
@@ -124,7 +131,16 @@ class ServicesController extends MyController
                     ->toArray();
                 $services[0]->dependencies = $dependencies ?? [];
                 $programs = DB::table('service_programs')
-                    ->select(['id', 'service_id', 'title', 'start_datetime', 'end_datetime', 'description'])->where('service_id', $id)->get();
+                    ->select([
+                        'id',
+                        'service_id',
+                        'title',
+                        'start_datetime',
+                        'end_datetime',
+                        'description'
+                    ])
+                    ->where('service_id', $id)
+                    ->get();
                 $services[0]->programs = $programs;
                 if ($services[0]->service_plan == 1) {
                     $availability = DB::table('service_plan_day_date as spdd')
@@ -143,7 +159,13 @@ class ServicesController extends MyController
                     $services[0]->availability = $availability ?? [];
                 }
                 $star_ratings_res = DB::table('service_reviews')
-                    ->select(['service_id', DB::raw("AVG(star) AS stars"), DB::raw("COUNT(user_id) AS reviewd_by")])
+                    ->select(
+                        [
+                            'service_id',
+                            DB::raw("AVG(star) AS stars"),
+                            DB::raw("COUNT(user_id) AS reviewd_by")
+                        ]
+                    )
                     ->where('service_id', $id)
                     ->groupBy('service_id')
                     ->first();
@@ -184,22 +206,22 @@ class ServicesController extends MyController
 
             $services = DB::table('services as srvc')
                 ->select([
-                    'srvc.*', 
+                    'srvc.*',
                     'srvc.id as service_id',
-                    'usr.name as provided_by', 
-                    DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"), 
-                    DB::raw("CONCAT('" . $s_img . "/',simag.image_url) AS image_url"), 
+                    'usr.name as provided_by',
+                    DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
+                    // DB::raw("CONCAT('" . $s_img . "/',simag.image_url) AS image_url"), 
                     DB::raw("CONCAT('" . $s_img . "/',simag.thumbnail) AS thumbnail"),
-                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
-                    'scat.category as service_category', 
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    'scat.category as service_category',
                     'ssec.sector as service_sector',
-                    'styp.type as service_type', 
-                    'slvl.level as service_level', 
+                    'styp.type as service_type',
+                    'slvl.level as service_level',
                     'cntri.country',
-                    'rgn.region', 
+                    'rgn.region',
                     'srvc.currency',
                     //'srvc.sfor_id as aimed_for', 
-                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
                     'srvc.cost_inc as including_gerea_and_other_taxes',
                     'srvc.cost_exc as excluding_gerea_and_other_taxes'
                 ])
@@ -221,10 +243,15 @@ class ServicesController extends MyController
                 ->groupBy('ssfor.service_id')
                 ->orderBy('updated_at', $recently_added)
                 ->get();
+
             foreach ($services as $key => $ser) {
+
                 $service_id = $ser->id;
+                $imageData = DB::table('service_images')->where('service_id', $service_id)->get();
                 $services[$key]->stars = isset($star_ratings[$service_id]) ? number_format($star_ratings[$service_id]['stars'], 2, '.', '') : 0;
                 $services[$key]->is_liked = in_array($service_id, $liked_services) ? 1 : 0;
+                $services[$key]->baseurl = $s_img;
+                $services[$key]->images =  $imageData;
             }
         }
         if (!$services->isEmpty()) {
@@ -452,11 +479,11 @@ class ServicesController extends MyController
             if ($request->promo_code) {
                 $promocode = DB::table('promocode')->where(['code' => $request->promo_code])->first();
                 if ($promocode) {
-                    if ($promocode->discount_type == 'A') {
+                    if ($promocode->discount_type == '1') {
                         $disc_typ = 1; //Direct amount
                         $disc_amt = $promocode->discount_amount;
                         $service_disc_amt = $total_amt - $disc_amt;
-                    } elseif ($promocode->discount_type == 'P') {
+                    } elseif ($promocode->discount_type == '2') {
                         $disc_typ = 2; // Percentage discount
                         $disc_amt = $promocode->discount_amount;
                         $service_disc_amt = $total_amt - (($total_amt * $disc_amt) / 100);
@@ -517,7 +544,12 @@ class ServicesController extends MyController
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
-            $promocode = DB::table('promocode')->select(['*', DB::raw("IF(discount_type = 'A','Amount','Percentage') AS discount_type")])->where(['code' => $request->promo_code])->first();
+            $promocode = DB::table('promocode')->select([
+                '*',
+                DB::raw("IF(discount_type = '1','Amount','Percentage') AS discount_type")
+            ])
+                ->where(['code' => $request->promo_code])
+                ->first();
             if ($promocode) {
                 if (strtotime($promocode->start_date) <= time() && strtotime($promocode->end_date) >= time()) {
                     return $this->sendResponse('Valid code', $promocode, 200);
@@ -767,8 +799,9 @@ class ServicesController extends MyController
                     'cntri.country',
                     'curr.code as currency',
                     DB::raw("GROUP_CONCAT(sfor.sfor ) as aimed_for"),
-                    DB::raw("dur.duration as duration",
-                    DB::raw("IF(slike.is_like=1,slike.is_like,0) AS is_liked")
+                    DB::raw(
+                        "dur.duration as duration",
+                        DB::raw("IF(slike.is_like=1,slike.is_like,0) AS is_liked")
                     )
                 ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
@@ -1049,11 +1082,11 @@ class ServicesController extends MyController
             if ($request->promo_code) {
                 $promocode = DB::table('promocode')->where(['code' => $request->promo_code])->first();
                 if ($promocode) {
-                    if ($promocode->discount_type == 'A') {
+                    if ($promocode->discount_type == '1') {
                         $disc_typ = 1; //Direct amount
                         $disc_amt = $promocode->discount_amount;
                         $service_disc_amt = $total_amt - $disc_amt;
-                    } elseif ($promocode->discount_type == 'P') {
+                    } elseif ($promocode->discount_type == '2') {
                         $disc_typ = 2; // Percentage discount
                         $disc_amt = $promocode->discount_amount;
                         $service_disc_amt = $total_amt - (($total_amt * $disc_amt) / 100);

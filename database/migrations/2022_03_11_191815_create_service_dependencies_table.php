@@ -17,6 +17,7 @@ class CreateServiceDependenciesTable extends Migration
             $table->bigIncrements('id');
             $table->integer('service_id')->nullable();
             $table->integer('dependency_id')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

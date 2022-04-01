@@ -16,6 +16,7 @@ class CreateAimedTable extends Migration
         Schema::create('aimed', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('AimedName')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

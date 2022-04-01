@@ -17,6 +17,7 @@ class CreateTermsConditionsTable extends Migration
             $table->bigIncrements('id');
             $table->string('title')->nullable();
             $table->text('description')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

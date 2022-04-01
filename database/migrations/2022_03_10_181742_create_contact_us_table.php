@@ -22,6 +22,7 @@ class CreateContactUsTable extends Migration
             $table->string('purpose')->nullable();
             $table->string('subject')->nullable();
             $table->string('message')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

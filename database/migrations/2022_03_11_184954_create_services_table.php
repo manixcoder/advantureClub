@@ -44,6 +44,7 @@ class CreateServicesTable extends Migration
             $table->string('image')->nullable();
             $table->longText('descreption')->nullable();
             $table->string('favourite_image')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

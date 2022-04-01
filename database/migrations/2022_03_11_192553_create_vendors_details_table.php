@@ -25,7 +25,8 @@ class CreateVendorsDetailsTable extends Migration
             $table->string('cr_copy')->nullable();
             $table->string('payment_mode')->nullable();
             $table->integer('subscription_id')->nullable();
-            $table->datetime('created_date');
+            $table->datetime('created_date')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

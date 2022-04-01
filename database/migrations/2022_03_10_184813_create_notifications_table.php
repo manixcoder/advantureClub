@@ -19,6 +19,9 @@ class CreateNotificationsTable extends Migration
             $table->integer('user_id')->nullable();
             $table->string('title')->nullable();
             $table->string('message')->nullable();
+            $table->enum('is_approved',['1','0'])->default(0);
+            $table->datetime('send_at')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

@@ -18,6 +18,7 @@ class CreateServicePlanDayDateTable extends Migration
             $table->integer('service_id');
             $table->integer('day');
             $table->date('date');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

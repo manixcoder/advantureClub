@@ -23,6 +23,7 @@ class CreateOtpTable extends Migration
             $table->bigInteger('mobile');
             $table->tinyInteger('otp');
             $table->enum('status', ['0', '1'])->default(0)->comment('1=Verified');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

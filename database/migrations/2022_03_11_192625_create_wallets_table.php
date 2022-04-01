@@ -24,6 +24,7 @@ class CreateWalletsTable extends Migration
             $table->string('current_amt')->nullable();
             $table->string('note')->nullable();
             $table->string('image')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

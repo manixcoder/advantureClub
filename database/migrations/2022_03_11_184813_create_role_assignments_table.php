@@ -18,6 +18,7 @@ class CreateRoleAssignmentsTable extends Migration
             $table->integer('country_id')->nullable();
             $table->integer('role_id')->nullable();
             $table->integer('sort')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

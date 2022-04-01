@@ -17,6 +17,7 @@ class CreateServicePlanTable extends Migration
             $table->bigIncrements('id');
             $table->string('plan')->nullable();
             $table->string('title')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

@@ -17,7 +17,7 @@ class CreateActivitiesTable extends Migration
             $table->bigIncrements('id');
             $table->string('activity')->nullable();
             $table->string('status');
-            $table->softDeletes();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

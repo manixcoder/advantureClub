@@ -17,6 +17,7 @@ class CreateServiceServiceForTable extends Migration
             $table->bigIncrements('id');
             $table->integer('service_id');
             $table->integer('sfor_id');
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

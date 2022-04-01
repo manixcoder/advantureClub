@@ -176,17 +176,7 @@ class AdventurePartnersController extends Controller
     //$editdata = User::where('id', $id)->first();
     $healthConditionData = '';
     $pModeData = '';
-    // $editdata = DB::table('users')
-    //   ->select(
-    //     'users.*',
-    //     'countries.country',
-    //     'cities.city',
-    //     'vendors_details.*'
-    //   )
-    //   ->rightjoin('countries', 'users.country_id', '=', 'countries.id')
-    //   ->rightjoin('cities', 'users.country_id', '=', 'cities.country_id')
-    //   ->rightjoin('vendors_details', 'users.id', '=', 'vendors_details.user_id')
-    //   ->where('users.id', $id)->first();
+
     $editdata =  DB::table('users as u')
       ->select(
         'u.*',
@@ -210,27 +200,42 @@ class AdventurePartnersController extends Controller
         'bp.is_approved',
         'bp.packages_id',
         'bp.start_date',
-        'bp.end_date'
+        'bp.end_date',
+
       )
       ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
       ->where('u.id', $id)
       //->where(['u.deleted_at' => NULL])
       ->first();
     //dd($editdata);
+    $healthConditionData = array();
     if (!empty($editdata->health_conditions)) {
       $hCondition = explode(",", $editdata->health_conditions);
-      $healthConditionData = DB::table('health_conditions')->select('health_conditions.*')
-        ->wherein('health_conditions.id', $hCondition)->get();
+      $healthConditionData = DB::table('health_conditions')
+        ->select('health_conditions.*')
+        ->wherein('health_conditions.id', $hCondition)
+        ->get();
+    } else {
+      $healthConditionData = array();
     }
-    $subscriptionData = '';
+    $subscriptionData = array();
     if (!empty($editdata->subscription_id)) {
-      $subscriptionData = DB::table('packages')->select('packages.*')
-        ->where('packages.id', $editdata->subscription_id)->get();
+      $subscriptionData = DB::table('packages')
+        ->select('packages.*')
+        ->where('packages.id', $editdata->subscription_id)
+        ->get();
+    } else {
+      $subscriptionData = array();
     }
+    $pModeData = array();
     if (!empty($editdata->payment_mode)) {
       $pMode = explode(",", $editdata->payment_mode);
-      $pModeData = DB::table('get_all_paymentmode')->select('get_all_paymentmode.*')
-        ->wherein('get_all_paymentmode.id', $pMode)->get();
+      $pModeData = DB::table('get_all_paymentmode')
+        ->select('get_all_paymentmode.*')
+        ->wherein('get_all_paymentmode.id', $pMode)
+        ->get();
+    } else {
+      $pModeData = array();
     }
     $services = DB::table('services as srvc')
       ->select([
@@ -274,8 +279,10 @@ class AdventurePartnersController extends Controller
     $data['content'] = 'admin.adventure_partners.view_adventure_partner';
     return view('layouts.content', compact('data'))->with([
       'editdata' => $editdata,
-      'healthConditionData' => $healthConditionData, 'pModeData' => $pModeData,
-      'services' => $services, 'subscriptionData' => $subscriptionData
+      'healthConditionData' => $healthConditionData,
+      'pModeData' => $pModeData,
+      'services' => $services,
+      'subscriptionData' => $subscriptionData
     ]);
   }
 
@@ -303,7 +310,8 @@ class AdventurePartnersController extends Controller
   /* Update status in db from ajax request starts */
   public function update_user_status($id, $status)
   {
-    //dd($request->all());
+    dd($_GET['status']);
+    dd($request->all());
 
 
 
@@ -314,6 +322,22 @@ class AdventurePartnersController extends Controller
       'status' => $_GET['status'],
     );
     $edituserData = DB::table('users')->where('id', $id)->update($Data);
+    DB::table('become_partner')->where('user_id', $id)->update([
+      'is_approved' => '1',
+    ]);
+    if ($_GET['become'] == '1') {
+      DB::table('become_partner')->where('user_id', $id)->update([
+        'is_approved' => '1',
+      ]);
+      DB::table('notifications')->insert([
+        'sender_id' => Auth::user()->id,
+        'user_id' => $id,
+        'title' => 'Your request has been approved.',
+        'message' => 'Now you may proceed to buy your subscription package & will be able to provide your service.',
+        'is_approved' => '0'
+      ]);
+    }
+
     return response()->json(array('msg' => $edituserData), 200);
   }
 

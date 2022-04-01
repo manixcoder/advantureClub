@@ -21,6 +21,7 @@ class CreateTransactionsTable extends Migration
             $table->string('method')->nullable();
             $table->string('status')->nullable();
             $table->integer('price')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAnnouncementsTable extends Migration
+class CreateQuestionReportsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,14 @@ class CreateAnnouncementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('announcements', function (Blueprint $table) {
+        Schema::create('question_reports', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('reach_for')->nullable();
-            $table->longText('content')->nullable();
+            $table->string('username')->nullable();
+            $table->string('emailid')->nullable();
+            $table->string('mobile')->nullable();
+            $table->string('country')->nullable();
+            $table->string('purpose')->nullable();
+            $table->longText('question')->nullable();
             $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
@@ -29,6 +33,6 @@ class CreateAnnouncementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('announcements');
+        Schema::dropIfExists('question_reports');
     }
 }

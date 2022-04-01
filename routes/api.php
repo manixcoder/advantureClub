@@ -30,7 +30,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/change_password', 'Api\V1\UsersController@changePassword');
     Route::post('/become_partner', 'Api\V1\UsersController@becomepartner');
     Route::post('/update_subscription', 'Api\V1\UsersController@updateSubscription');
-    Route::post('/remaining_days', 'Api\V1\UsersController@remainingDays');
+    Route::post('/remaining_days', 'Api\V1\UsersController@remainingDays'); 
     Route::post('/get_profile', 'Api\V1\UsersController@userProfile');
     Route::get('/serviceProviderProfile/{id?}', 'Api\V1\UsersController@serviceProviderProfile')->where(['id' => '[0-9]+']);
 

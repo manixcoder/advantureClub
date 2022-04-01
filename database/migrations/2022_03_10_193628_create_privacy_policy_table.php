@@ -17,6 +17,7 @@ class CreatePrivacyPolicyTable extends Migration
             $table->bigIncrements('id');
             $table->string('title')->nullable();
             $table->longText('description')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

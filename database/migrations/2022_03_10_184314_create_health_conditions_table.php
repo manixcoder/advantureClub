@@ -16,6 +16,7 @@ class CreateHealthConditionsTable extends Migration
         Schema::create('health_conditions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

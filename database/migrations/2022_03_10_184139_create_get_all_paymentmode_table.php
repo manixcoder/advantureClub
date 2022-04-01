@@ -17,6 +17,7 @@ class CreateGetAllPaymentmodeTable extends Migration
             $table->bigIncrements('id');
             $table->string('payment_name')->nullable();
             $table->string('payment_image')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

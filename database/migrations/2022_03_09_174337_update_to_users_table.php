@@ -70,7 +70,6 @@ class UpdateToUsersTable extends Migration
             $table->dropColumn('username')->nullable();
             $table->dropColumn('first_name')->nullable();
             $table->dropColumn('last_name')->nullable();
-            $table->softDeletes();
         });
     }
 }

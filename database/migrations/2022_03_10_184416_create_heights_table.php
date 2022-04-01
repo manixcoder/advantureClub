@@ -16,6 +16,7 @@ class CreateHeightsTable extends Migration
         Schema::create('heights', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('heightName')->nullable();
+            $table->datetime('deleted_at')->nullable();
             $table->timestamps();
         });
     }
