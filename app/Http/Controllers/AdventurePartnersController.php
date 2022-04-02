@@ -203,7 +203,6 @@ class AdventurePartnersController extends Controller
         'bp.packages_id',
         'bp.start_date',
         'bp.end_date'
-
       )
       ->where('u.id', $id)
       ->where(['u.deleted_at' => NULL])
@@ -316,28 +315,28 @@ class AdventurePartnersController extends Controller
       'status' => $_GET['status'],
     );
     $edituserData = DB::table('users')->where('id', $id)->update($Data);
-    DB::table('become_partner')->where('user_id', $id)->update([
-      'is_approved' => '1',
-    ]);
-    DB::table('notifications')->insert([
-      'sender_id' => Auth::user()->id,
-      'user_id' => $id,
-      'title' => 'Your request has been approved.',
-      'message' => 'Now you may proceed to buy your subscription package & will be able to provide your service.',
-      'is_approved' => '0'
-    ]);
-    if ($_GET['become'] == '1') {
-      DB::table('become_partner')->where('user_id', $id)->update([
-        'is_approved' => '1',
-      ]);
-      DB::table('notifications')->insert([
-        'sender_id' => Auth::user()->id,
-        'user_id' => $id,
-        'title' => 'Your request has been approved.',
-        'message' => 'Now you may proceed to buy your subscription package & will be able to provide your service.',
-        'is_approved' => '0'
-      ]);
-    }
+    // DB::table('become_partner')->where('user_id', $id)->update([
+    //   'is_approved' => '1',
+    // ]);
+    // DB::table('notifications')->insert([
+    //   'sender_id' => Auth::user()->id,
+    //   'user_id' => $id,
+    //   'title' => 'Your request has been approved.',
+    //   'message' => 'Now you may proceed to buy your subscription package & will be able to provide your service.',
+    //   'is_approved' => '0'
+    // ]);
+    // if ($_GET['become'] == '1') {
+    //   DB::table('become_partner')->where('user_id', $id)->update([
+    //     'is_approved' => '1',
+    //   ]);
+    //   DB::table('notifications')->insert([
+    //     'sender_id' => Auth::user()->id,
+    //     'user_id' => $id,
+    //     'title' => 'Your request has been approved.',
+    //     'message' => 'Now you may proceed to buy your subscription package & will be able to provide your service.',
+    //     'is_approved' => '0'
+    //   ]);
+    // }
 
     return response()->json(array('msg' => $edituserData), 200);
   }
@@ -359,6 +358,9 @@ class AdventurePartnersController extends Controller
     $update = array(
       'is_approved' => $_GET['status']
     );
+    $userData = DB::table('users')->where('id', $id)->update([
+      'status' => $is_approved
+    ]);
     $approveData = DB::table('become_partner')->where('user_id', $id)->update($update);
 
     $editpartnerData = DB::table('notifications')->insert([
@@ -366,7 +368,10 @@ class AdventurePartnersController extends Controller
       'user_id' => $_GET['id'],
       'is_approved' => $is_approved,
       'title' => 'Your request has been ' . $statusMsg,
-      'message' => 'Now you may proceed to buy subscription package & will be able to provide your service.'
+      'message' => 'Now you may proceed to buy subscription package & will be able to provide your service.',
+      'send_at'=>date("Y-m-d H:i:s"),
+      'created_at'=>date("Y-m-d H:i:s"),
+      'updated_at'=>date("Y-m-d H:i:s"),
     ]);
     // }
     // $Data = array(
