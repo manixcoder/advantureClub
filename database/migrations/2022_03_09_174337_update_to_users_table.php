@@ -30,7 +30,7 @@ class UpdateToUsersTable extends Migration
             $table->string('points')->after('app_notification')->nullable();
             $table->string('health_conditions')->after('points')->nullable();
             $table->string('health_conditions_id')->after('health_conditions')->nullable();
-            $table->enum('status', ['1', '2', '0'])->after('health_conditions_id')->default(1)->comment = '0= Inactive  1= Active, 2= Decline';
+            $table->enum('status', ['1', '2', '0'])->after('health_conditions_id')->default(0)->comment = '0= Inactive  1= Active, 2= Decline';
             $table->string('mobile_code')->after('status')->nullable();
             $table->string('added_from')->after('mobile_code')->nullable();
             $table->string('username')->after('added_from')->nullable();
