@@ -2,10 +2,10 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <h4 class="pull-left page-title"><a href="{{URL::to('services')}}" >My Services</a> > Create Service</h4>
+                <h4 class="pull-left page-title"><a href="{{URL::to('services')}}">My Services</a> > Create Service</h4>
             </div>
         </div>
-        <form  action="{{ URL::to('services/add') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ URL::to('services/add') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row" id="example-basic">
                 <div class="col-md-10 offset-1">
@@ -34,7 +34,7 @@
                                                 if ($owner == $ven['id']) {
                                                     $sel = 'selected';
                                                 }
-                                                ?>
+                                            ?>
                                                 <option value='<?php echo $ven['id']; ?>' <?= $sel ?>><?php echo $ven['name']; ?></option>
                                             <?php } ?>
                                         </select>
@@ -44,7 +44,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="row"> 
+                                    <div class="row">
                                         <div class="col-md-6 text-center">
                                             <img class="img-responsive" id="banner1" src="https://picsum.photos/seed/picsum/500/180" alt="Photo">
                                         </div>
@@ -61,7 +61,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="file" id="banners" name="banners[]" class="form-control" multiple> 
+                                        <input type="file" id="banners" name="banners[]" class="form-control" multiple>
                                         <?php if (isset($validation['banners'])) { ?>
                                             <label class="error">{{ $validation['banners'] }}</label>
                                         <?php } ?>
@@ -77,7 +77,7 @@
                                             $adventure_name = $service_detail['name'];
                                         }
                                         ?>
-                                        <input type="text" id="adventure_name" name="adventure_name" class="form-control" value="{{$adventure_name}}" placeholder="Adventure Name" > 
+                                        <input type="text" id="adventure_name" name="adventure_name" class="form-control" value="{{$adventure_name}}" placeholder="Adventure Name">
                                         <?php if (isset($validation['adventure_name'])) { ?>
                                             <label class="error">{{ $validation['adventure_name'] }}</label>
                                         <?php } ?>
@@ -103,7 +103,7 @@
                                                 if ($service_sector == $sec['id']) {
                                                     $sel = 'selected';
                                                 }
-                                                ?>
+                                            ?>
                                                 <option value='<?= $sec['id'] ?>' <?= $sel ?>><?= $sec['sector'] ?></option>
                                             <?php } ?>
                                         </select>
@@ -130,7 +130,7 @@
                                                 if ($country == $cntri['id']) {
                                                     $sel = 'selected';
                                                 }
-                                                ?>
+                                            ?>
                                                 <option value='<?= $cntri['id'] ?>' <?= $sel ?>><?= $cntri['country'] ?></option>
                                             <?php } ?>
                                         </select>
@@ -175,7 +175,7 @@
                                                 if ($service_category == $cat['id']) {
                                                     $sel = 'selected';
                                                 }
-                                                ?>
+                                            ?>
                                                 <option value='<?= $cat['id'] ?>' <?= $sel ?>><?= $cat['category'] ?></option>
                                             <?php } ?>
                                         </select>
@@ -202,7 +202,7 @@
                                                 if ($service_type == $typ['id']) {
                                                     $sel = 'selected';
                                                 }
-                                                ?>
+                                            ?>
                                                 <option value='<?= $typ['id'] ?>' <?= $sel ?>><?= $typ['type'] ?></option>
                                             <?php } ?>
                                         </select>
@@ -229,7 +229,7 @@
                                                 if ($service_level == $lvl['id']) {
                                                     $sel = 'selected';
                                                 }
-                                                ?>
+                                            ?>
                                                 <option value='<?= $lvl['id'] ?>' <?= $sel ?>><?= $lvl['level'] ?></option>
                                             <?php } ?>
                                         </select>
@@ -249,14 +249,14 @@
                                         }
                                         ?>
                                         <select class="form-control" id="duration" name='duration'>
-                                            <option value='' >Duration</option>
+                                            <option value=''>Duration</option>
                                             <?php
                                             foreach ($durations as $dur) {
                                                 $sel = '';
                                                 if ($duration == $dur->id) {
                                                     $sel = 'selected';
                                                 }
-                                                ?>
+                                            ?>
                                                 <option value='<?= $dur->id ?>' <?= $sel ?>><?= $dur->duration ?></option>
                                             <?php } ?>
                                         </select>
@@ -275,7 +275,7 @@
                                             $available_seats = $service_detail['available_seats'];
                                         }
                                         ?>
-                                        <input type="text" id="available_seats" name="available_seats" class="form-control" value="{{$available_seats}}" placeholder="Available Seats" > 
+                                        <input type="text" id="available_seats" name="available_seats" class="form-control" value="{{$available_seats}}" placeholder="Available Seats">
                                         <?php if (isset($validation['available_seats'])) { ?>
                                             <label class="error">{{ $validation['available_seats'] }}</label>
                                         <?php } ?>
@@ -291,7 +291,7 @@
                                             $start_date = $service_detail['start_date'];
                                         }
                                         ?>
-                                        <input type="text" id="start_date" name="start_date" class="form-control datepicker" value="{{$start_date}}" placeholder="Start date" readonly > 
+                                        <input type="text" id="start_date" name="start_date" class="form-control datepicker" value="{{$start_date}}" placeholder="Start date" readonly>
                                         <?php if (isset($validation['start_date'])) { ?>
                                             <label class="error">{{ $validation['start_date'] }}</label>
                                         <?php } ?>
@@ -307,7 +307,7 @@
                                             $end_date = $service_detail['end_date'];
                                         }
                                         ?>
-                                        <input type="text" id="end_date" name="end_date" class="form-control datepicker" value="{{$end_date}}" placeholder="End date" readonly > 
+                                        <input type="text" id="end_date" name="end_date" class="form-control datepicker" value="{{$end_date}}" placeholder="End date" readonly>
                                         <?php if (isset($validation['end_date'])) { ?>
                                             <label class="error">{{ $validation['end_date'] }}</label>
                                         <?php } ?>
@@ -332,7 +332,7 @@
                                                 if (in_array($act->id, $activities)) {
                                                     $sel = 'selected';
                                                 }
-                                                ?>
+                                            ?>
                                                 <option value='<?php echo $act->id; ?>' <?= $sel ?>><?php echo $act->activity; ?></option>
                                             <?php } ?>
                                         </select>
@@ -372,18 +372,18 @@
                                             ?>
                                             <div class="col-md-4">
                                                 <input type="radio" name="recommended" id="recommended" value="1" <?php
-                                                if ($recommended == 1) {
-                                                    echo 'checked';
-                                                }
-                                                ?> >
+                                                                                                                    if ($recommended == 1) {
+                                                                                                                        echo 'checked';
+                                                                                                                    }
+                                                                                                                    ?>>
                                                 Yes
                                             </div>
                                             <div class="col-md-4">
                                                 <input type="radio" name="recommended" id="recommended" value="2" <?php
-                                                if ($recommended == 2) {
-                                                    echo 'checked';
-                                                }
-                                                ?> >
+                                                                                                                    if ($recommended == 2) {
+                                                                                                                        echo 'checked';
+                                                                                                                    }
+                                                                                                                    ?>>
                                                 No
                                             </div>
                                             <div class="col-md-12">
@@ -411,9 +411,9 @@
                                                 if ($service_plan == $splan->id) {
                                                     $checked = 'checked';
                                                 }
-                                                ?>
+                                            ?>
                                                 <div class="col-md-4">
-                                                    <input type="radio" name="service_plan" class="service_plan_radio" id="service_plan1" value="{{$splan->id}}" <?= $checked ?> >
+                                                    <input type="radio" name="service_plan" class="service_plan_radio" id="service_plan1" value="{{$splan->id}}" <?= $checked ?>>
                                                     {{$splan->title}}
                                                 </div>
                                             <?php } ?>
@@ -437,7 +437,7 @@
                                                     if (in_array($wd->id, $service_plan_days)) {
                                                         $checked = 'checked';
                                                     }
-                                                    ?>
+                                                ?>
                                                     <div class="checkbox-cus">
                                                         <input type="checkbox" name='service_plan_days[]' value="{{$wd->id}}" <?= $checked ?>>
                                                         {{$wd->day}}
@@ -445,7 +445,7 @@
                                                 <?php } ?>
                                             </div>
                                         </div>
-                                        <div class="row calender_days_div" style="display:none" >
+                                        <div class="row calender_days_div" style="display:none">
                                             <?php
                                             $particular_date = '';
                                             if (request('particular_date')) {
@@ -455,7 +455,7 @@
                                             }
                                             ?>
                                             <div class="col-md-12">
-                                                <input type="text" id="particular_date" name="particular_date" class="form-control datepicker" value="<?php echo $particular_date; ?>" placeholder="Select multiple date" readonly > 
+                                                <input type="text" id="particular_date" name="particular_date" class="form-control datepicker" value="<?php echo $particular_date; ?>" placeholder="Select multiple date" readonly>
                                             </div>
                                         </div>
                                         <?php if (isset($validation['service_plan_days'])) { ?>
@@ -483,7 +483,7 @@
                                                     if (in_array($sfor->id, $sservice_for)) {
                                                         $checked = 'checked';
                                                     }
-                                                    ?>
+                                                ?>
                                                     <div class="checkbox-cus">
                                                         <input type="checkbox" name='service_for[]' value='{{$sfor->id}}' <?= $checked ?>>
                                                         {{$sfor->sfor}}
@@ -513,9 +513,9 @@
                                                     if (in_array($dep->id, $dependency)) {
                                                         $checked = 'checked';
                                                     }
-                                                    ?>
+                                                ?>
                                                     <div class="checkbox-cus">
-                                                        <input type="checkbox" name="dependency[]" value="{{$dep->id}}" <?= $checked ?> >
+                                                        <input type="checkbox" name="dependency[]" value="{{$dep->id}}" <?= $checked ?>>
                                                         {{$dep->dependency_name}}
                                                     </div>
                                                 <?php } ?>
@@ -537,7 +537,7 @@
                                             $gathering_end_time = request('gathering_end_time');
                                             $program_description = request('program_description');
                                             foreach ($schedule_title as $key => $val) {
-                                                ?>
+                                        ?>
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <div class="row">
@@ -555,7 +555,7 @@
                                                                 <?php } ?>
                                                             </div>
                                                             <div class="col-md-4">
-                                                                <input type="text" class="form-control cursor-pointer gathering_datepicker" name='gathering_date[]' placeholder="Gathering Date" value="{{$g_date}}" readonly >
+                                                                <input type="text" class="form-control cursor-pointer gathering_datepicker" name='gathering_date[]' placeholder="Gathering Date" value="{{$g_date}}" readonly>
                                                                 <?php if (isset($validation['gathering_date'])) { ?>
                                                                     <label class="error">{{ $validation['gathering_date'] }}</label>
                                                                 <?php } ?>
@@ -589,9 +589,9 @@
                                                         <?php } ?>
                                                     </div>
                                                 </div> <?php
-                                            }
-                                        } else {
-                                            ?>
+                                                    }
+                                                } else {
+                                                        ?>
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <div class="row">
@@ -632,7 +632,7 @@
                                                                 $gathering_start_time = $service_detail['gathering_start_time'];
                                                             }
                                                             ?>
-                                                            <input type="text" class="form-control cursor-pointer gathering_start_time" name='gathering_start_time[]' placeholder="Start Time" value="" readonly required="" >
+                                                            <input type="text" class="form-control cursor-pointer gathering_start_time" name='gathering_start_time[]' placeholder="Start Time" value="" readonly required="">
                                                             <?php if (isset($validation['gathering_start_time'])) { ?>
                                                                 <label class="error">{{ $validation['gathering_start_time'] }}</label>
                                                             <?php } ?>
@@ -646,7 +646,7 @@
                                                                 $gathering_end_time = $service_detail['gathering_end_time'];
                                                             }
                                                             ?>
-                                                            <input type="text" class="form-control cursor-pointer gathering_end_time" name='gathering_end_time[]' placeholder="End Time" value="" readonly required="" >
+                                                            <input type="text" class="form-control cursor-pointer gathering_end_time" name='gathering_end_time[]' placeholder="End Time" value="" readonly required="">
                                                             <?php if (isset($validation['gathering_end_time'])) { ?>
                                                                 <label class="error">{{ $validation['gathering_end_time'] }}</label>
                                                             <?php } ?>
@@ -748,7 +748,7 @@
                                                     if ($currency == $curr['id']) {
                                                         $sel = 'selected';
                                                     }
-                                                    ?>
+                                                ?>
                                                     <option value="{{@$curr['id']}}" <?= $sel ?>><?php echo @$curr['currency'] . ' (' . @$curr['country'] . ')'; ?></option>
                                                 <?php } ?>
                                             </select>
@@ -812,9 +812,9 @@
                             </div>
                         </div>
                         <div class="modal-footer text-center">
-                            <button type="cancel"  class="btn btn-default cancel"><a href="{{url()->previous()}}">Cancel</a></button>
-                            <button type="submit" id="submit"  class="btn btn-primary save">Save</button>
-                        </div>                     
+                            <button type="cancel" class="btn btn-default cancel"><a href="{{url()->previous()}}">Cancel</a></button>
+                            <button type="submit" id="submit" class="btn btn-primary save">Save</button>
+                        </div>
                     </div><!-- End card-body -->
                 </div> <!-- End card -->
         </form><!-- Form End -->
@@ -832,7 +832,7 @@
                     <input type="text" class="form-control" name='schedule_title[]' placeholder="Schedule Title" value="" required="">
                 </div>
                 <div class="col-md-4">
-                    <input type="text" class="form-control cursor-pointer gathering_datepicker" name='gathering_date[]' placeholder="Gathering Date" value="" readonly required="" >
+                    <input type="text" class="form-control cursor-pointer gathering_datepicker" name='gathering_date[]' placeholder="Gathering Date" value="" readonly required="">
                 </div>
                 <div class="col-md-2">
                     <input type="text" class="form-control cursor-pointer gathering_start_time" name='gathering_start_time[]' placeholder="Gathering Start Time" value="" readonly required="">
@@ -843,17 +843,17 @@
             </div>
         </div>
         <div class="form-group">
-            <textarea class="form-control" rows="7" name='program_description[]' placeholder="Program description" ></textarea>
+            <textarea class="form-control" rows="7" name='program_description[]' placeholder="Program description"></textarea>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-    $(function () {
+    $(function() {
         $("#start_date").datepicker({
             format: 'yyyy-mm-dd',
             startDate: '+1d',
             autoclose: true,
-        }).on('changeDate', function (ev) {
+        }).on('changeDate', function(ev) {
             var next_date = new Date(ev.date);
             next_date.setDate(next_date.getDate() + 1);
             $("#end_date").datepicker({
@@ -863,7 +863,7 @@
             });
         });
     });
-    $(document).ready(function () {
+    $(document).ready(function() {
         var date = new Date();
         var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
         $(".gathering_datepicker").datepicker({
@@ -891,7 +891,7 @@
             minuteStep: 15
 
         });
-        $('.add-more-btn').click(function () {
+        $('.add-more-btn').click(function() {
             $('.add-more-parent-div').append($('.add-more-program-div-content').html());
             $(".gathering_datepicker").datepicker({
                 format: 'yyyy-mm-dd',
@@ -913,7 +913,7 @@
 
             });
         });
-        $('.service_plan_radio').change(function () {
+        $('.service_plan_radio').change(function() {
             if ($(this).val() == 1) {
                 $('.calender_days_div').hide();
                 $('.weekdays_div').show();
@@ -922,20 +922,19 @@
                 $('.weekdays_div').hide();
             }
         });
-        $('#country').change(function () {
+        $('#country').change(function() {
             base_url = '<?php echo URL::to('/'); ?>';
             $country_id = $('#country').val();
             $('#currency').val($country_id);
-            $.post(base_url + '/get_regions/' + $country_id,
-                    {
-                        "_token": "{{ csrf_token() }}",
-                        count: $country_id
-                    }, function (data) {
+            $.post(base_url + '/get_regions/' + $country_id, {
+                "_token": "{{ csrf_token() }}",
+                count: $country_id
+            }, function(data) {
                 $('#region').html(data);
             });
         });
 
-        $("#banners").change(function () {
+        $("#banners").change(function() {
             var $fileUpload = $("#banners");
             if (parseInt($fileUpload.get(0).files.length) > 4) {
                 alert("You are only allowed to upload a maximum of 4 files");
@@ -943,10 +942,10 @@
                 return false;
             } else {
                 var allFiles = this.files;
-                jQuery.each(allFiles, function (i, file) {
+                jQuery.each(allFiles, function(i, file) {
                     if (file) {
                         let reader = new FileReader();
-                        reader.onload = function (event) {
+                        reader.onload = function(event) {
                             $('#banner' + ++i).attr('src', event.target.result);
                         }
                         reader.readAsDataURL(file);
@@ -955,30 +954,29 @@
             }
         });
     });
-    $(document).on('click', '.remove-program-btn', function () {
+    $(document).on('click', '.remove-program-btn', function() {
         if (confirm('Are you sure you want to remove this program?')) {
             $(this).parent().parent().remove();
         }
     });
 
 
-<?php if (request('country')) { ?>
+    <?php if (request('country')) { ?>
 
         base_url = '<?php echo URL::to('/'); ?>';
         $country_id = <?php echo request('country'); ?>;
         $region = <?php echo request('region'); ?>;
         $('#currency').val($country_id);
-        $.post(base_url + '/get_regions/' + $country_id,
-                {
-                    "_token": "{{ csrf_token() }}",
-                    count: $country_id,
-                    region: $region
-                }, function (data) {
+        $.post(base_url + '/get_regions/' + $country_id, {
+            "_token": "{{ csrf_token() }}",
+            count: $country_id,
+            region: $region
+        }, function(data) {
             $('#region').html(data);
         });
     <?php
-}
-if (request('service_plan')) {
+    }
+    if (request('service_plan')) {
     ?>
         var service_plan_val = <?php echo request('service_plan'); ?>;
         if (service_plan_val == 1) {
@@ -987,7 +985,7 @@ if (request('service_plan')) {
         } else if (service_plan_val == 2) {
             $('.calender_days_div').show();
             $('.weekdays_div').hide();
-            
+
         }
-<?php } ?>
+    <?php } ?>
 </script>
