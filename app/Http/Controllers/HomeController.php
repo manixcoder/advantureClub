@@ -30,13 +30,16 @@ class HomeController extends Controller
 
     public function update_user_password($id)
     {
-        $data = DB::table('users')->Where('id', $id)->first();
+        $data = DB::table('users')
+            ->Where('id', $id)
+            ->first();
         return Response::json($data);
     }
 
     public function update_user_newpassword(Request $request)
     {
-        $updatedata = DB::table('users')->where('id', $request->ids)
+        $updatedata = DB::table('users')
+            ->where('id', $request->ids)
             ->update(['password' => Hash::make($request->new_password)]);
         Session::flash('success', 'Password Update successfully..!');
         return back();
@@ -53,7 +56,8 @@ class HomeController extends Controller
             $image = $insert['photo'] = "$profileImage";
         }
 
-        $updatedata = DB::table('users')->where('id', $request->ids)
+        $updatedata = DB::table('users')
+            ->where('id', $request->ids)
             ->update(['profile_image' => $image]);
         Session::flash('success', 'Image Update successfully..!');
         return back();
@@ -125,7 +129,8 @@ class HomeController extends Controller
                         $udata['name'] = $request->name;
                     }
                     $udata['password'] = Hash::make($request->new_password);
-                    User::where('id', $request->u_ids)->update($udata);
+                    User::where('id', $request->u_ids)
+                        ->update($udata);
                 }
                 Session::flash('success', 'Profile updated successfully');
                 return back();
@@ -135,7 +140,8 @@ class HomeController extends Controller
             if ($request->name) {
                 $udata['name'] = $request->name;
             }
-            User::where('id', $request->u_ids)->update($udata);
+            User::where('id', $request->u_ids)
+                ->update($udata);
             Session::flash('success', 'Profile updated successfully');
             return back();
         }
@@ -149,7 +155,8 @@ class HomeController extends Controller
             ->user();
 
         $data['content'] = 'admin.user.user-profile';
-        return view('layouts.content', compact('data'))->with(['companydata' => $companydata]);
+        return view('layouts.content', compact('data'))
+            ->with(['companydata' => $companydata]);
     }
 
     public function Dashboard(Request $request)
