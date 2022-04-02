@@ -25,8 +25,14 @@ class VendorsController extends MyController
             ->get();
 
         foreach ($result as $key => $res) {
-            $includes = DB::table('package_detail')->where('package_id', $res->id)->where('detail_type', '1')->get();
-            $Exclude = DB::table('package_detail')->where('package_id', $res->id)->where('detail_type', '0')->get();
+            $includes = DB::table('package_detail')
+                ->where('package_id', $res->id)
+                ->where('detail_type', '1')
+                ->get();
+            $Exclude = DB::table('package_detail')
+                ->where('package_id', $res->id)
+                ->where('detail_type', '0')
+                ->get();
             $result[$key]->includes = $includes;
             $result[$key]->Exclude = $Exclude;
         }
@@ -36,7 +42,6 @@ class VendorsController extends MyController
         }
         return $this->sendError('Data not found.', [], 404);
     }
-
     public function addPackage(Request $request)
     {
     }

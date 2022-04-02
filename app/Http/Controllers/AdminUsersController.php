@@ -53,18 +53,18 @@ class AdminUsersController extends MyController
         //echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|min:3|max:50|unique:users',
-                'mobile_code' => 'required|numeric',
-                'mobile' => 'required|numeric|digits:10|unique:users',
-                'email' => 'required|email:filter|unique:users',
-                'country' => 'required|numeric',
-                'region' => 'required|numeric',
-                'dob' => 'required|date_format:Y-m-d',
-                'health_condition' => 'required',
-                'height' => 'required',
-                'weight' => 'required',
-                'status' => 'required|numeric|min:1|max:2',
-                'image' => 'required'
+                'name'              => 'required|min:3|max:50|unique:users',
+                'mobile_code'       => 'required|numeric',
+                'mobile'            => 'required|numeric|digits:10|unique:users',
+                'email'             => 'required|email:filter|unique:users',
+                'country'           => 'required|numeric',
+                'region'            => 'required|numeric',
+                'dob'               => 'required|date_format:Y-m-d',
+                'health_condition'  => 'required',
+                'height'            => 'required',
+                'weight'            => 'required',
+                'status'            => 'required|numeric|min:1|max:2',
+                'image'             => 'required'
             ]);
             if ($validator->fails()) {
                 $errors = array();
@@ -104,7 +104,12 @@ class AdminUsersController extends MyController
                             }
                             $files = $request->image;
                             $filepath = $files->move($destinationPath, $filename);
-                            DB::table('users')->where(['id' => $user_id])->update(['profile_image' => 'profile_image/' . $filename]);
+                            DB::table('users')->where([
+                                'id' => $user_id
+                            ])
+                                ->update([
+                                    'profile_image' => 'profile_image/' . $filename
+                                ]);
                         }
                     }
                     Session::flash('success', 'User has been successfully.');
@@ -116,11 +121,12 @@ class AdminUsersController extends MyController
         $countries = DB::table('countries')->where(['deleted_at' => NULL])->get();
 
         $data['content'] = 'admin.admin_users.add_admin_users';
-        return view('layouts.content', compact('data'))->with([
-            'validation' => $data['validation'] ?? [],
-            'health_conditions' => $health_conditions,
-            'countries' => $countries
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'validation' => $data['validation'] ?? [],
+                'health_conditions' => $health_conditions,
+                'countries' => $countries
+            ]);
     }
 
     /* Add New Adventure User ends */
@@ -142,7 +148,10 @@ class AdminUsersController extends MyController
 
 
         $data['content'] = 'admin.admin_users.view_admin_user';
-        return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'editdata' => $editdata
+            ]);
     }
 
     /* View Adventure users ends */
@@ -164,7 +173,9 @@ class AdminUsersController extends MyController
 
     function adminuser_delete($id)
     {
-        $delete = DB::table('users')->where('id', $id)->delete();
+        $delete = DB::table('users')
+            ->where('id', $id)
+            ->delete();
         session()->flash('error', 'Deleted Successfully..!');
         return back();
     }
