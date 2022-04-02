@@ -58,7 +58,8 @@ class PackagesController extends MyController
             ]);
             if ($validator->fails()) {
                 $validation = array();
-                foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                foreach ($validator->messages()
+                    ->getMessages() as $field_name => $messages) {
                     $validation[$field_name] = $messages[0];
                 }
             } else {
@@ -68,11 +69,13 @@ class PackagesController extends MyController
                     'cost' => $request->package_cost
                 ])) {
                     $package_id = DB::getPdo()->lastInsertId();
-                    DB::table('package_detail')->where(['package_id' => $package_id])->delete();
+                    DB::table('package_detail')
+                        ->where(['package_id' => $package_id])
+                        ->delete();
                     $pkg_det = [];
                     foreach ($request->includes as $val) {
                         $pkg_det[] = [
-                            'package_id' => $package_id, 
+                            'package_id' => $package_id,
                             'title' => $val,
                             'detail_type' => 1
                         ];
@@ -84,7 +87,8 @@ class PackagesController extends MyController
                             'detail_type' => 0
                         ];
                     }
-                    DB::table('package_detail')->insert($pkg_det);
+                    DB::table('package_detail')
+                        ->insert($pkg_det);
                     $request->session()->flash('success', 'Record has been added successfully.');
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -175,7 +179,8 @@ class PackagesController extends MyController
             } else {
                 DB::table('about_us')->truncate();
                 if (DB::table('about_us')->insert(['content' => $request->description])) {
-                    $request->session()->flash('success', 'Record has been added successfully.');
+                    $request->session()
+                        ->flash('success', 'Record has been added successfully.');
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }

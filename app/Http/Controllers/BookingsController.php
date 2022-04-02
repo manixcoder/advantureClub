@@ -135,16 +135,22 @@ class BookingsController extends MyController
             ->orderBy('bkng.id', 'DESC')
             ->first();
         $data['content'] = 'admin.services.booking_detail';
-        return view('layouts.content', compact('data'))->with([
-            'service' => $service
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'service' => $service
+            ]);
     }
 
     public function accept(Request $request, $id)
     {
         if ($id) {
             $user_id = Auth::user()->id;
-            DB::table('bookings')->where(['id' => $id])->update(['status' => 1, 'updated_by' => $user_id]);
+            DB::table('bookings')
+                ->where(['id' => $id])
+                ->update([
+                    'status' => 1,
+                    'updated_by' => $user_id
+                ]);
             $request->session()->flash('success', 'Request has been accepted successfully.');
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -156,7 +162,12 @@ class BookingsController extends MyController
     {
         if ($id) {
             $user_id = Auth::user()->id;
-            DB::table('bookings')->where(['id' => $id])->update(['status' => 2, 'updated_by' => $user_id]);
+            DB::table('bookings')
+                ->where(['id' => $id])
+                ->update([
+                    'status' => 2,
+                    'updated_by' => $user_id
+                ]);
             $request->session()->flash('success', 'Request has been cancelled successfully.');
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');
