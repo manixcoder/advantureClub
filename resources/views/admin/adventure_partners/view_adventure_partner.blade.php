@@ -43,11 +43,11 @@
                   </li>
                   <li>
                      <p>Nationality :</p>
-                     <h3>{{!empty($editdata->country)?$editdata->country:''}}</h3>
+                     <h3>{{!empty($editdata->country_id)?$editdata->country_id:''}}</h3>
                   </li>
                   <li>
                      <p>City/State :</p>
-                     <h3>{{!empty($editdata->city)?$editdata->city:''}}</h3>
+                     <h3>{{!empty($editdata->city_id)?$editdata->city_id:''}}</h3>
                   </li>
                   <li>
                      <p>Date of Birth :</p>
@@ -118,11 +118,11 @@
                   </li>
                   <li>
                      <p>Country :</p>
-                     <h3>{{!empty($editdata->company_address)?$editdata->company_address:''}}</h3>
+                     <h3>{{!empty($editdata->address)?$editdata->address:''}}</h3>
                   </li>
                   <li>
                      <p>GeoLocation :</p>
-                     <h3>{{!empty($editdata->geo_location)?$editdata->geo_location:''}}</h3>
+                     <h3>{{!empty($editdata->location)?$editdata->location:''}}</h3>
                   </li>
                   <li>
                      <p>Licensed :</p>
