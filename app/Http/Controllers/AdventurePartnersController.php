@@ -105,28 +105,28 @@ class AdventurePartnersController extends Controller
           'validation' => $validation ?? []
         ]);
       } else {
-          $subscription = !empty($request->subscription) ? $request->subscription : '1';
+        $subscription = !empty($request->subscription) ? $request->subscription : '1';
         $packageData = DB::table('packages')
-        //->where('id', $request->subscription)
-        ->where('id', $subscription)
-        ->orderBy('id', 'DESC')
-        ->first();
+          //->where('id', $request->subscription)
+          ->where('id', $subscription)
+          ->orderBy('id', 'DESC')
+          ->first();
         if ($packageData) {
-            $day = $packageData->days - 1;
-            $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
-            if ($files = $request->image) {
-                $destinationPath = public_path('/profile_image/');
-                $profileImage = date('YmdHis') . "-" . $files->getClientOriginalName();
-                $path =  $files->move($destinationPath, $profileImage);
-                $image = $insert['photo'] = "$profileImage";
-            }
-            if ($file = $request->file('crCopy')) {
-                $destinationPath = base_path('public/crCopy/');
-                $cr_copy = uniqid('file') . "-" . $file->getClientOriginalName();
-                $path = $file->move($destinationPath, $cr_copy);
-            } else {
-                $cr_copy = "";
-            }
+          $day = $packageData->days - 1;
+          $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
+          if ($files = $request->image) {
+            $destinationPath = public_path('/profile_image/');
+            $profileImage = date('YmdHis') . "-" . $files->getClientOriginalName();
+            $path =  $files->move($destinationPath, $profileImage);
+            $image = $insert['photo'] = "$profileImage";
+          }
+          if ($file = $request->file('crCopy')) {
+            $destinationPath = base_path('public/crCopy/');
+            $cr_copy = uniqid('file') . "-" . $file->getClientOriginalName();
+            $path = $file->move($destinationPath, $cr_copy);
+          } else {
+            $cr_copy = "";
+          }
 
           // $request->merge([
           //   // 'health_conditions' => implode(',', (array) $request->get('health_condition')),
@@ -177,15 +177,15 @@ class AdventurePartnersController extends Controller
   /* View Adventure users starts */
   public function view_adventure_partner($id)
   {
-     // dd($id);
+    // dd($id);
     //$editdata = User::where('id', $id)->first();
     $healthConditionData = '';
     $pModeData = '';
 
     $editdata =  DB::table('users as u')
-     
+
       ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
-       ->select(
+      ->select(
         'u.*',
         'bp.user_id',
         'bp.company_name',
@@ -211,7 +211,7 @@ class AdventurePartnersController extends Controller
 
       )
       ->where('u.id', $id)
-     
+
       ->first();
     //dd($editdata);
     $healthConditionData = array();
@@ -316,21 +316,21 @@ class AdventurePartnersController extends Controller
   /* Update status in db from ajax request starts */
   public function update_user_status($id, $status)
   {
-      $Data = array(
+    $Data = array(
       'id' => $_GET['id'],
       'status' => $_GET['status'],
     );
     $edituserData = DB::table('users')->where('id', $id)->update($Data);
     DB::table('become_partner')->where('user_id', $id)->update([
-        'is_approved' => '1',
-      ]);
-      DB::table('notifications')->insert([
-        'sender_id' => Auth::user()->id,
-        'user_id' => $id,
-        'title' => 'Your request has been approved.',
-        'message' => 'Now you may proceed to buy your subscription package & will be able to provide your service.',
-        'is_approved' => '0'
-      ]);
+      'is_approved' => '1',
+    ]);
+    DB::table('notifications')->insert([
+      'sender_id' => Auth::user()->id,
+      'user_id' => $id,
+      'title' => 'Your request has been approved.',
+      'message' => 'Now you may proceed to buy your subscription package & will be able to provide your service.',
+      'is_approved' => '0'
+    ]);
     if ($_GET['become'] == '1') {
       DB::table('become_partner')->where('user_id', $id)->update([
         'is_approved' => '1',
@@ -371,7 +371,10 @@ class AdventurePartnersController extends Controller
       'user_id' => $_GET['id'],
       'is_approved' => $is_approved,
       'title' => 'Your request has been ' . $statusMsg,
-      'message' => 'Now you may proceed to buy subscription package & will be able to provide your service.'
+      'message' => 'Now you may proceed to buy subscription package & will be able to provide your service.',
+      'created_at'=>date("Y-m-d H:i:s"),
+      'updated_at'=>date("Y-m-d H:i:s"),
+      'send_at'=>date("Y-m-d H:i:s"),
     ]);
     // }
     // $Data = array(
@@ -388,9 +391,7 @@ class AdventurePartnersController extends Controller
   {
     $user = Users::find($id);
     if ($user) {
-      // dd($id);
       DB::table('become_partner')->where('user_id', $id)->delete();
-      //$destroy = Users::destroy($id);
       $request->session()->flash('success', 'Partner has been deleted successfully.');
     } else {
       $request->session()->flash('error', 'Something went wrong. Please try again.');

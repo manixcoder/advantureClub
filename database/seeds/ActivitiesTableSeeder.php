@@ -79,5 +79,9 @@ class ActivitiesTableSeeder extends Seeder
 
         );
         DB::table('activities')->insert($userData);
+
+
+
+       
     }
 }
