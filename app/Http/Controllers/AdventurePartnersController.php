@@ -178,6 +178,8 @@ class AdventurePartnersController extends Controller
     $pModeData = '';
 
     $editdata =  DB::table('users as u')
+
+      ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
       ->select(
         'u.*',
         'bp.user_id',
@@ -200,12 +202,11 @@ class AdventurePartnersController extends Controller
         'bp.is_approved',
         'bp.packages_id',
         'bp.start_date',
-        'bp.end_date',
+        'bp.end_date'
 
       )
-      ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
       ->where('u.id', $id)
-      //->where(['u.deleted_at' => NULL])
+      ->where(['u.deleted_at' => NULL])
       ->first();
     //dd($editdata);
     $healthConditionData = array();
@@ -310,13 +311,6 @@ class AdventurePartnersController extends Controller
   /* Update status in db from ajax request starts */
   public function update_user_status($id, $status)
   {
-    dd($_GET['status']);
-    dd($request->all());
-
-
-
-
-
     $Data = array(
       'id' => $_GET['id'],
       'status' => $_GET['status'],
@@ -324,6 +318,13 @@ class AdventurePartnersController extends Controller
     $edituserData = DB::table('users')->where('id', $id)->update($Data);
     DB::table('become_partner')->where('user_id', $id)->update([
       'is_approved' => '1',
+    ]);
+    DB::table('notifications')->insert([
+      'sender_id' => Auth::user()->id,
+      'user_id' => $id,
+      'title' => 'Your request has been approved.',
+      'message' => 'Now you may proceed to buy your subscription package & will be able to provide your service.',
+      'is_approved' => '0'
     ]);
     if ($_GET['become'] == '1') {
       DB::table('become_partner')->where('user_id', $id)->update([

@@ -337,8 +337,11 @@ class ServicesController extends MyController
             //dd($services);        
             foreach ($services as $key => $ser) {
                 $service_id = $ser->id;
+                $imageData = DB::table('service_images')->where('service_id', $service_id)->get();
                 $services[$key]->stars = isset($star_ratings[$service_id]) ? number_format($star_ratings[$service_id]['stars'], 2, '.', '') : 0;
                 $services[$key]->is_liked = in_array($service_id, $liked_services) ? 1 : 0;
+                $services[$key]->baseurl = $s_img;
+                $services[$key]->images = $imageData;
                 //$service_array[]=$ser;
             }
             if (!$services->isEmpty()) {

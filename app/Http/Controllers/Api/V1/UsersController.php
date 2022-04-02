@@ -1084,24 +1084,49 @@ class UsersController extends MyController
             return response()->json(['error' => $validator->errors()], 404);
         }
         try {
-            $packageData = DB::table('packages')
+            if($request->payment_status ==1){
+                $packageData = DB::table('packages')
                 ->where('id', $request->packages_id)
                 ->orderBy('id', 'DESC')
                 ->first();
-            $day = $packageData->days - 1;
-            $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
-            $updatetData = array(
-                'packages_id' => $request->packages_id,
-                'start_date' => date("Y-m-d H:i:s"),
-                'end_date' => $enddate,
-            );
-            $like = DB::table('become_partner')->where('user_id', $request->user_id)->update($updatetData);
+                $day = $packageData->days - 1;
+                $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
+                $updatetData = array(
+                    'packages_id' => $request->packages_id,
+                    'start_date' => date("Y-m-d H:i:s"),
+                    'end_date' => $enddate,
+                    );
+                    $like = DB::table('become_partner')->where('user_id', $request->user_id)->update($updatetData);
+                    $history = DB::table('subscription_plan_history')->insert([
+                        'user_id'=>$request->user_id,
+                        'package_id'=>$request->packages_id,
+                        'order_id'=>$request->order_id,
+                        'payment_type'=>$request->payment_type,
+                        'payment_status'=>$request->payment_status,
+                        'payment_amount'=>$request->payment_amount,
+                        'created_at'=>date("Y-m-d H:i:s"),
+                        'updated_at'=>date("Y-m-d H:i:s")
+                ]);
             $like = DB::table('become_partner')->where('user_id', $request->user_id)->get();
             if ($like) {
                 return $this->sendResponse('Data updated Successfully', $like, 200);
             } else {
                 return $this->sendResponse('Somethingwent wrong', [], 404);
+            }   
+            }else{
+                 DB::table('subscription_plan_history')
+                 ->insert([
+                     'user_id'=>$request->user_id,
+                     'package_id'=>$request->packages_id,
+                     'order_id'=>$request->order_id,
+                     'payment_type'=>$request->payment_type,
+                     'payment_status'=>$request->payment_status,
+                     'payment_amount'=>$request->payment_amount,
+                     'created_at'=>date("Y-m-d H:i:s"),
+                     'updated_at'=>date("Y-m-d H:i:s")
+                ]);
             }
+            
         } catch (\Exception $e) {
             return $this->sendResponse($e->getMessage(), [], 404);
         }
