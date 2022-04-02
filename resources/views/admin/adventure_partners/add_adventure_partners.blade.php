@@ -349,7 +349,9 @@
                               ?>
 
                               <input type="text" id="company_location" name="company_location" class="form-control" aria-required="true" placeholder="Geo Location" value="{{$company_location}}">
-                              <span onclick="getLocation()"><img src="{{URL::to('/public/images/map.png')}}"></span>
+                              <span onclick="getLocation()">
+                                 <img src="{{URL::to('/public/images/map.png')}}">
+                              </span>
                               <?php if (isset($validation['company_location'])) { ?>
                                  <label class="error">{{ $validation['company_location'] }}</label>
                               <?php } ?>
@@ -595,15 +597,15 @@
 
    function getLocation() {
       if (navigator.geolocation) {
+        
          navigator.geolocation.getCurrentPosition(showPosition);
       } else {
          x.value = "Geolocation is not supported by this browser.";
       }
    }
 
-
-
    function showPosition(position) {
+      alert(position);
       x.value = "Latitude: " + position.coords.latitude +
          ", Longitude: " + position.coords.longitude;
    }

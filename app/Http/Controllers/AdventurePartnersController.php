@@ -310,21 +310,18 @@ class AdventurePartnersController extends Controller
   /* Update status in db from ajax request starts */
   public function update_user_status($id, $status)
   {
-    dd($_GET['status']);
-    dd($request->all());
-
-
-
-
-
     $Data = array(
       'id' => $_GET['id'],
       'status' => $_GET['status'],
     );
-    $edituserData = DB::table('users')->where('id', $id)->update($Data);
-    DB::table('become_partner')->where('user_id', $id)->update([
-      'is_approved' => '1',
-    ]);
+    $edituserData = DB::table('users')
+      ->where('id', $id)
+      ->update($Data);
+    DB::table('become_partner')
+      ->where('user_id', $id)
+      ->update([
+        'is_approved' => '1',
+      ]);
     if ($_GET['become'] == '1') {
       DB::table('become_partner')->where('user_id', $id)->update([
         'is_approved' => '1',
