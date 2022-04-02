@@ -11,8 +11,13 @@
    <div class="container-fluid">
       <div class="row">
          <div class="col-sm-12">
-            <!-- echo"<pre>";{{print_r($editdata)}};exit;  -->
-            <h4 class="pull-left page-title"><a href="{{URL::to('list-adventure-partners')}}">Partner</a> >#{{$editdata->id}}</h4>
+            <?php // echo"<pre>";print_r($editdata);exit;  ?>
+            <h4 class="pull-left page-title">
+                <a href="{{URL::to('list-adventure-partners')}}">
+                    Partner
+                    </a> >
+                #{{$editdata->id}}
+                </h4>
          </div>
       </div>
 
@@ -38,11 +43,11 @@
                   </li>
                   <li>
                      <p>Nationality :</p>
-                     <h3>{{!empty($editdata->country)?$editdata->country:''}}</h3>
+                     <h3>{{!empty($editdata->country_id)?$editdata->country_id:''}}</h3>
                   </li>
                   <li>
                      <p>City/State :</p>
-                     <h3>{{!empty($editdata->city)?$editdata->city:''}}</h3>
+                     <h3>{{!empty($editdata->city_id)?$editdata->city_id:''}}</h3>
                   </li>
                   <li>
                      <p>Date of Birth :</p>
@@ -52,9 +57,9 @@
                      <p>Profile Pic :</p>
                      <h3>
                         @if(!empty($editdata->profile_image))
-                        <img src="{{ asset('public/profile_image/').'/'.$editdata->profile_image }}" alt="image" width="100" height="100">
+                        <img src="{{ asset('public').'/'.$editdata->profile_image }}" alt="image" width="100" height="100">
                         @else
-                        <img src="https://162.241.87.160/Adventureworld/public/images/profile.png" alt="image" width="100" height="100">
+                        <img src="{{ asset('public/uploads/profile.png')}}" alt="image" width="100" height="100">
                         @endif
                      </h3>
                   </li>
@@ -96,10 +101,10 @@
                      <!--span id="statusText_{{$editdata->id}}" class="$class">{{$stat}} &nbsp;&nbsp;</!--span>
                      <span-->
                         <h3>
-                           <label class="switch">
+                           <!--label class="switch">
                               <input type="checkbox" class="togBtn" id="togBtn_{{$editdata->id}}" name="togBtn_{{$editdata->id}}" value="{{ $statVal}}" <?php echo $checked; ?> />
                               <span class="slider round"></span>
-                           </label>
+                           </label-->
                         </h3>
                      </span->
                   </li>
@@ -113,11 +118,11 @@
                   </li>
                   <li>
                      <p>Country :</p>
-                     <h3>{{!empty($editdata->company_address)?$editdata->company_address:''}}</h3>
+                     <h3>{{!empty($editdata->address)?$editdata->address:''}}</h3>
                   </li>
                   <li>
                      <p>GeoLocation :</p>
-                     <h3>{{!empty($editdata->geo_location)?$editdata->geo_location:''}}</h3>
+                     <h3>{{!empty($editdata->location)?$editdata->location:''}}</h3>
                   </li>
                   <li>
                      <p>Licensed :</p>
@@ -165,6 +170,26 @@
                                                 echo $val->payment_name;
                                              }
                                           } ?></h3>
+                  </li>
+                  @if($editdata->packages_id !='')
+                  @php 
+                  $package = DB::table('packages')
+                  ->select('*')
+                  ->where('id',$editdata->packages_id)
+                  ->first();
+                  @endphp
+                  <li>
+                     <p>Subscription Type :</p>
+                     <h3 class="ellipsis">{{$package->title}}</h3>
+                  </li>
+                  @endif
+                  <li>
+                     <p>Start Date :</p>
+                     <h3 class="ellipsis">{{date('d M Y | H:i'  , strtotime($editdata->start_date))}}</h3>
+                  </li>
+                  <li>
+                     <p>End Date :</p>
+                     <h3 class="ellipsis">{{date('d M Y | H:i'  , strtotime($editdata->end_date))}}</h3>
                   </li>
                </ul>
             </div>

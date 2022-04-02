@@ -33,12 +33,19 @@ class BannersController extends MyController
         $result = array();
         $usersdata = DB::table('users')
             ->rightjoin('countries', 'users.country_id', '=', 'countries.id')
-            ->where('users.users_role', 3)->get();
+            ->where('users.users_role', 3)
+            ->get();
         $where = array(
             'banners.deleted_at' => NULL
         );
         $banners = Banner::where($where)
-            ->select('banners.id', 'banners.banner as banner_name', 'banners.title', 'banners.status', 'thumbnail')
+            ->select(
+                'banners.id',
+                'banners.banner as banner_name',
+                'banners.title',
+                'banners.status',
+                'thumbnail'
+            )
             ->orderBy('banners.id', 'desc')
             ->get();
         if (!empty($banners)) {
@@ -153,7 +160,14 @@ class BannersController extends MyController
             );
 
             $banner_res = Banner::where($where)
-                ->select('banners.id', 'banners.banner as banner_name', 'banners.title', 'banners.link', 'banners.status')->orderBy('banners.id', 'desc')
+                ->select(
+                    'banners.id', 
+                    'banners.banner as banner_name', 
+                    'banners.title', 
+                    'banners.link', 
+                    'banners.status'
+                    )
+                    ->orderBy('banners.id', 'desc')
                 ->get();
             if (!empty($banner_res)) {
                 foreach ($banner_res as $banner) {

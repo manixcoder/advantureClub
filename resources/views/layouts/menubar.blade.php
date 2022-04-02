@@ -27,10 +27,17 @@ $userrole = Session::get('userRole');
                 ->get();
                 foreach($country_arr as $countss)
                 {
+<<<<<<< HEAD
                     $countss->role_id;
                     //@endphp
                     //print_r($countss); 
                  ?>
+=======
+                $countss->role_id;
+                //@endphp
+                
+                // print_r($countss); ?>
+>>>>>>> 423ab817d304b25b4903dd4eb9dd0a40ae912b60
                 
                 
                 <ul>

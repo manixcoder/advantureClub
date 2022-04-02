@@ -32,12 +32,15 @@ class LocationController extends Controller
 
     public function getCountries(Request $request, $id = null)
     {
-        $countries = DB::table('countries')->where(['deleted_at' => NULL])->get();
+        $countries = DB::table('countries')
+            ->where(['deleted_at' => NULL])
+            ->get();
         $data['content'] = 'admin.locations.country_list';
-        return view('layouts.content', compact('data'))->with([
-            'validation' => $validation ?? [],
-            'countries' => $countries
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'validation' => $validation ?? [],
+                'countries' => $countries
+            ]);
     }
 
     public function addCountry(Request $request, $id = null)

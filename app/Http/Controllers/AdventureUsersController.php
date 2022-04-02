@@ -98,9 +98,13 @@ class AdventureUsersController extends MyController
                     if ($request->file('image')) {
                         $file_info = $this->getExtensionSize($_FILES['image']);
                         if (!in_array($file_info['ext'], $this->allowed_mime())) {
-                            $data['validation'] = ['banner' => 'File must be jpeg,jpg,png.'];
+                            $data['validation'] = [
+                                'banner' => 'File must be jpeg,jpg,png.'
+                            ];
                         } else if ($file_info['size'] > 2024) {
-                            $data['validation'] = ['banner' => 'File size must be 2 MB maximum'];
+                            $data['validation'] = [
+                                'banner' => 'File size must be 2 MB maximum'
+                            ];
                         } else {
                             $filename = time() . '.' . $file_info['ext'];
                             $basepath = "public/profile_image/";
@@ -119,7 +123,9 @@ class AdventureUsersController extends MyController
             }
         }
         $health_conditions = DB::table('health_conditions')->get();
-        $countries = DB::table('countries')->where(['deleted_at' => NULL])->get();
+        $countries = DB::table('countries')
+            ->where(['deleted_at' => NULL])
+            ->get();
 
         $data['content'] = 'admin.adventure_users.add_adventure_users';
         return view('layouts.content', compact('data'))->with([
@@ -160,7 +166,9 @@ class AdventureUsersController extends MyController
             'id' => $_GET['id'],
             'status' => $_GET['status'],
         );
-        $edituserData = DB::table('users')->where('id', $id)->update($Data);
+        $edituserData = DB::table('users')
+            ->where('id', $id)
+            ->update($Data);
         return response()->json(array('msg' => $edituserData), 200);
     }
     /* Update status ends */
