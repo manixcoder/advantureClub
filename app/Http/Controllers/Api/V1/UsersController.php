@@ -996,55 +996,31 @@ class UsersController extends MyController
                 //     $filepath = null;
 
                 // }
-
                 if ($file = $request->file('cr_copy')) {
-
                     $destinationPath = base_path('public/crCopy/');
-
                     $cr_copy = uniqid('file') . "-" . $file->getClientOriginalName();
-
                     $path = $file->move($destinationPath, $cr_copy);
                 } else {
-
                     $cr_copy = "";
                 }
-
                 if ($request->packages_id != '0') {
-
                     $packageData = DB::table('packages')
-
                         ->where('id', $request->packages_id)
-
                         ->orderBy('id', 'DESC')
-
                         ->first();
-
                     $day = $packageData->days - 1;
-
                     $start_date = date("Y-m-d H:i:s");
-
                     $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
                 } else {
-
                     $day = 0;
-
                     $start_date = Null;
-
                     $enddate = Null;
                 }
-
-
-
                 DB::table('users')
-
                     ->where('id', $request->user_id)
-
                     ->update(array(
-
                         'users_role' => '2',
-
                     ));
-
                 $insertData = array(
                     'user_id' => $request->user_id,
                     'company_name' => $request->company_name,
@@ -1069,14 +1045,10 @@ class UsersController extends MyController
                     'end_date' => $enddate,
                     'created_at' => date("Y-m-d H:i:s")
                 );
-
                 $like = DB::table('become_partner')->insert($insertData);
-
                 if ($like) {
-
                     return $this->sendResponse('Data Inserted Successfully', [], 200);
                 } else {
-
                     return $this->sendResponse('Somethingwent wrong', [], 404);
                 }
             }
@@ -1085,11 +1057,6 @@ class UsersController extends MyController
             return $this->sendResponse($e->getMessage(), [], 404);
         }
     }
-
-
-
-
-
     public function updateSubscription(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1151,7 +1118,6 @@ class UsersController extends MyController
                         return $this->sendResponse('You allready used free subscription', [], 200);
                     }
                 } else {
-
                     DB::table('subscription_plan_history')
                         ->insert([
                             'user_id' => $request->user_id,

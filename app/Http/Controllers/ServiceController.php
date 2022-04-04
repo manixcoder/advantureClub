@@ -40,32 +40,44 @@ class ServiceController extends Controller
 
     if ($request->ids != '') {
       Session::flash('success', 'Updated successfully..!');
-      $updateData = DB::table('Services')->where('id', $request->ids)->update($data);
+      $updateData = DB::table('Services')
+        ->where('id', $request->ids)
+        ->update($data);
       return redirect('service');
     } else {
       Session::flash('success', 'Inserted successfully..!');
-      $insertData = DB::table('Services')->insert($data);
+      $insertData = DB::table('Services')
+        ->insert($data);
       return redirect('service');
     }
   }
 
   public function view_service()
   {
-    $servicedata = DB::table('Services')->orderBy('id', 'Desc')->get();
+    $servicedata = DB::table('Services')
+      ->orderBy('id', 'Desc')
+      ->get();
 
     $data['content'] = 'admin.service.manage_service';
-    return view('layouts.content', compact('data'))->with(['servicedata' => $servicedata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'servicedata' => $servicedata
+      ]);
   }
 
   public function service_edit($id)
   {
-    $data = DB::table('services')->where('id', $id)->first();
+    $data = DB::table('services')
+      ->where('id', $id)
+      ->first();
     return Response::json($data);
   }
 
   public function delete_service($id)
   {
-    $delete = DB::table('Services')->where('id', $id)->delete();
+    $delete = DB::table('Services')
+      ->where('id', $id)
+      ->delete();
     session()->flash('error', 'Deleted Successfully..!');
     return redirect()->back();
   }
@@ -74,10 +86,14 @@ class ServiceController extends Controller
   /* Service Category Functions Start */
   public function view_service_category()
   {
-    $servicecategorydata = DB::table('Service_Category')->get();
+    $servicecategorydata = DB::table('Service_Category')
+      ->get();
 
     $data['content'] = 'admin.service.manage_service_category';
-    return view('layouts.content', compact('data'))->with(['servicecategorydata' => $servicecategorydata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'servicecategorydata' => $servicecategorydata
+      ]);
   }
 
   public function add_service_category(Request $request)
@@ -90,38 +106,57 @@ class ServiceController extends Controller
 
     if ($request->ids != '') {
       Session::flash('success', 'Updated successfully..!');
-      $updateData = DB::table('Service_Category')->where('id', $request->ids)->update($data);
+      $updateData = DB::table('Service_Category')
+        ->where('id', $request->ids)
+        ->update($data);
       return back();
     } else {
       Session::flash('success', 'Inserted successfully..!');
-      $insertData = DB::table('Service_Category')->insert($data);
+      $insertData = DB::table('Service_Category')
+        ->insert($data);
       return back();
     }
   }
 
   public function service_category_edit($id)
   {
-    $data = DB::table('Service_Category')->where('id', $id)->first();
+    $data = DB::table('Service_Category')
+      ->where('id', $id)
+      ->first();
     return Response::json($data);
   }
 
   public function delete_service_category($id)
   {
-    $delete = DB::table('Service_Category')->where('Id', $id)->delete();
-    $productdelete = DB::table('home_products')->where('home_cat_id', $id)->get();
-    $Service_Category_ActivityType = DB::table('Service_Category_ActivityType')->where('Service_Category_Id', $id)->get();
-    $shopproduct = DB::table('shopproduct')->where('ProductCategoryId', $id)->get();
+    $delete = DB::table('Service_Category')
+      ->where('Id', $id)
+      ->delete();
+    $productdelete = DB::table('home_products')
+      ->where('home_cat_id', $id)
+      ->get();
+    $Service_Category_ActivityType = DB::table('Service_Category_ActivityType')
+      ->where('Service_Category_Id', $id)
+      ->get();
+    $shopproduct = DB::table('shopproduct')
+      ->where('ProductCategoryId', $id)
+      ->get();
 
     foreach ($shopproduct as $data3) {
-      $delete_shopproduct = DB::table('shopproduct')->where('ProductCategoryId', $id)->delete();
+      $delete_shopproduct = DB::table('shopproduct')
+        ->where('ProductCategoryId', $id)
+        ->delete();
     }
 
     foreach ($Service_Category_ActivityType as $data2) {
-      $deleteproduct = DB::table('Service_Category_ActivityType')->where('Service_Category_Id', $id)->delete();
+      $deleteproduct = DB::table('Service_Category_ActivityType')
+        ->where('Service_Category_Id', $id)
+        ->delete();
     }
 
     foreach ($productdelete as $data) {
-      $deleteproduct = DB::table('home_products')->where('home_cat_id', $id)->delete();
+      $deleteproduct = DB::table('home_products')
+        ->where('home_cat_id', $id)
+        ->delete();
     }
 
     session()->flash('error', 'Deleted Successfully..!');
@@ -132,10 +167,15 @@ class ServiceController extends Controller
   /* Service Category Activity Functions Start */
   public function view_service_activity()
   {
-    $serviceactivity_data = DB::table('Service_Category_ActivityType')->orderBy('id', 'Desc')->get();
+    $serviceactivity_data = DB::table('Service_Category_ActivityType')
+      ->orderBy('id', 'Desc')
+      ->get();
 
     $data['content'] = 'admin.service.manage_service_activitytype';
-    return view('layouts.content', compact('data'))->with(['serviceactivity_data' => $serviceactivity_data]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'serviceactivity_data' => $serviceactivity_data
+      ]);
   }
 
   public function add_service_activitytype(Request $request)
@@ -149,24 +189,31 @@ class ServiceController extends Controller
 
     if ($request->ids != '') {
       Session::flash('success', 'Updated successfully..!');
-      $updateData = DB::table('Service_Category_ActivityType')->where('id', $request->ids)->update($data);
+      $updateData = DB::table('Service_Category_ActivityType')
+        ->where('id', $request->ids)
+        ->update($data);
       return back();
     } else {
       Session::flash('success', 'Inserted successfully..!');
-      $insertData = DB::table('Service_Category_ActivityType')->insert($data);
+      $insertData = DB::table('Service_Category_ActivityType')
+        ->insert($data);
       return back();
     }
   }
 
   public function service_activitytype_edit($id)
   {
-    $data = DB::table('Service_Category_ActivityType')->where('id', $id)->first();
+    $data = DB::table('Service_Category_ActivityType')
+      ->where('id', $id)
+      ->first();
     return Response::json($data);
   }
 
   public function delete_service_activity($id)
   {
-    $delete = DB::table('Service_Category_ActivityType')->where('Id', $id)->delete();
+    $delete = DB::table('Service_Category_ActivityType')
+      ->where('Id', $id)
+      ->delete();
 
     session()->flash('error', 'Deleted Successfully..!');
     return redirect()->back();

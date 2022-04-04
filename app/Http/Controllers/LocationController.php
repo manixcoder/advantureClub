@@ -32,12 +32,15 @@ class LocationController extends Controller
 
     public function getCountries(Request $request, $id = null)
     {
-        $countries = DB::table('countries')->where(['deleted_at' => NULL])->get();
+        $countries = DB::table('countries')
+            ->where(['deleted_at' => NULL])
+            ->get();
         $data['content'] = 'admin.locations.country_list';
-        return view('layouts.content', compact('data'))->with([
-            'validation' => $validation ?? [],
-            'countries' => $countries
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'validation' => $validation ?? [],
+                'countries' => $countries
+            ]);
     }
 
     public function addCountry(Request $request, $id = null)
@@ -75,9 +78,10 @@ class LocationController extends Controller
             }
         }
         $data['content'] = 'admin.locations.add_country';
-        return view('layouts.content', compact('data'))->with([
-            'validation' => $validation ?? []
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'validation' => $validation ?? []
+            ]);
     }
 
     public function deleteCountries($id)
@@ -98,10 +102,11 @@ class LocationController extends Controller
             ->leftJoin('countries as cntry', 'cntry.id', '=', 'ct.country_id')
             ->where(['ct.deleted_at' => NULL])->get();
         $data['content'] = 'admin.locations.city_list';
-        return view('layouts.content', compact('data'))->with([
-            'validation' => $validation ?? [],
-            'cities' => $result
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'validation' => $validation ?? [],
+                'cities' => $result
+            ]);
     }
 
     public function addCities(Request $request, $id = null)
@@ -124,7 +129,12 @@ class LocationController extends Controller
                 if (!$city_exist->isEmpty()) {
                     $validation = array('city' => 'This city already created.');
                 } else {
-                    if (DB::table('cities')->insert(['country_id' => $request->country, 'city' => $request->city])) {
+                    if (DB::table('cities')
+                        ->insert([
+                            'country_id' => $request->country,
+                            'city' => $request->city
+                        ])
+                    ) {
                         $request->session()->flash('success', "Record has been added successfully.");
                     } else {
                         $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -187,12 +197,16 @@ class LocationController extends Controller
                     ->where('country_id', $request->country)
                     ->get();
                 if (!$region_exist->isEmpty()) {
-                    $validation = array('region' => 'This region already created.');
+                    $validation = array(
+                        'region' => 'This region already created.'
+                    );
                 } else {
-                    if (DB::table('regions')->insert([
-                        'country_id' => $request->country,
-                        'region' => $request->region
-                    ])) {
+                    if (DB::table('regions')
+                        ->insert([
+                            'country_id' => $request->country,
+                            'region' => $request->region
+                        ])
+                    ) {
                         $request->session()->flash('success', "Record has been added successfully.");
                     } else {
                         $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -203,10 +217,11 @@ class LocationController extends Controller
         }
         $countries = DB::table('countries')->where(['deleted_at' => NULL])->get();
         $data['content'] = 'admin.locations.add_region';
-        return view('layouts.content', compact('data'))->with([
-            'validation' => $validation ?? [],
-            'countries' => $countries
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'validation' => $validation ?? [],
+                'countries' => $countries
+            ]);
     }
 
     public function deleteRegions($id)

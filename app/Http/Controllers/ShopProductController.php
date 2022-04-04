@@ -79,11 +79,14 @@ class ShopProductController extends Controller
     }
 
     if ($request->edit_id != '') {
-      $updateData = DB::table('ShopProduct')->where('id', $request->edit_id)->update($data);
+      $updateData = DB::table('ShopProduct')
+        ->where('id', $request->edit_id)
+        ->update($data);
       Session::flash('success', 'Updated successfully..!');
       return redirect('shop-product');
     } else {
-      $insertData = DB::table('ShopProduct')->insertgetId($data);
+      $insertData = DB::table('ShopProduct')
+        ->insertgetId($data);
       Session::flash('success', 'Inserted successfully..!');
       return redirect('shop-product');
     }
@@ -92,34 +95,54 @@ class ShopProductController extends Controller
   public function shop_product_listing()
   {
     if (Session::get('userRole') == 1) {
-      $shopproductdata = DB::table('ShopProduct')->orderBy('id', 'desc')->get();
+      $shopproductdata = DB::table('ShopProduct')
+        ->orderBy('id', 'desc')
+        ->get();
     } else {
-      $shopproductdata = DB::table('ShopProduct')->orderBy('id', 'desc')->where('CreatorVendorId', Session::get('user_id'))->get();
+      $shopproductdata = DB::table('ShopProduct')
+        ->orderBy('id', 'desc')
+        ->where('CreatorVendorId', Session::get('user_id'))
+        ->get();
     }
 
     $data['content'] = 'admin.shop_product.manage_shop_product';
-    return view('layouts.content', compact('data'))->with(['shopproductdata' => $shopproductdata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'shopproductdata' => $shopproductdata
+      ]);
   }
 
   public function edit_shop_product($id)
   {
-    $shop_product_edit = DB::table('ShopProduct')->where('id', $id)->first();
+    $shop_product_edit = DB::table('ShopProduct')
+      ->where('id', $id)
+      ->first();
 
     $data['content'] = 'admin.shop_product.edit_shop_products';
-    return view('layouts.content', compact('data'))->with(['shop_product_edit' => $shop_product_edit]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'shop_product_edit' => $shop_product_edit
+      ]);
   }
 
   public function view_shop_product($id)
   {
-    $shop_product_view_data = DB::table('ShopProduct')->where('id', $id)->first();
+    $shop_product_view_data = DB::table('ShopProduct')
+      ->where('id', $id)
+      ->first();
 
     $data['content'] = 'admin.shop_product.view_shop_product';
-    return view('layouts.content', compact('data'))->with(['shop_product_view_data' => $shop_product_view_data]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'shop_product_view_data' => $shop_product_view_data
+      ]);
   }
 
   public function delete_shop_product($id)
   {
-    $delete = DB::table('ShopProduct')->where('id', $id)->delete();
+    $delete = DB::table('ShopProduct')
+      ->where('id', $id)
+      ->delete();
     session()->flash('error', 'Deleted Successfully..!');
     return redirect()->back();
   }

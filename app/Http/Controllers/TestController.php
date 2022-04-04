@@ -796,9 +796,18 @@ class ServicesController extends MyController {
             ]);
         } else {// Service list
             $services = DB::table('services as srvc')
-                    ->select(['srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
-                    'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type',
-                    'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region'])
+                    ->select([
+                        'srvc.*', 
+                        'usr.name as provided_by',
+                         DB::raw("CONCAT(srvc.duration,'Min') AS duration"),
+                         'scat.category as service_category', 
+                         'ssec.sector as service_sector', 
+                         'styp.type as service_type',
+                         'slvl.level as service_level',
+                          'cntri.country', 
+                          'crnci.sign as currency_sign', 
+                          'rgns.region'
+                          ])
                     ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                     ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                     ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
@@ -982,7 +991,6 @@ class ServicesController extends MyController {
                         $banner_data = [];
                         if (count($request->file('banners'))) {
                             foreach ($request->file('banners') as $key => $banner) {
-
                                 $banner->type = $banner->getClientMimeType();
                                 $file_info = $this->getExtensionSize((array) $banner);
                                 if (!in_array($file_info['ext'], $this->allowed_mime())) {
@@ -992,9 +1000,8 @@ class ServicesController extends MyController {
                                 } else {
                                     $msg = config('constants.BANNER_ADDED');
                                     if ($banner) {
-//                                        if (isset($result['banner']) && $result['banner'] != '') {
-//                                            Storage::disk('public')->delete($result['banner']);
-//                                        }
+
+                                        
                                         $filename = time() . '-' . $key . '.jpg';
                                         $basepath = "public/uploads/services/thumbs/";
                                         if (!is_dir($basepath)) {
@@ -1053,11 +1060,14 @@ class ServicesController extends MyController {
                                     'end_datetime' => $g_date[$key] . ' ' . $g_etime[$key] . ':00',
                                     'description' => $p_desc[$key]);
                             }
-                            DB::table('service_programs')->insert($serv_programs);
+                            DB::table('service_programs')
+                            ->insert($serv_programs);
                         }
                         if ($request->service_plan == 1) {
                             $spd_data = [];
-                            DB::table('service_plan_day_date')->where('service_id', '=', $service_id)->delete();
+                            DB::table('service_plan_day_date')
+                            ->where('service_id', '=', $service_id)
+                            ->delete();
                             foreach ($request->service_plan_days as $spd) {
                                 $spd_data[] = array('service_id' => $service_id, 'day' => $spd);
                             }
@@ -1065,11 +1075,14 @@ class ServicesController extends MyController {
                         }
                         if ($request->service_plan == 2) {
                             $pd_data = [];
-                            DB::table('service_plan_day_date')->where('service_id', '=', $service_id)->delete();
+                            DB::table('service_plan_day_date')
+                            ->where('service_id', '=', $service_id)
+                            ->delete();
                             foreach (explode(',', $request->particular_date) as $p_date) {
                                 $pd_data[] = array('service_id' => $service_id, 'date' => date('Y-m-d', strtotime($p_date)));
                             }
-                            DB::table('service_plan_day_date')->insert($pd_data);
+                            DB::table('service_plan_day_date')
+                            ->insert($pd_data);
                         }
 
                         $request->session()->flash('success', 'Service has been added successfully.');
@@ -1086,7 +1099,8 @@ class ServicesController extends MyController {
                 $result[] = $vendor->attributesToArray();
             }
         }
-        $countries = Countrie::where(['deleted_at' => NULL])->get();
+        $countries = Countrie::where(['deleted_at' => NULL])
+        ->get();
         if (!empty($countries)) {
             foreach ($countries as $countrie) {
                 $countries_res[] = $countrie->attributesToArray();
@@ -1143,22 +1157,23 @@ class ServicesController extends MyController {
                 ->select('id', 'region')
                 ->get();
         $data['content'] = 'admin.services.update_services';
-        return view('layouts.content', compact('data'))->with([
-                    'validation' => $validation ?? [],
-                    'vendors' => $result ?? [],
-                    'countries' => $countries_res,
-                    'sectors' => $sectors_res,
-                    'categories' => $categories_res,
-                    'types' => $types_res,
-                    'levels' => $levels_res,
-                    'durations' => $durations_list,
-                    'dependencies' => $dependencies,
-                    'service_for' => $service_for,
-                    'currencies' => $currencies,
-                    'service_plans' => $service_plans,
-                    'weekdays' => $weekdays,
-                    'activities_list' => $activities_list,
-                    'regions_list' => $region_list
+        return view('layouts.content', compact('data'))
+        ->with([
+            'validation' => $validation ?? [],
+            'vendors' => $result ?? [],
+            'countries' => $countries_res,
+            'sectors' => $sectors_res,
+            'categories' => $categories_res,
+            'types' => $types_res,
+            'levels' => $levels_res,
+            'durations' => $durations_list,
+            'dependencies' => $dependencies,
+            'service_for' => $service_for,
+            'currencies' => $currencies,
+            'service_plans' => $service_plans,
+            'weekdays' => $weekdays,
+            'activities_list' => $activities_list,
+            'regions_list' => $region_list
         ]);
     }
 
@@ -1166,10 +1181,22 @@ class ServicesController extends MyController {
         $url = asset('public/profile_image/');
         $where = 'srvc.id = ' . $id . ' ';
         $services = DB::table('services as srvc')
-                ->select(['srvc.*', 'srvc.id as service_id', 'usr.name as provided_by', DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
-                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector',
-                    'styp.type as service_type', 'slvl.level as service_level', 'cntri.country',
-                    'rgn.region', 'curr.code as currency', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 'slike.is_like'])
+                ->select([
+                    'srvc.*', 
+                    'srvc.id as service_id', 
+                    'usr.name as provided_by',
+                     DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
+                    'scat.category as service_category',
+                     'ssec.sector as service_sector',
+                    'styp.type as service_type', 
+                    'slvl.level as service_level',
+                     'cntri.country',
+                    'rgn.region',
+                     'curr.code as currency',
+                      DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
+                       'slike.is_like'
+                       ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
@@ -1254,9 +1281,10 @@ class ServicesController extends MyController {
                 ->orderBy('bkng.id', 'DESC')
                 ->get();
         $data['content'] = 'admin.services.service_detail';
-        return view('layouts.content', compact('data'))->with([
-                    'service' => $services[0],
-                    'bookings' => $bookings
+        return view('layouts.content', compact('data'))
+        ->with([
+            'service' => $services[0],
+            'bookings' => $bookings
         ]);
     }
 
@@ -1334,14 +1362,18 @@ class ServicesController extends MyController {
                 ->first();
         $service_id = $service->service_id;
         $dependencies = DB::table('service_dependencies as s_dep')
-                        ->select(['dep.id', 'dep.dependency_name'])
+                        ->select([
+                            'dep.id', 
+                            'dep.dependency_name'
+                            ])
                         ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
                         ->where('s_dep.service_id', $service_id)
                         ->get()->toArray();
         $service->dependencies = $dependencies ?? [];
         $data['content'] = 'admin.services.booked_client_view';
-        return view('layouts.content', compact('data'))->with([
-                    'service' => $service
+        return view('layouts.content', compact('data'))
+        ->with([
+            'service' => $service
         ]);
     }
 
@@ -1351,7 +1383,18 @@ class ServicesController extends MyController {
             $where .= ' && srvc.id = ' . $id;
         }
         $services = DB::table('services as srvc')
-                ->select(['srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type', 'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")])
+                ->select([
+                    'srvc.*', 
+                    'usr.name as provided_by', 
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
+                    'scat.category as service_category', 
+                    'ssec.sector as service_sector',
+                    'styp.type as service_type', 
+                    'slvl.level as service_level', 
+                    'cntri.country', 
+                    'crnci.sign as currency_sign', 
+                    'rgns.region', 
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
@@ -1379,7 +1422,12 @@ class ServicesController extends MyController {
         $result = array();
 
         $regions = DB::table('regions as rg')
-                        ->select('cnt.id as country_id', 'cnt.country', 'rg.id as region_id', 'rg.region')
+                        ->select(
+                            'cnt.id as country_id', 
+                            'cnt.country',
+                            'rg.id as region_id', 
+                            'rg.region'
+                            )
                         ->leftJoin('countries as cnt', 'cnt.id', '=', 'rg.country_id')
                         ->where(['rg.country_id' => $id, 'rg.deleted_at' => NULL])->orderBy('rg.region', 'ASC')->get();
         $options = '';
@@ -1401,9 +1449,23 @@ class ServicesController extends MyController {
     public function listServiceReviews(Request $request){
 
         $reviewData = DB::table('services as srvc')
-                            ->select(['srvc.id','srvc.adventure_name','sercat.category','sersec.sector','sertype.type','rev.service_id','rev.user_id', DB::raw("AVG(star) AS stars"),
-                             DB::raw("COUNT(user_id) AS reviewd_by"),DB::raw("COUNT(service_id) AS likes"),'rev.remark',
-                             'usr.name','usr.users_role','cntri.country',DB::raw("MAX(srvc.updated_at)as date")])
+                            ->select([
+                                'srvc.id',
+                                'srvc.adventure_name',
+                                'sercat.category',
+                                'sersec.sector',
+                                'sertype.type',
+                                'rev.service_id',
+                                'rev.user_id', 
+                                DB::raw("AVG(star) AS stars"),
+                                DB::raw("COUNT(user_id) AS reviewd_by"),
+                                DB::raw("COUNT(service_id) AS likes"),
+                                'rev.remark',
+                                'usr.name',
+                                'usr.users_role',
+                                'cntri.country',
+                                DB::raw("MAX(srvc.updated_at)as date")
+                                ])
                              ->join('service_reviews as rev','rev.service_id','=','srvc.id')
                              ->join('service_categories as sercat','srvc.service_category','=','sercat.id')
                              ->join('service_sectors as sersec','srvc.service_sector','=','sersec.id')
@@ -1414,7 +1476,10 @@ class ServicesController extends MyController {
                             ->get()->toArray();
                           //  echo "<pre>";print_r( $reviewData);exit;
               $likesData= DB::table('service_likes as srvclks')
-                        ->select(['rev.*','srvclks.is_like'])
+                        ->select([
+                            'rev.*',
+                            'srvclks.is_like'
+                            ])
                         ->join('service_reviews as rev','rev.service_id','=','srvclks.service_id')
                         ->groupBy('rev.service_id')
                         ->get()->toArray();
@@ -1436,13 +1501,12 @@ class ServicesController extends MyController {
 
     
     public function update_like_status($id){
-        $Data = array
-                  (
-                      'id' => $_GET['id'],
-                      'status' => $_GET['status'],
-              );
-            $edituserData = DB::table('service_likes')->insert($Data);
-            return response()->json(array('msg'=> $edituserData), 200);
+        $Data = array(
+            'id' => $_GET['id'],
+            'status' => $_GET['status'],
+        );
+        $edituserData = DB::table('service_likes')->insert($Data);
+        return response()->json(array('msg'=> $edituserData), 200);
         }
 
 }

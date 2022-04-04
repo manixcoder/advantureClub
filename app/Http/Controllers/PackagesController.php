@@ -37,9 +37,10 @@ class PackagesController extends MyController
             $packages = [];
         }
         $data['content'] = 'admin.pages.packages';
-        return view('layouts.content', compact('data'))->with([
-            'packages' => $packages
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'packages' => $packages
+            ]);
     }
 
     public function add(Request $request)
@@ -70,14 +71,15 @@ class PackagesController extends MyController
                     'cost'          => $request->cost,
                     'offer_cost'    => $request->offer_cost
                 ])) {
-                    $package_id = DB::getPdo()->lastInsertId();
+                    $package_id = DB::getPdo()
+                        ->lastInsertId();
                     DB::table('package_detail')
-                    ->where(['package_id' => $package_id])
-                    ->delete();
+                        ->where(['package_id' => $package_id])
+                        ->delete();
                     $pkg_det = [];
                     foreach ($request->includes as $val) {
                         $pkg_det[] = [
-                            'package_id'    => $package_id, 
+                            'package_id'    => $package_id,
                             'title'         => $val,
                             'detail_type'   => 1
                         ];
@@ -90,16 +92,16 @@ class PackagesController extends MyController
                         ];
                     }
                     DB::table('package_detail')
-                    ->insert($pkg_det);
+                        ->insert($pkg_det);
                     $request->session()->flash(
-                        'success', 
+                        'success',
                         'Record has been added successfully.'
-                        );
+                    );
                 } else {
                     $request->session()->flash(
-                        'error', 
+                        'error',
                         'Something went wrong. Please try again.'
-                        );
+                    );
                 }
                 return redirect('/sub-packages/add');
             }
@@ -107,22 +109,24 @@ class PackagesController extends MyController
         $packages = DB::table('packages')->get();
         $data['content'] = 'admin.pages.update_packages';
         return view('layouts.content', compact('data'))
-        ->with([
-            'validation' => $validation ?? [],
-            'packages' => $packages
-        ]);
+            ->with([
+                'validation' => $validation ?? [],
+                'packages' => $packages
+            ]);
     }
 
     public function privacyPolicies(Request $request)
     {
-        $terms = DB::table('privacy_policy')->get();
+        $terms = DB::table('privacy_policy')
+            ->get();
         if ($terms->isEmpty()) {
             $terms = [];
         }
         $data['content'] = 'admin.pages.privacy_policy_list';
-        return view('layouts.content', compact('data'))->with([
-            'terms' => $terms
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'terms' => $terms
+            ]);
     }
 
     public function addPrivacyPolicy(Request $request)
@@ -148,36 +152,44 @@ class PackagesController extends MyController
                         'description' => $request->description[$key]
                     );
                 }
-                DB::table('privacy_policy')->truncate();
-                if (DB::table('privacy_policy')->insert($term_data)) {
-                    $request->session()->flash(
-                        'success', 
-                        'Record has been added successfully.'
+                DB::table('privacy_policy')
+                    ->truncate();
+                if (DB::table('privacy_policy')
+                    ->insert($term_data)
+                ) {
+                    $request->session()
+                        ->flash(
+                            'success',
+                            'Record has been added successfully.'
                         );
                 } else {
                     $request->session()->flash(
-                        'error', 
+                        'error',
                         'Something went wrong. Please try again.'
-                        );
+                    );
                 }
                 return redirect('/privacy-policy/add');
             }
         }
-        $terms = DB::table('privacy_policy')->get();
+        $terms = DB::table('privacy_policy')
+            ->get();
         $data['content'] = 'admin.pages.update_privacy_policies';
-        return view('layouts.content', compact('data'))->with([
-            'validation' => $validation ?? [],
-            'terms' => $terms
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'validation' => $validation ?? [],
+                'terms' => $terms
+            ]);
     }
 
     public function aboutUs(Request $request)
     {
-        $terms = DB::table('about_us')->first();
+        $terms = DB::table('about_us')
+            ->first();
         $data['content'] = 'admin.pages.about_us_list';
-        return view('layouts.content', compact('data'))->with([
-            'terms' => $terms
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'terms' => $terms
+            ]);
     }
 
     public function addAboutUs(Request $request)
@@ -193,7 +205,11 @@ class PackagesController extends MyController
                 }
             } else {
                 DB::table('about_us')->truncate();
-                if (DB::table('about_us')->insert(['content' => $request->description])) {
+                if (DB::table('about_us')
+                    ->insert([
+                        'content' => $request->description
+                    ])
+                ) {
                     $request->session()->flash('success', 'Record has been added successfully.');
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -203,10 +219,11 @@ class PackagesController extends MyController
         }
         $terms = DB::table('about_us')->first();
         $data['content'] = 'admin.pages.update_about_us';
-        return view('layouts.content', compact('data'))->with([
-            'validation' => $validation ?? [],
-            'terms' => $terms
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'validation' => $validation ?? [],
+                'terms' => $terms
+            ]);
     }
 
     public function transactions()
@@ -216,9 +233,10 @@ class PackagesController extends MyController
             ->leftJoin('users as usr', 'usr.id', '=', 'pmt.user_id')
             ->get();
         $data['content'] = 'admin.pages.transactions';
-        return view('layouts.content', compact('data'))->with([
-            'result' => $result
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'result' => $result
+            ]);
     }
 
     /* Update status in db from ajax request starts */
@@ -229,8 +247,8 @@ class PackagesController extends MyController
             'status'    => $_GET['status'],
         );
         $edituserData = DB::table('packages')
-        ->where('id', $id)
-        ->update($Data);
+            ->where('id', $id)
+            ->update($Data);
         return response()->json(array('msg' => $edituserData), 200);
     }
     /* Update status ends */
@@ -244,12 +262,12 @@ class PackagesController extends MyController
             $request->session()->flash(
                 'success',
                 'Package has been deleted successfully.'
-                );
+            );
         } else {
             $request->session()->flash(
-                'error', 
+                'error',
                 'Something went wrong. Please try again.'
-                );
+            );
         }
         return redirect()->back();
     }

@@ -206,7 +206,6 @@ class SelectionsController extends MyController
                 switch ($request->comes_under) {
                     case 1:
                         $sector = new Service_sector();
-
                         $sector->sector = $request->selection_name;
                         if ($sector->save()) {
                             $request->session()->flash('success', "Record has been added successfully.");
@@ -217,7 +216,6 @@ class SelectionsController extends MyController
                         break;
                     case 2:
                         $sector = new Service_categorie();
-
                         $sector->category = $request->selection_name;
                         if ($sector->save()) {
                             $request->session()->flash('success', "Record has been added successfully.");
@@ -228,7 +226,6 @@ class SelectionsController extends MyController
                         break;
                     case 3:
                         $sector = new Service_type();
-
                         $sector->type = $request->selection_name;
                         if ($sector->save()) {
                             $request->session()->flash('success', "Record has been added successfully.");
@@ -239,7 +236,6 @@ class SelectionsController extends MyController
                         break;
                     case 4:
                         $sector = new Service_level();
-
                         $sector->level = $request->selection_name;
                         if ($sector->save()) {
                             $request->session()->flash('success', "Record has been added successfully.");
@@ -250,9 +246,7 @@ class SelectionsController extends MyController
                         break;
                     case 5:
 
-                        if (DB::table('durations')->insert([
-                            'duration' => $request->selection_name
-                        ])) {
+                        if (DB::table('durations')->insert(['duration' => $request->selection_name])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -260,9 +254,7 @@ class SelectionsController extends MyController
                         return redirect('/selections/5');
                         break;
                     case 6:
-                        if (DB::table('activities')->insert([
-                            'activity' => $request->selection_name
-                        ])) {
+                        if (DB::table('activities')->insert(['activity' => $request->selection_name])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -280,9 +272,7 @@ class SelectionsController extends MyController
                         return redirect('/selections/7');
                         break;
                     case 8:
-                        if (DB::table('dependency')->insert([
-                            'dependency_name' => $request->selection_name
-                        ])) {
+                        if (DB::table('dependency')->insert(['dependency_name' => $request->selection_name])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -290,9 +280,7 @@ class SelectionsController extends MyController
                         return redirect('/selections/8');
                         break;
                     case 9:
-                        if (DB::table('currencies')->insert([
-                            'name' => $request->selection_name
-                        ])) {
+                        if (DB::table('currencies')->insert(['name' => $request->selection_name])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -344,8 +332,6 @@ class SelectionsController extends MyController
                         }
                         return redirect('/selections/13');
                         break;
-
-
                     default:
                 }
             }
@@ -358,7 +344,6 @@ class SelectionsController extends MyController
 
     public function delete(Request $request, $tab_id = 1, $item_id)
     {
-
         switch ($tab_id) {
             case 1:
                 $sector = Service_sector::find($item_id);

@@ -62,14 +62,16 @@ class CategoryController extends Controller
       return redirect('category');
     } else {
       Session::flash('success', 'Inserted successfully..!');
-      $insertData = DB::table('home_categories')->insert($data);
+      $insertData = DB::table('home_categories')
+        ->insert($data);
       return redirect('category');
     }
   }
 
   public function view_category()
   {
-    $categorydata = DB::table('home_categories')->get();
+    $categorydata = DB::table('home_categories')
+      ->get();
 
     $data['content'] = 'admin.category.manage_category';
     return view('layouts.content', compact('data'))
@@ -80,7 +82,9 @@ class CategoryController extends Controller
 
   public function category_edit($id)
   {
-    $editdata = DB::table('home_categories')->where('id', $id)->first();
+    $editdata = DB::table('home_categories')
+      ->where('id', $id)
+      ->first();
     $data['content'] = 'admin.category.edit_category';
     return view('layouts.content', compact('data'))
       ->with([
@@ -126,7 +130,8 @@ class CategoryController extends Controller
 
   public function useremail($y)
   {
-    $data = User::where('email', $y)->first();
+    $data = User::where('email', $y)
+      ->first();
     if ($data != '') {
       return Response::json($data);
     }

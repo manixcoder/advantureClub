@@ -151,11 +151,23 @@ class LoginController extends Controller
       $productdata = DB::table('home_products')->orderBy('id', 'desc')->count();
 
       $data['content'] = 'admin.home';
-      return view('layouts.content', compact('data'))->with(['usredata' => $usredata, 'customerdata' => $customerdata, 'vendor_requests' => $vendor_requests, 'categorydata' => $categorydata, 'countrydata' => $countrydata, 'adventure_programdata' => $adventure_programdata, 'productdata' => $productdata]);
+      return view('layouts.content', compact('data'))
+        ->with([
+          'usredata' => $usredata,
+          'customerdata' => $customerdata,
+          'vendor_requests' => $vendor_requests,
+          'categorydata' => $categorydata,
+          'countrydata' => $countrydata,
+          'adventure_programdata' => $adventure_programdata,
+          'productdata' => $productdata
+        ]);
     } elseif ($userRole == '2') {
       $usredata = DB::table('users')->count();
       $data['content'] = 'admin.home';
-      return view('layouts.content', compact('data'))->with(['usredata' => $usredata]);
+      return view('layouts.content', compact('data'))
+        ->with([
+          'usredata' => $usredata
+        ]);
     } else {
       echo "customer login not allowed";
       die;
@@ -174,14 +186,20 @@ class LoginController extends Controller
     $total_users = User::all();
 
     $data['content'] = 'admin.user';
-    return view('layouts.content', compact('data'))->with(['usredata' => $usredata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'usredata' => $usredata
+      ]);
   }
   public function user_view()
   {
     $usredata = User::where('users_role', 2)->get();
 
     $data['content'] = 'admin.user.user';
-    return view('layouts.content', compact('data'))->with(['usredata' => $usredata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'usredata' => $usredata
+      ]);
   }
 
   public function add_user(Request $request)
@@ -216,11 +234,14 @@ class LoginController extends Controller
     }
     if ($request->ids != '') {
       Session::flash('success', 'Updated successfully..!');
-      $updateData = DB::table('users')->where('id', $request->ids)->update($data);
+      $updateData = DB::table('users')
+        ->where('id', $request->ids)
+        ->update($data);
       return redirect('users');
     } else {
       Session::flash('success', 'Inserted successfully..!');
-      $insertData = DB::table('users')->insert($data);
+      $insertData = DB::table('users')
+        ->insert($data);
       return back();
     }
   }
@@ -228,17 +249,23 @@ class LoginController extends Controller
   {
     $editdata = User::where('id', $id)->first();
     $data['content'] = 'admin.user.edit_user';
-    return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'editdata' => $editdata
+      ]);
   }
   public function view_user($id)
   {
     $editdata = User::where('id', $id)->first();
     $data['content'] = 'admin.user.view_user';
-    return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
+    return view('layouts.content', compact('data'))->with([
+      'editdata' => $editdata
+    ]);
   }
   public function user_delete($id)
   {
-    $customerdata_delete = User::where('id', $id)->delete();
+    $customerdata_delete = User::where('id', $id)
+      ->delete();
     Session::flash('error', 'User delete successfully.!');
     return back();
   }
@@ -249,7 +276,10 @@ class LoginController extends Controller
   {
     $countrydata = DB::table('countries')->get();
     $data['content'] = 'admin.countries.manage_country';
-    return view('layouts.content', compact('data'))->with(['countrydata' => $countrydata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'countrydata' => $countrydata
+      ]);
   }
 
   public function add_countries(Request $request)
@@ -262,24 +292,31 @@ class LoginController extends Controller
     );
     if ($request->ids != '') {
       Session::flash('success', 'Updated successfully..!');
-      $updateData = DB::table('countries')->where('id', $request->ids)->update($data);
+      $updateData = DB::table('countries')
+        ->where('id', $request->ids)
+        ->update($data);
       return back();
     } else {
       Session::flash('success', 'Inserted successfully..!');
-      $insertData = DB::table('countries')->insert($data);
+      $insertData = DB::table('countries')
+        ->insert($data);
       return back();
     }
   }
 
   public function countries_edit($id)
   {
-    $data = DB::table('countries')->where('id', $id)->first();
+    $data = DB::table('countries')
+      ->where('id', $id)
+      ->first();
     return Response::json($data);
   }
 
   public function delete_countries($id)
   {
-    $delete = DB::table('countries')->where('id', $id)->delete();
+    $delete = DB::table('countries')
+      ->where('id', $id)
+      ->delete();
     session()->flash('error', 'Deleted Successfully..!');
     return redirect()->back();
   }
@@ -291,12 +328,17 @@ class LoginController extends Controller
     $customersdata = User::where('users_role', 3)->get();
 
     $data['content'] = 'admin.customer.manage_customer';
-    return view('layouts.content', compact('data'))->with(['customersdata' => $customersdata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'customersdata' => $customersdata
+      ]);
   }
 
   function customer_delete($id)
   {
-    $delete = DB::table('users')->where('id', $id)->delete();
+    $delete = DB::table('users')
+      ->where('id', $id)
+      ->delete();
     session()->flash('error', 'Deleted Successfully..!');
     return back();
   }
