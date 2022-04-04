@@ -1,4 +1,3 @@
-
 <?php
 $segment = Request::segment(3);
 $base_url = URL::to('/');
@@ -112,24 +111,24 @@ $base_url = URL::to('/');
                             </div>
                             <?php
                             if ($service->status == 0) {
-                                ?>
+                            ?>
                                 <div class="col-md-4">
                                     <a href="{{URL::to('booking/accept/'.$service->booking_id)}}" onclick="return confirm('Are you sure you want to accept this request ?')">
-                                        <span class="badge bg-green"><i class="fa fa-check"></i> &nbsp;&nbsp;<span class="text-green" >Accept</span></span>
+                                        <span class="badge bg-green"><i class="fa fa-check"></i> &nbsp;&nbsp;<span class="text-green">Accept</span></span>
                                     </a>
                                 </div>
                                 <div class="col-md-4">
                                     <a href="{{URL::to('booking/decline/'.$service->booking_id)}}" onclick="return confirm('Are you sure you want to decline this request ?')">
-                                        <span class="badge bg-red"><i class="fa fa-times" style="margin-left: 2px;"></i> &nbsp;&nbsp;<span class="text-red" >Decline</span></span>
+                                        <span class="badge bg-red"><i class="fa fa-times" style="margin-left: 2px;"></i> &nbsp;&nbsp;<span class="text-red">Decline</span></span>
                                     </a>
                                 </div>
                             <?php } else if ($service->status == 1) {
-                                ?>
+                            ?>
                                 <div class="col-md-4">
                                     <span class="text-green">{{$service->booking_status_text}}</span>
                                 </div>
                             <?php } else if ($service->status == 2) {
-                                ?>
+                            ?>
                                 <div class="col-md-4">
                                     <span class="text-red">{{$service->booking_status_text}}</span>
                                 </div>

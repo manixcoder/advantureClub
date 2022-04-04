@@ -117,7 +117,7 @@ Route::any('delete-announcement/{id}', 'TransactionsController@announcement_dele
 
 /*Question Reports*/
 Route::any('questionreport', 'TransactionsController@list_questionreport');
-Route::any('question_report/{id}', 'TransactionsController@questionreport_delete');
+Route::any('question_report/{id}', 'TransactionsController@questionreport_delete'); 
 
 /* AdventurePartnersController all routes start */
 Route::any('list-adventure-partners', 'AdventurePartnersController@list_adventure_partners');

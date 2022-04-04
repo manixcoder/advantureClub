@@ -98,15 +98,15 @@
                         $class = 'badge-danger';
                      }
                      ?>
-                     <span id="statusText_{{$editdata->id}}" class="$class">{{$stat}} &nbsp;&nbsp;</span>
-                     <span>
+                     <!--span id="statusText_{{$editdata->id}}" class="$class">{{$stat}} &nbsp;&nbsp;</!--span>
+                     <span-->
                         <h3>
                            <!--label class="switch">
                               <input type="checkbox" class="togBtn" id="togBtn_{{$editdata->id}}" name="togBtn_{{$editdata->id}}" value="{{ $statVal}}" <?php echo $checked; ?> />
                               <span class="slider round"></span>
                            </label-->
                         </h3>
-                     </span>
+                     </span->
                   </li>
                </ul>
             </div>

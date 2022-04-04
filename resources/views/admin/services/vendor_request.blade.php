@@ -25,18 +25,18 @@ $base_url = URL::to('/');
                 <div class="row">
                     <div class="col-md-6">
                         <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="2" <?php
-                        if ($segment == 'vendors') {
-                            echo 'checked';
-                        }
-                        ?>  onchange="return window.location.href = '<?php echo $base_url . '/requests/vendors' ?>'" >
+                                                                                                                                    if ($segment == 'vendors') {
+                                                                                                                                        echo 'checked';
+                                                                                                                                    }
+                                                                                                                                    ?> onchange="return window.location.href = '<?php echo $base_url . '/requests/vendors' ?>'">
                         Partner Requests
                     </div>
                     <div class="col-md-6">
                         <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" <?php
-                        if ($segment == 'adventures') {
-                            echo 'checked';
-                        }
-                        ?> onchange="return window.location.href = '<?php echo $base_url . '/requests/adventures' ?>'" >
+                                                                                                                                    if ($segment == 'adventures') {
+                                                                                                                                        echo 'checked';
+                                                                                                                                    }
+                                                                                                                                    ?> onchange="return window.location.href = '<?php echo $base_url . '/requests/adventures' ?>'">
                         Adventure Requests
                     </div>
                 </div>
@@ -63,8 +63,8 @@ $base_url = URL::to('/');
                             //dd($service_for);
                             //$role_exist = DB::table('service_for')->where('id', $service->sforid)->get();
                             //dd($role_exist);
-                            ?>
-                            <tr class = "gradeX">
+                    ?>
+                            <tr class="gradeX">
                                 <td>#{{$service->id}}</td>
                                 <td>{{$service->adventure_name}}</td>
                                 <td>{{$service->country.' / '.$service->region}}</td>
@@ -79,11 +79,11 @@ $base_url = URL::to('/');
                                     </ul>
                                 </td>
                             </tr>
-                            <?php
+                        <?php
                         }
                     } else {
                         ?>
-                        <tr class = "gradeX">
+                        <tr class="gradeX">
                             <td colspan="7" class="text-center">No request found</td>
                         </tr>
                     <?php } ?>
