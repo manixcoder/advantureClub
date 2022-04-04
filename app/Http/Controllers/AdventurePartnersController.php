@@ -319,10 +319,12 @@ class AdventurePartnersController extends Controller
       'id' => $_GET['id'],
       'status' => $_GET['status'],
     );
-    $edituserData = DB::table('users')->where('id', $id)->update($Data);
-    DB::table('become_partner')->where('user_id', $id)->update([
-      'is_approved' => '1',
-    ]);
+    $edituserData = DB::table('users')->where('id', $id)
+      ->update($Data);
+    DB::table('become_partner')->where('user_id', $id)
+      ->update([
+        'is_approved' => '1',
+      ]);
     DB::table('notifications')->insert([
       'sender_id' => Auth::user()->id,
       'user_id' => $id,
