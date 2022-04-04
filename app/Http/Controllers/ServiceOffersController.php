@@ -140,7 +140,9 @@ class ServiceOffersController extends MyController
             'id'        => $_GET['id'],
             'status'    => $_GET['status'],
         );
-        $edituserData = DB::table('service_offers')->where('id', $id)->update($Data);
+        $edituserData = DB::table('service_offers')
+        ->where('id', $id)
+        ->update($Data);
         return response()->json(array('msg' => $edituserData), 200);
     }
     /* Update status ends */

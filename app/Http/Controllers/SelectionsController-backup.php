@@ -49,7 +49,8 @@ class SelectionsController extends MyController
                     'sector as name',
                     DB::raw("'Service Sector' as under"),
                     'created_at'
-                ])->get()
+                ])
+                    ->get()
                     ->toArray();
                 $active_tab = 'service_sector';
                 break;
@@ -71,7 +72,8 @@ class SelectionsController extends MyController
                     DB::raw("'Service Type' as under"),
                     'created_at'
                 ])
-                    ->get()->toArray();
+                    ->get()
+                    ->toArray();
                 $active_tab = 'service_type';
                 break;
             case 4:
@@ -80,7 +82,8 @@ class SelectionsController extends MyController
                     'level as name',
                     DB::raw("'Service Level' as under"),
                     'created_at'
-                ])->get()->toArray();
+                ])->get()
+                    ->toArray();
                 $active_tab = 'service_level';
                 break;
             case 5:
@@ -103,7 +106,8 @@ class SelectionsController extends MyController
             case 6:
                 $response = DB::table('activities')
                     ->select('id', 'activity as name', DB::raw("'Activities' as under"), 'created_at')
-                    ->get()->toArray();
+                    ->get()
+                    ->toArray();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -150,9 +154,11 @@ class SelectionsController extends MyController
 
         //        $this->prx($result);
         $data['content'] = 'admin.selections.selections';
-        return view('layouts.content', compact('data'))->with([
-            'records' => (array) $result, 'active_tab' => $active_tab
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'records' => (array) $result,
+                'active_tab' => $active_tab
+            ]);
     }
 
     public function add(Request $request)
@@ -281,9 +287,11 @@ class SelectionsController extends MyController
             }
         }
         $data['content'] = 'admin.selections.update_selections';
-        return view('layouts.content', compact('data'))->with([
-            'under' => $under, 'validation' => $validation ?? []
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'under' => $under,
+                'validation' => $validation ?? []
+            ]);
     }
 
     public function delete(Request $request, $tab_id = 1, $item_id)

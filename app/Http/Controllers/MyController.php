@@ -8,16 +8,18 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use DB;
 use Twilio\Rest\Client;
-Use Mail;
+use Mail;
 
-class MyController extends Controller {
+class MyController extends Controller
+{
 
     /**
      * success response method.
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendResponse($message, $result, $code = 200) {
+    public function sendResponse($message, $result, $code = 200)
+    {
         $response = [
             'success' => true,
             'data' => $result,
@@ -33,7 +35,8 @@ class MyController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendError($message, $errors = [], $code = 404) {
+    public function sendError($message, $errors = [], $code = 404)
+    {
         $response = [
             'success' => false,
             'message' => $message,
@@ -47,28 +50,20 @@ class MyController extends Controller {
         return response()->json($response, $code);
     }
 
-    public function sendSms($mobile, $msg, $code = 91) {
-//      Your authentication key
-        /*$account_id = 'AC01c09569d5b874c029dd460572f6840a';
-        $auth_token = '1174862ea2d0bb5b1de8159eac066c44';
-        $sender_id = '+1 781 417 5259';*/
-        $account_id = 'AC75d2d726b087dafa49ac9ec2681857fc';
-        $auth_token = '6232aa13fcbdcac0df594f6f379a7045';
-        $sender_id = '+968 915 465 9898';
-        
-        $client = new Client($account_id, $auth_token);
+    public function sendSms($mobile, $msg, $code = 91)
+    {
+        $client = new Client(env('SID'), env('TWILIO_TOKEN'));
         try {
             $message = $client->messages->create(
-                    // the number you'd like to send the message to
-                    '+' . $code . $mobile, [
-                // A Twilio phone number you purchased at twilio.com/console
-                'from' => $sender_id,
-                // the body of the text message you'd like to send
-                'body' => $msg
-                    ]
+                '+' . $code . $mobile,
+                [
+                    // A Twilio phone number you purchased at twilio.com/console
+                    'from' => env('TWILIO_FROM'),
+                    // the body of the text message you'd like to send
+                    'body' => $msg
+                ]
             );
             if ($message) {
-//                return $message->status;
                 return true;
             }
         } catch (Exception $e) {
@@ -78,7 +73,8 @@ class MyController extends Controller {
         return false;
     }
 
-    public function checkPasswordStrength($password) {
+    public function checkPasswordStrength($password)
+    {
         $password_length = 8;
 
         $returnVal = True;
@@ -106,9 +102,10 @@ class MyController extends Controller {
         return $returnVal;
     }
 
-    public function sendEmail($data) {
+    public function sendEmail($data)
+    {
         return true;
-        Mail::send('mail', ['data' => $data], function ($message)use ($data) {
+        Mail::send('mail', ['data' => $data], function ($message) use ($data) {
             $message->to($data['email']);
             $message->subject('OTP Testing');
             $message->from(env('MAIL_USERNAME'), 'Adventures Club');
@@ -119,18 +116,20 @@ class MyController extends Controller {
         return true;
     }
 
-    public function image_path() {
+    public function image_path()
+    {
         return public_path() . '/' . 'uploads';
     }
 
-    public function resize_crop_image($source_file, $dst_dir, $quality = 80) {
+    public function resize_crop_image($source_file, $dst_dir, $quality = 80)
+    {
         $imgsize = getimagesize($source_file);
         $width = $imgsize[0];
         $height = $imgsize[1];
         $mime = $imgsize['mime'];
 
-//        $max_width = ($width * 30) / 100;
-//        $max_height = ($height * 30) / 100;
+        //        $max_width = ($width * 30) / 100;
+        //        $max_height = ($height * 30) / 100;
         $max_width = 180;
         $max_height = 60;
         switch ($mime) {
@@ -172,7 +171,7 @@ class MyController extends Controller {
             $w_point = (($width - $width_new) / 2);
             imagecopyresampled($dst_img, $src_img, 0, 0, $w_point, 0, $max_width, $max_height, $width_new, $height);
         }
-//    imagejpeg($dst_img);
+        //    imagejpeg($dst_img);
         $image($dst_img, $dst_dir, $quality);
 
         if ($dst_img)
@@ -181,24 +180,27 @@ class MyController extends Controller {
             imagedestroy($src_img);
     }
 
-    public function getRandomNumber() {
+    public function getRandomNumber()
+    {
         return mt_rand(1000, 9999);
     }
 
-    public function last_query($qry) {
+    public function last_query($qry)
+    {
         DB::enableQueryLog();
         $qry;
         $this->prx(DB::getQueryLog());
     }
 
-    public function getExtensionSize($file) {
+    public function getExtensionSize($file)
+    {
         $type = $file['type'];
         $ext_diff = explode('/', $type);
         return ['ext' => $ext_diff[1], 'size' => $file['type']];
     }
 
-    public function allowed_mime() {
+    public function allowed_mime()
+    {
         return ['jpeg', 'jpg', 'png'];
     }
-
 }

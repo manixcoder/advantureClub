@@ -66,9 +66,10 @@ class PromocodeController extends Controller
           $validation[$field_name] = $messages[0];
         }
         $data['content'] = 'admin.promocode.add_promocodes';
-        return view('layouts.content', compact('data'))->with([
-          'validation' => $validation ?? []
-        ]);
+        return view('layouts.content', compact('data'))
+          ->with([
+            'validation' => $validation ?? []
+          ]);
       } else {
         $request->start_date = date("Y-m-d", strtotime($request->start_date));
         $request->end_date = date("Y-m-d", strtotime($request->end_date));
@@ -86,7 +87,9 @@ class PromocodeController extends Controller
 
         if ($request->edit_id != '') { // echo"33".$request->edit_id;
           Session::flash('success', 'Updated successfully..!');
-          $updateData = DB::table('promocode')->where('id', $request->edit_id)->update($data);
+          $updateData = DB::table('promocode')
+            ->where('id', $request->edit_id)
+            ->update($data);
           return back();
         } else {
           Session::flash('success', 'Inserted successfully..!');
@@ -107,7 +110,10 @@ class PromocodeController extends Controller
       ->where('id', $id)->first();
 
     $data['content'] = 'admin.adventure_users.view_adventure_user';
-    return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'editdata' => $editdata
+      ]);
   }
 
   /* View Adventure users ends */

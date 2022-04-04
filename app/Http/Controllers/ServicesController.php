@@ -275,9 +275,6 @@ class ServicesController extends MyController
                                 } else {
                                     $msg = config('constants.BANNER_ADDED');
                                     if ($banner) {
-                                        //                                        if (isset($result['banner']) && $result['banner'] != '') {
-                                        //                                            Storage::disk('public')->delete($result['banner']);
-                                        //                                        }
                                         $filename = time() . '-' . $key . '.jpg';
                                         $basepath = "public/uploads/services/thumbs/";
                                         if (!is_dir($basepath)) {
@@ -298,27 +295,39 @@ class ServicesController extends MyController
                         }
                         $ssfor = array();
                         if (count($request->service_for)) {
-                            DB::table('service_service_for')->where('service_id', '=', $service_id)->delete();
+                            DB::table('service_service_for')
+                                ->where('service_id', '=', $service_id)
+                                ->delete();
                             foreach ($request->service_for as $sfor) {
-                                $ssfor[] = array('service_id' => $service_id, 'sfor_id' => $sfor);
+                                $ssfor[] = array(
+                                    'service_id' => $service_id,
+                                    'sfor_id' => $sfor
+                                );
                             }
-                            DB::table('service_service_for')->insert($ssfor);
+                            DB::table('service_service_for')
+                                ->insert($ssfor);
                         }
                         $sdep = [];
                         if (count($request->dependency)) {
-                            DB::table('service_dependencies')->where('service_id', '=', $service_id)->delete();
+                            DB::table('service_dependencies')
+                                ->where('service_id', '=', $service_id)
+                                ->delete();
                             foreach ($request->dependency as $dep) {
                                 $sdep[] = array('service_id' => $service_id, 'dependency_id' => $dep);
                             }
-                            DB::table('service_dependencies')->insert($sdep);
+                            DB::table('service_dependencies')
+                                ->insert($sdep);
                         }
                         $activitiess = [];
                         if (count($request->activities)) {
-                            DB::table('service_activities')->where('service_id', '=', $service_id)->delete();
+                            DB::table('service_activities')
+                                ->where('service_id', '=', $service_id)
+                                ->delete();
                             foreach ($request->activities as $act) {
                                 $activitiess[] = array('service_id' => $service_id, 'activity_id' => $act);
                             }
-                            DB::table('service_activities')->insert($activitiess);
+                            DB::table('service_activities')
+                                ->insert($activitiess);
                         }
                         $serv_programs = [];
                         if (count($request->schedule_title)) {
@@ -327,7 +336,9 @@ class ServicesController extends MyController
                             $g_stime = $request->gathering_start_time;
                             $g_etime = $request->gathering_end_time;
                             $p_desc = $request->program_description;
-                            DB::table('service_programs')->where('service_id', '=', $service_id)->delete();
+                            DB::table('service_programs')
+                                ->where('service_id', '=', $service_id)
+                                ->delete();
                             foreach ($request->schedule_title as $key => $act) {
                                 $serv_programs[] = array(
                                     'service_id' => $service_id,
@@ -337,23 +348,30 @@ class ServicesController extends MyController
                                     'description' => $p_desc[$key]
                                 );
                             }
-                            DB::table('service_programs')->insert($serv_programs);
+                            DB::table('service_programs')
+                                ->insert($serv_programs);
                         }
                         if ($request->service_plan == 1) {
                             $spd_data = [];
-                            DB::table('service_plan_day_date')->where('service_id', '=', $service_id)->delete();
+                            DB::table('service_plan_day_date')
+                                ->where('service_id', '=', $service_id)
+                                ->delete();
                             foreach ($request->service_plan_days as $spd) {
                                 $spd_data[] = array('service_id' => $service_id, 'day' => $spd);
                             }
-                            DB::table('service_plan_day_date')->insert($spd_data);
+                            DB::table('service_plan_day_date')
+                                ->insert($spd_data);
                         }
                         if ($request->service_plan == 2) {
                             $pd_data = [];
-                            DB::table('service_plan_day_date')->where('service_id', '=', $service_id)->delete();
+                            DB::table('service_plan_day_date')
+                                ->where('service_id', '=', $service_id)
+                                ->delete();
                             foreach (explode(',', $request->particular_date) as $p_date) {
                                 $pd_data[] = array('service_id' => $service_id, 'date' => date('Y-m-d', strtotime($p_date)));
                             }
-                            DB::table('service_plan_day_date')->insert($pd_data);
+                            DB::table('service_plan_day_date')
+                                ->insert($pd_data);
                         }
 
                         $request->session()->flash('success', 'Service has been added successfully.');
@@ -364,14 +382,17 @@ class ServicesController extends MyController
                 }
             }
         }
-        $vendors = User::where(['deleted_at' => NULL])->whereIn('users_role', [1, 2])->get();
+        $vendors = User::where(['deleted_at' => NULL])
+            ->whereIn('users_role', [1, 2])
+            ->get();
         //dd($vendors);
         if (!empty($vendors)) {
             foreach ($vendors as $vendor) {
                 $result[] = $vendor->attributesToArray();
             }
         }
-        $countries = Countrie::where(['deleted_at' => NULL])->get();
+        $countries = Countrie::where(['deleted_at' => NULL])
+            ->get();
         if (!empty($countries)) {
             foreach ($countries as $countrie) {
                 $countries_res[] = $countrie->attributesToArray();
@@ -487,29 +508,42 @@ class ServicesController extends MyController
                 ->select(['act.id', 'act.activity'])
                 ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
                 ->where('s_act.service_id', $id)
-                ->get()->toArray();
+                ->get()
+                ->toArray();
             $services[0]->included_activities = $activities ?? [];
             $dependencies = DB::table('service_dependencies as s_dep')
                 ->select(['dep.id', 'dep.dependency_name'])
                 ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
                 ->where('s_dep.service_id', $id)
-                ->get()->toArray();
+                ->get()
+                ->toArray();
             $services[0]->dependencies = $dependencies ?? [];
             $programs = DB::table('service_programs')
-                ->select(['id', 'service_id', 'title', 'start_datetime', 'end_datetime', 'description'])->where('service_id', $id)->get();
+                ->select([
+                    'id',
+                    'service_id',
+                    'title',
+                    'start_datetime',
+                    'end_datetime',
+                    'description'
+                ])
+                ->where('service_id', $id)
+                ->get();
             $services[0]->programs = $programs;
             if ($services[0]->service_plan == 1) {
                 $availability = DB::table('service_plan_day_date as spdd')
                     ->select(['spdd.id', 'wkd.day'])
                     ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
                     ->where('spdd.service_id', $id)
-                    ->get()->toArray();
+                    ->get()
+                    ->toArray();
                 $services[0]->availability = $availability ?? [];
             } else if ($services[0]->service_plan == 2) {
                 $availability = DB::table('service_plan_day_date as spdd')
                     ->select(['spdd.id', 'spdd.date'])
                     ->where('spdd.service_id', $id)
-                    ->get()->toArray();
+                    ->get()
+                    ->toArray();
                 $services[0]->availability = $availability ?? [];
             }
             $star_ratings_res = DB::table('service_reviews')
@@ -642,12 +676,14 @@ class ServicesController extends MyController
             ->select(['dep.id', 'dep.dependency_name'])
             ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
             ->where('s_dep.service_id', $service_id)
-            ->get()->toArray();
+            ->get()
+            ->toArray();
         $service->dependencies = $dependencies ?? [];
         $data['content'] = 'admin.services.booked_client_view';
-        return view('layouts.content', compact('data'))->with([
-            'service' => $service
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'service' => $service
+            ]);
     }
 
     public function adventures(Request $request, $id = null)
@@ -687,9 +723,10 @@ class ServicesController extends MyController
             $services = [];
         }
         $data['content'] = 'admin.services.adventure_request';
-        return view('layouts.content', compact('data'))->with([
-            'services' => $services
-        ]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'services' => $services
+            ]);
     }
 
     public function getRegions(Request $request, $id)
@@ -703,7 +740,9 @@ class ServicesController extends MyController
                 'rg.region'
             )
             ->leftJoin('countries as cnt', 'cnt.id', '=', 'rg.country_id')
-            ->where(['rg.country_id' => $id, 'rg.deleted_at' => NULL])->orderBy('rg.region', 'ASC')->get();
+            ->where(['rg.country_id' => $id, 'rg.deleted_at' => NULL])
+            ->orderBy('rg.region', 'ASC')
+            ->get();
         $options = '';
         if (!$regions->isEmpty()) {
             $options .= '<option value="">Select</option>';
@@ -755,7 +794,11 @@ class ServicesController extends MyController
             ->get()->toArray();
         //   echo "<pre>";print_r( $likes);exit;
         $data['content'] = 'admin.services.list_reviews';
-        return view('layouts.content', compact('data'))->with(['reviewdata' => $reviewData, 'likesData' => $likesData]);
+        return view('layouts.content', compact('data'))
+            ->with([
+                'reviewdata' => $reviewData,
+                'likesData' => $likesData
+            ]);
     }
 
     public function deleteServiceReviews(Request $request, $id)
@@ -777,7 +820,10 @@ class ServicesController extends MyController
             'id' => $_GET['id'],
             'status' => $_GET['status'],
         );
-        $edituserData = DB::table('service_likes')->insert($Data);
-        return response()->json(array('msg' => $edituserData), 200);
+        $edituserData = DB::table('service_likes')
+            ->insert($Data);
+        return response()->json(array(
+            'msg' => $edituserData
+        ), 200);
     }
 }

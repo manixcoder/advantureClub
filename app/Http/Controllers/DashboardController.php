@@ -22,16 +22,13 @@ use Auth;
 
 class DashboardController extends MyController
 {
-
     public function __construct()
     {
         $this->middleware('auth');
         $this->middleware('role');
     }
-
     public function dashboard(Request $request)
     {
-
         $userRole = Session::get('userRole');
         $id = Session::get('user_id');
         $OrgData = DB::table('users')->where('id', $id)->first();
