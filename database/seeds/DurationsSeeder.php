@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class DurationsTableSeeder extends Seeder
+class DurationsSeeder extends Seeder
 {
     /**
      * Run the database seeds.

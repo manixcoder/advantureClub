@@ -20,16 +20,16 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <?php
-                                        $package_name = '';
-                                        if (request('package_name')) {
-                                            $package_name = request('package_name');
-                                        } elseif (!empty($package_detail) && (request('package_name') == '')) {
-                                            $package_name = $package_detail['package_name'];
+                                        $title = '';
+                                        if (request('title')) {
+                                            $title = request('title');
+                                        } elseif (!empty($title) && (request('title') == '')) {
+                                            $title = $package_detail['title'];
                                         }
                                         ?>
-                                        <input type="text" name="package_name" class="form-control" value="{{$package_name}}" placeholder="Package Name">
-                                        <?php if (isset($validation['package_name'])) { ?>
-                                            <label class="error">{{ $validation['package_name'] }}</label>
+                                        <input type="text" name="title" class="form-control" value="{{$title}}" placeholder="Package Name">
+                                        <?php if (isset($validation['title'])) { ?>
+                                            <label class="error">{{ $validation['title'] }}</label>
                                         <?php } ?>
                                     </div>
                                 </div>
@@ -46,48 +46,96 @@
                                         <input type="text" name="package_cost" class="form-control" value="{{$package_cost}}" placeholder="Package Cost">
                                         <?php if (isset($validation['package_cost'])) { ?>
                                             <label class="error">{{ $validation['package_cost'] }}</label>
+                                        <?php 
+                                        
+                                        } ?>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <?php 
+                                        $duration = '';
+                                       ?>
+                                    <div class="form-group">
+                                       <input type="text" name="duration" class="form-control" value="{{$duration}}" placeholder="Duration">
+                                        <?php if (isset($validation['duration'])) { ?>
+                                            <label class="error">{{ $validation['duration'] }}</label>
                                         <?php } ?>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
+                                     <?php 
+                                        $days = '';
+                                       ?>
+                                    <div class="form-group">
+                                       <input type="text" name="days" class="form-control" value="{{$days}}" placeholder="Days">
+                                        <?php if (isset($validation['days'])) { ?>
+                                            <label class="error">{{ $validation['days'] }}</label>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <?php 
+                                        $symbol = '';
+                                       ?>
+                                    <div class="form-group">
+                                       <input type="text" name="symbol" class="form-control" value="{{$symbol}}" placeholder="Symbol $">
+                                        <?php if (isset($validation['symbol'])) { ?>
+                                            <label class="error">{{ $validation['symbol'] }}</label>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <?php 
+                                        $cost = '';
+                                       ?>
+                                    <div class="form-group">
+                                       <input type="text" name="cost" class="form-control" value="{{$cost}}" placeholder="Cost">
+                                        <?php if (isset($validation['cost'])) { ?>
+                                            <label class="error">{{ $validation['cost'] }}</label>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                               <div class="col-md-6">
+                                     <?php 
+                                        $offer_cost = '';
+                                       ?>
+                                    <div class="form-group">
+                                       <input type="text" name="offer_cost" class="form-control" value="{{$offer_cost}}" placeholder="Offer Cost">
+                                        <?php if (isset($validation['offer_cost'])) { ?>
+                                            <label class="error">{{ $validation['offer_cost'] }}</label>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                <!--div class="col-md-6">
                                     <div class="form-group">
                                         <?php
-                                        $package_duration = '';
-                                        if (request('package_duration')) {
-                                            $package_duration = request('package_duration');
-                                        } elseif (!empty($package_detail) && (request('package_duration') == '')) {
-                                            $package_duration = $package_detail['package_duration'];
-                                        }
+                                        // $package_duration = '';
+                                        // if (request('package_duration')) {
+                                        //     $package_duration = request('package_duration');
+                                        // } elseif (!empty($package_detail) && (request('package_duration') == '')) {
+                                        //     $package_duration = $package_detail['package_duration'];
+                                        // }
+                                        // $packages = DB::table('packages')->get();
                                         ?>
                                         <select class="form-control" name='package_duration'>
                                             <option value="">Package Duration</option>
-                                            <option value="1" <?php
-                                                                if (request('package_duration') == 1) {
+                                            @forelse($packages as $package)
+                                             <option value="{{ $package->id}}" <?php
+                                                                if (request('package_duration') == $package->id) {
                                                                     echo 'selected';
                                                                 }
-                                                                ?>>Weekly</option>
-                                            <option value="2" <?php
-                                                                if (request('package_duration') == 2) {
-                                                                    echo 'selected';
-                                                                }
-                                                                ?>>Monthly</option>
-                                            <option value="3" <?php
-                                                                if (request('package_duration') == 3) {
-                                                                    echo 'selected';
-                                                                }
-                                                                ?>>Quarterly</option>
-                                            <option value="4" <?php
-                                                                if (request('package_duration') == 4) {
-                                                                    echo 'selected';
-                                                                }
-                                                                ?>>Yearly</option>
+                                                                ?>>{{ $package->title}}</option>
+                                                    @empty
+                                                    <option value="">Package Duration</option>
+                                                    @endforelse            
+                                                                
+                                            
                                         </select>
                                         <?php if (isset($validation['package_duration'])) { ?>
                                             <label class="error">{{ $validation['package_duration'] }}</label>
                                         <?php } ?>
                                     </div>
-                                </div>
-                            </div>
+                                </div-->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="col-md-12">

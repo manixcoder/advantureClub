@@ -350,7 +350,10 @@ class UsersController extends MyController
 
         $where = array($fieldType => $request->email);
 
-        $result = User::select(['*', DB::raw("CONCAT('+',mobile_code) AS mobile_code"), DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")])
+        $result = User::select(['*', 
+        DB::raw("CONCAT('+',mobile_code) AS mobile_code"),
+        DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")
+        ])
             ->where($where)
             ->first();
         // dd($result->id);
@@ -413,7 +416,10 @@ class UsersController extends MyController
         $new_data = array();
         foreach ($result as $key => $value) {
 
-            $data =  DB::table('service_reviews')->select('star as rating')->where(['service_id' => $value->id])->first();
+            $data =  DB::table('service_reviews')
+            ->select('star as rating')
+            ->where(['service_id' => $value->id])
+            ->first();
             if ($data != null) {
                 $rating = $data->rating;
             } else {
@@ -458,8 +464,6 @@ class UsersController extends MyController
                 "profile_image" => $url . $value->profile_image
             );
         }
-
-        //dd($new_data);
         if (!empty($result)) {
             return $this->sendResponse(config('custom.DATA_FOUND'), $new_data, 200);
         }
@@ -479,8 +483,6 @@ class UsersController extends MyController
     {
         $banner_rule = 'required|image|mimes:jpeg,jpg,png|max:2048';
         $email_rule = 'required|email:filter|unique:users';
-
-
         $result = array();
         if ($id) {
             $result = User::find($id);
@@ -515,7 +517,9 @@ class UsersController extends MyController
                     Storage::disk('public')->delete($result['profile_picture']);
                 }
                 $extension = $request->file('profile_picture')->extension();
-                $filepath = Storage::disk('public')->putFileAs('profile_pictures', $request->file('profile_picture'), time() . '.' . $extension);
+                $filepath = Storage::disk('public')
+                ->putFileAs('profile_pictures', 
+                $request->file('profile_picture'), time() . '.' . $extension);
             }
             $data = new User();
 
@@ -564,7 +568,8 @@ class UsersController extends MyController
 
         $errors = array();
         if ($validator->fails()) {
-            foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+            foreach ($validator->messages()
+            ->getMessages() as $field_name => $messages) {
                 $errors[$field_name] = $messages[0];
             }
             return $this->sendError(config('custom.NOT_VALID'), $errors);
@@ -675,7 +680,10 @@ class UsersController extends MyController
                 if ($result->save()) {
                     $otp_modal = Otp::find($request->otp_id);
                     $otp_modal->delete();
-                    return $this->sendResponse('Password has been updated successfully.', [], 200);
+                    return $this->sendResponse(
+                        'Password has been updated successfully.',
+                        [],
+                        200);
                 } else {
                     return $this->sendError(
                         'Something went wrong. Please try again.',
@@ -1020,27 +1028,39 @@ class UsersController extends MyController
             if ($become_partnerData) {
                 return $this->sendResponse('Your request allready send', [], 404);
             } else {
-                if ($request->file('cr_copy')) {
-                    $extension = $request->file('cr_copy')->extension();
-                    $filepath = Storage::disk('public')
-                        ->putFileAs('profile_pictures', $request->file('cr_copy'), time() . '.' . $extension);
-                } else {
-                    $filepath = null;
-                }
-                if ($request->packages_id != '') {
+                // if ($request->file('cr_copy')) {
+                //     $extension = $request->file('cr_copy')->extension();
+                //     $filepath = Storage::disk('public')
+                //         ->putFileAs('profile_pictures', $request->file('cr_copy'), time() . '.' . $extension);
+                // } else {
+                //     $filepath = null;
+                // }
+                if ($file = $request->file('cr_copy')) {
+                        $destinationPath = base_path('public/crCopy/');
+                        $cr_copy = uniqid('file') . "-" . $file->getClientOriginalName();
+                        $path = $file->move($destinationPath, $cr_copy);
+                    } else {
+                        $cr_copy = "";
+                    }
+                if ($request->packages_id != '0') {
                     $packageData = DB::table('packages')
                         ->where('id', $request->packages_id)
                         ->orderBy('id', 'DESC')
                         ->first();
                     $day = $packageData->days - 1;
-                    $startdate = date("Y-m-d H:i:s");
+                    $start_date = date("Y-m-d H:i:s");
                     $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
                 } else {
                     $day = 0;
                     $start_date = Null;
                     $enddate = Null;
                 }
-
+                
+                DB::table('users')
+                ->where('id',$request->user_id)
+                ->update(array(
+                    'users_role' => '2',
+                ));
                 $insertData = array(
                     'user_id' => $request->user_id,
                     'company_name' => $request->company_name,
@@ -1050,7 +1070,7 @@ class UsersController extends MyController
                     'license' => $request->license,
                     'cr_name' => $request->cr_name,
                     'cr_number' => $request->cr_number,
-                    'cr_copy' => $filepath,
+                    'cr_copy' => $cr_copy,
                     'debit_card' => $request->debit_card,
                     'visa_card' => $request->visa_card,
                     'payon_arrival' => $request->payon_arrival,
@@ -1061,7 +1081,7 @@ class UsersController extends MyController
                     'is_online' => $request->is_online,
                     'packages_id' => $request->packages_id,
                     'is_wiretransfer' => $request->is_wiretransfer,
-                    'start_date' => $startdate,
+                    'start_date' => $start_date,
                     'end_date' => $enddate,
                     'created_at' => date("Y-m-d H:i:s")
                 );
@@ -1091,37 +1111,55 @@ class UsersController extends MyController
         }
         try {
             if ($request->payment_status == '1') {
+                $partnerData = DB::table('become_partner')
+                ->where('user_id', $request->user_id)
+                ->first();
+               // dd($partnerData);
                 $packageData = DB::table('packages')
                     ->where('id', $request->packages_id)
                     ->orderBy('id', 'DESC')
                     ->first();
+                $cost = $packageData->cost;
                 $day = $packageData->days - 1;
-                $enddate = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
-                $updatetData = array(
-                    'packages_id' => $request->packages_id,
-                    'start_date' => date("Y-m-d H:i:s"),
-                    'end_date' => $enddate,
-                );
-                $like = DB::table('become_partner')->where('user_id', $request->user_id)->update($updatetData);
-                $history = DB::table('subscription_plan_history')->insert([
-                    'user_id' => $request->user_id,
-                    'package_id' => $request->packages_id,
-                    'order_id' => $request->order_id,
-                    'payment_type' => $request->payment_type,
-                    'payment_status' => $request->payment_status,
-                    'payment_amount' => $request->payment_amount,
-                    'created_at' => date("Y-m-d H:i:s"),
-                    'updated_at' => date("Y-m-d H:i:s")
-                ]);
-                $like = DB::table('become_partner')->where('user_id', $request->user_id)->get();
-                if ($like) {
-                    return $this->sendResponse('Data updated Successfully', $like, 200);
-                } else {
-                    return $this->sendResponse('Somethingwent wrong', [], 404);
-                }
-            } else {
-                DB::table('subscription_plan_history')
-                    ->insert([
+                $end_date = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
+                
+                 if($request->payment_amount == '0'){
+                     if($partnerData->is_free_used =='0'){
+                       //  dd($partnerData);
+                       $is_free_used='1';
+                       $updatetData = array(
+                           'packages_id' => $request->packages_id,
+                           'start_date' => date("Y-m-d H:i:s"),
+                           'end_date' => $end_date,
+                           'is_free_used'=>$is_free_used
+                           );
+                           $like = DB::table('become_partner')->where('user_id', $request->user_id)->update($updatetData);
+                           $history = DB::table('subscription_plan_history')->insert([
+                               'user_id' => $request->user_id,
+                               'package_id' => $request->packages_id,
+                               'order_id' => $request->order_id,
+                               'payment_type' => $request->payment_type,
+                               'payment_status' => $request->payment_status,
+                               'payment_amount' => $request->payment_amount,
+                               'created_at' => date("Y-m-d H:i:s"),
+                               'updated_at' => date("Y-m-d H:i:s")
+                               ]);
+                               $like = DB::table('become_partner')->where('user_id', $request->user_id)->get();
+                               if ($like) {
+                                   return $this->sendResponse('Data updated Successfully', $like, 200);
+                                   
+                               } else {
+                                   return $this->sendResponse('Somethingwent wrong', [], 404);
+                                   
+                               }
+                         
+                     }else{
+                         return $this->sendResponse('You allready used free subscription', [], 200);
+                     }
+                     
+                 } else {
+                     DB::table('subscription_plan_history')
+                     ->insert([
                         'user_id' => $request->user_id,
                         'package_id' => $request->packages_id,
                         'order_id' => $request->order_id,
@@ -1137,6 +1175,9 @@ class UsersController extends MyController
                 } else {
                     return $this->sendResponse('Somethingwent wrong', [], 404);
                 }
+            }
+            }else{
+                return $this->sendResponse('Payment status 0', [], 200);
             }
         } catch (\Exception $e) {
             return $this->sendResponse($e->getMessage(), [], 404);

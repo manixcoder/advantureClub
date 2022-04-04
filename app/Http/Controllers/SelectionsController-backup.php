@@ -102,14 +102,8 @@ class SelectionsController extends MyController
                 break;
             case 6:
                 $response = DB::table('activities')
-                    ->select(
-                        'id',
-                        'activity as name',
-                        DB::raw("'Activities' as under"),
-                        'created_at'
-                    )
-                    ->get()
-                    ->toArray();
+                    ->select('id', 'activity as name', DB::raw("'Activities' as under"), 'created_at')
+                    ->get()->toArray();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -119,12 +113,7 @@ class SelectionsController extends MyController
                 break;
             case 7:
                 $response = DB::table('service_for')
-                    ->select(
-                        'id',
-                        'sfor as name',
-                        DB::raw("'Aimed' as under"),
-                        'created_at'
-                    )
+                    ->select('id', 'sfor as name', DB::raw("'Aimed' as under"), 'created_at')
                     ->get();
                 $resss = [];
                 foreach ($response as $res) {
@@ -135,12 +124,7 @@ class SelectionsController extends MyController
                 break;
             case 8:
                 $response = DB::table('dependency')
-                    ->select(
-                        'id',
-                        'dependency_name as name',
-                        DB::raw("'Dependency' as under"),
-                        'created_at'
-                    )
+                    ->select('id', 'dependency_name as name', DB::raw("'Dependency' as under"), 'created_at')
                     ->get();
                 $resss = [];
                 foreach ($response as $res) {
@@ -151,12 +135,7 @@ class SelectionsController extends MyController
                 break;
             case 9:
                 $response = DB::table('currencies')
-                    ->select(
-                        'id',
-                        'name',
-                        DB::raw("'Currency' as under"),
-                        'created_at'
-                    )
+                    ->select('id', 'name', DB::raw("'Currency' as under"), 'created_at')
                     ->get();
                 $resss = [];
                 foreach ($response as $res) {
@@ -171,11 +150,9 @@ class SelectionsController extends MyController
 
         //        $this->prx($result);
         $data['content'] = 'admin.selections.selections';
-        return view('layouts.content', compact('data'))
-            ->with([
-                'records' => (array) $result,
-                'active_tab' => $active_tab
-            ]);
+        return view('layouts.content', compact('data'))->with([
+            'records' => (array) $result, 'active_tab' => $active_tab
+        ]);
     }
 
     public function add(Request $request)
@@ -354,50 +331,35 @@ class SelectionsController extends MyController
                 }
                 break;
             case 5:
-                if (DB::table('durations')
-                    ->where('id', '=', $item_id)
-                    ->delete()
-                ) {
+                if (DB::table('durations')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 6:
-                if (DB::table('activities')
-                    ->where('id', '=', $item_id)
-                    ->delete()
-                ) {
+                if (DB::table('activities')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 7:
-                if (DB::table('service_for')
-                    ->where('id', '=', $item_id)
-                    ->delete()
-                ) {
+                if (DB::table('service_for')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 8:
-                if (DB::table('dependency')
-                    ->where('id', '=', $item_id)
-                    ->delete()
-                ) {
+                if (DB::table('dependency')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 break;
             case 9:
-                if (DB::table('currencies')
-                    ->where('id', '=', $item_id)
-                    ->delete()
-                ) {
+                if (DB::table('currencies')->where('id', '=', $item_id)->delete()) {
                     $request->session()->flash('success', "Record has been deleted successfully.");
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');

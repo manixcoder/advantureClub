@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class AimedTableSeeder extends Seeder
+class GetAllPaymentmodeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,40 +11,39 @@ class AimedTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('aimed')->delete();
+        DB::table('get_all_paymentmode')->delete();
         $userData = array(
             array(
                 'id' => 1,
-                'AimedName' => 'Kids',
+                'payment_name' => 'Oman debit card',
+                'payment_image' => 'oman_debitCards.png',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 2,
-                'AimedName' => 'Youngsters',
+                'payment_name' => 'International visa card',
+                'payment_image' => 'oman_debitCards.png',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 3,
-                'AimedName' => 'Gents',
+                'payment_name' => 'pay on arrival',
+                'payment_image' => 'oman_debitCards.png',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 4,
-                'AimedName' => 'Ladies',
-                'created_at' =>  date("Y-m-d H:i:s"),
-                'updated_at' =>  date("Y-m-d H:i:s"),
-            ),
-            array(
-                'id' => 5,
-                'AimedName' => 'Multigender',
+                'payment_name' => 'PayPal',
+                'payment_image' => 'oman_debitCards.png',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
 
+
         );
-        DB::table('aimed')->insert($userData);
+        DB::table('get_all_paymentmode')->insert($userData);
     }
 }

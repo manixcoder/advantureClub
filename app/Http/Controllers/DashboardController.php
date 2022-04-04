@@ -34,9 +34,7 @@ class DashboardController extends MyController
 
         $userRole = Session::get('userRole');
         $id = Session::get('user_id');
-        $OrgData = DB::table('users')
-            ->where('id', $id)
-            ->first();
+        $OrgData = DB::table('users')->where('id', $id)->first();
 
         if ($userRole == '1') {
             $where = ' 1 ';

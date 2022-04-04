@@ -39,7 +39,9 @@
                                     <td>{{ $pkg->title }}</td>
                                     <td>
                                         @forelse ($includes as $include)
-                                        <li>{{ $include->title }}</li>
+                                        <li> <?php 
+                                        echo substr($include->title, 0, 10).'... ';
+                                        ?></li>
                                         @empty
                                         <p> Not includes</p>
                                         @endforelse
@@ -47,7 +49,9 @@
                                     </td>
                                     <td>
                                     @forelse ($excludes as $exclude)
-                                        <li>{{ $exclude->title }}</li>
+                                        <li><?php 
+                                        echo substr($exclude->title, 0, 10).'... ';
+                                        ?></li>
                                         @empty
                                         <p>Not includes</p>
                                         @endforelse

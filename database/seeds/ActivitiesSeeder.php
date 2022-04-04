@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class HealthConditionsTableSeeder extends Seeder
+class ActivitiesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,89 +11,77 @@ class HealthConditionsTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('health_conditions')->delete();
+        DB::table('activities')->delete();
         $userData = array(
             array(
                 'id' => 1,
-                'name' => 'Good condition',
-                'payment_image' => 'oman_debitCards.png',
+                'activity' => 'Transportation from gathering area',
+                'status' => '1',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 2,
-                'name' => 'Bone weakness',
-                'payment_image' => 'oman_debitCards.png',
+                'activity' => 'Drinks',
+                'status' => '1',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 3,
-                'name' => 'Breath weakness',
-                'payment_image' => 'oman_debitCards.png',
+                'activity' => 'Snacks',
+                'status' => '1',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 4,
-                'name' => 'Muscles issues',
-                'payment_image' => 'oman_debitCards.png',
+                'activity' => 'Sand bashing',
+                'status' => '1',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 5,
-                'name' => 'Backbone issues',
-                'payment_image' => 'oman_debitCards.png',
+                'activity' => 'Swimming',
+                'status' => '1',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 6,
-                'name' => 'Joints issues',
-                'payment_image' => 'oman_debitCards.png',
+                'activity' => 'Learning',
+                'status' => '1',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 7,
-                'name' => 'Ligament issues',
-                'payment_image' => 'oman_debitCards.png',
+                'activity' => 'Cooking',
+                'status' => '1',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 8,
-                'name' => 'Not good conditions',
-                'payment_image' => 'oman_debitCards.png',
+                'activity' => 'Camping',
+                'status' => '1',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 9,
-                'name' => 'High blood pressure',
-                'payment_image' => 'oman_debitCards.png',
+                'activity' => 'Abseiling',
+                'status' => '1',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
-            array(
-                'id' => 10,
-                'name' => 'Low blood pressure',
-                'payment_image' => 'oman_debitCards.png',
-                'created_at' =>  date("Y-m-d H:i:s"),
-                'updated_at' =>  date("Y-m-d H:i:s"),
-            ),
-            array(
-                'id' => 11,
-                'name' => 'High diabetes',
-                'payment_image' => 'oman_debitCards.png',
-                'created_at' =>  date("Y-m-d H:i:s"),
-                'updated_at' =>  date("Y-m-d H:i:s"),
-            ),
-           
-
 
         );
-        DB::table('health_conditions')->insert($userData);
+        DB::table('activities')->insert($userData);
+
+
+
+       
     }
 }

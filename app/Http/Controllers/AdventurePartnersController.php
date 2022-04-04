@@ -211,9 +211,8 @@ class AdventurePartnersController extends Controller
 
       )
       ->where('u.id', $id)
-     
       ->first();
-    //dd($editdata);
+   // dd($editdata);
     $healthConditionData = array();
     if (!empty($editdata->health_conditions)) {
       $hCondition = explode(",", $editdata->health_conditions);

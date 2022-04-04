@@ -40,7 +40,7 @@ Route::get('home', function () {
 });
 Route::get('dashboard', 'DashboardController@dashboard');
 Route::post('update-profile-image/{id}', 'HomeController@update_profile_image');
-Route::post('update-user-profile-image', 'HomeController@update_user_profile_image');
+Route::post('update-user-profile-image','HomeController@update_user_profile_image');
 
 Route::get('/forgot-password', 'ForgotPasswordController@getEmail');
 Route::post('/forgot-password', 'ForgotPasswordController@postEmail');
@@ -191,7 +191,7 @@ Route::post('about-us/add', 'PagesController@addAboutUs');
 //Route::get('transactions', 'PagesController@transactions');
 Route::get('sub-packages', 'PackagesController@get');
 Route::get('sub-packages/add', 'PackagesController@add');
-Route::post('sub-packages/add', 'PackagesController@add'); 
+Route::post('sub-packages/add', 'PackagesController@add');
 Route::any('update-pkg-status/{id}', 'PackagesController@update_pkg_status');
 Route::get('sub-packages/delete/{id}', 'PackagesController@delete_sub_pkg')->where(['id' => '[0-9]+']);
 

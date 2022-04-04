@@ -27,7 +27,7 @@
                <ul>
                   <li>
                      <p>Partner ID :</p>
-                     <h3>#{{!empty($editdata->id)?$editdata->id:''}}</h3>
+                     <h3>#{{!empty($editdata->id) ? $editdata->id : ''}}</h3>
                   </li>
                   <li>
                      <p>Partner Name :</p>
@@ -117,7 +117,7 @@
                      <h3>{{!empty($editdata->company_name)?$editdata->company_name:''}}</h3>
                   </li>
                   <li>
-                     <p>Country :</p>
+                     <p>Address :</p>
                      <h3>{{!empty($editdata->address)?$editdata->address:''}}</h3>
                   </li>
                   <li>
@@ -126,13 +126,10 @@
                   </li>
                   <li>
                      <p>Licensed :</p>
-                     @if(!empty($editdata->license_status)?$editdata->license_status:''==1)
-                     <h3>Yes</h3>
-                     @else
-                     <h3>No</h3>
-                     @endif
+                     {{!empty($editdata->license)? 'Yes':'No'}}
+                     
                   </li>
-                  <?php if (!empty($editdata->license_status) ? $editdata->license_status : '' == 1) { ?>
+                  
                      <li>
                         <p>CR Name :</p>
                         <h3>{{!empty($editdata->cr_name)?$editdata->cr_name:''}}</h3>
@@ -144,34 +141,35 @@
                      <li>
                         <p>Cr Copy :</p>
                         <h3>
-                           @if($editdata->cr_copy!='')
-                           <img src="{{ asset('public/crCopy/').'/'.$editdata->cr_copy }}" alt="image" width="100" height="100">
-
-                           @endif
-                        </h3>
+                          @if($editdata->cr_copy != '')
+                          <img src="{{ URL::asset('/public/crCopy/') }}/{{ $editdata->cr_copy ?? ''}}" alt="image" width="250" height="150">
+                          @else
+                          <img src="{{ URL::asset('/public/crCopy/no.png') }}" alt="image" width="100" height="100">
+                          @endif
+                          </h3>
                      </li>
-                  <?php } ?>
-                  <li>
+                  <!--li>
                      <p>Partnership :</p>
-                     <h3><?php foreach ($subscriptionData as $val) {
-                              echo $val->duration;
-                           } ?></h3>
-                  </li>
-                  <li>
+                     <h3><?php //foreach ($subscriptionData as $val) {
+                             // echo $val->duration;
+                          // } ?></h3>
+                  </li-->
+                  <!--li>
                      <p>Payment :</p>
                      <h3><?php foreach ($subscriptionData as $val) { ?><strike>{{$val->cost}}</strike>&nbsp;&nbsp;{{$val->offer_cost}}<?php } ?></h3>
                   </li>
                   <li>
                      <p>Payment Setup :</p>
-                     <h3 class="ellipsis"><?php foreach ($pModeData as $val) {
-                                             if (count($pModeData) > 1) {
-                                                echo $val->payment_name . ' , ';
-                                             } else {
-                                                echo $val->payment_name;
-                                             }
-                                          } ?></h3>
-                  </li>
-                  @if($editdata->packages_id !='')
+                     <h3 class="ellipsis"><?php 
+                    //  foreach ($pModeData as $val) {
+                    //                          if (count($pModeData) > 1) {
+                    //                             echo $val->payment_name . ' , ';
+                    //                          } else {
+                    //                             echo $val->payment_name;
+                    //                          }
+                    //                       } ?></h3>
+                  </li-->
+                  @if($editdata->packages_id !='0')
                   @php 
                   $package = DB::table('packages')
                   ->select('*')
@@ -180,9 +178,8 @@
                   @endphp
                   <li>
                      <p>Subscription Type :</p>
-                     <h3 class="ellipsis">{{$package->title}}</h3>
+                     <h3 class="ellipsis">{{ $package->title }}</h3>
                   </li>
-                  @endif
                   <li>
                      <p>Start Date :</p>
                      <h3 class="ellipsis">{{date('d M Y | H:i'  , strtotime($editdata->start_date))}}</h3>
@@ -191,6 +188,47 @@
                      <p>End Date :</p>
                      <h3 class="ellipsis">{{date('d M Y | H:i'  , strtotime($editdata->end_date))}}</h3>
                   </li>
+                  @else
+                  <li>
+                     <p>Subscription Type :</p>
+                     <h3 class="ellipsis">No Subscription active</h3>
+                  </li>
+                  @endif
+                  
+                  <li>
+                     <p>Is Online :</p>
+                     <h3>{{!empty($editdata->is_online)? 'Yes':'No'}}</h3>
+                  </li>
+                  
+                  <li>
+                     <p>Payon Arrival :</p>
+                     <h3>{{!empty($editdata->debit_card)? 'Yes':'No'}}</h3>
+                  </li>
+                  
+                  <li>
+                     <p>Paypal :</p>
+                     <h3>{{ $editdata->paypal }}</h3>
+                  </li>
+                  
+                  <li>
+                     <p>Bankname :</p>
+                     <h3>{{ $editdata->bankname }}</h3>
+                  </li>
+                  
+                  <li>
+                     <p>account_holdername :</p>
+                     <h3 class="ellipsis">{{ $editdata->account_holdername }}</h3>
+                  </li>
+                  
+                  <li>
+                     <p>Account Number :</p>
+                     <h3>{{ $editdata->account_number }}</h3>
+                  </li>
+                  <li>
+                     <p>Description :</p>
+                     <h3>{{ $editdata->description }}</h3>
+                  </li>
+                  
                </ul>
             </div>
          </div>

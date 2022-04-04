@@ -86,14 +86,11 @@ class PromocodeController extends Controller
 
         if ($request->edit_id != '') { // echo"33".$request->edit_id;
           Session::flash('success', 'Updated successfully..!');
-          $updateData = DB::table('promocode')
-            ->where('id', $request->edit_id)
-            ->update($data);
+          $updateData = DB::table('promocode')->where('id', $request->edit_id)->update($data);
           return back();
         } else {
           Session::flash('success', 'Inserted successfully..!');
-          $insertData = DB::table('promocode')
-            ->insert($data);
+          $insertData = DB::table('promocode')->insert($data);
           return redirect('/add-promocodes');
         }
       }
@@ -107,14 +104,10 @@ class PromocodeController extends Controller
     $editdata = DB::table('Users')
       ->rightjoin('countries', 'users.country_id', '=', 'countries.country_id')
       ->rightjoin('region', 'users.country_id', '=', 'region.country_id')
-      ->where('id', $id)
-      ->first();
+      ->where('id', $id)->first();
 
     $data['content'] = 'admin.adventure_users.view_adventure_user';
-    return view('layouts.content', compact('data'))
-      ->with([
-        'editdata' => $editdata
-      ]);
+    return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
   }
 
   /* View Adventure users ends */
@@ -136,9 +129,7 @@ class PromocodeController extends Controller
       'id' => $_GET['id'],
       'status' => $_GET['status'],
     );
-    $edituserData = DB::table('promocode')
-      ->where('id', $id)
-      ->update($Data);
+    $edituserData = DB::table('promocode')->where('id', $id)->update($Data);
     return response()->json(array('msg' => $edituserData), 200);
   }
   /* Update status ends */

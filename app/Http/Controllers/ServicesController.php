@@ -365,6 +365,7 @@ class ServicesController extends MyController
             }
         }
         $vendors = User::where(['deleted_at' => NULL])->whereIn('users_role', [1, 2])->get();
+        //dd($vendors);
         if (!empty($vendors)) {
             foreach ($vendors as $vendor) {
                 $result[] = $vendor->attributesToArray();

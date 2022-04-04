@@ -10,16 +10,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\MyController;
 
-class HealthConditionsController extends MyController
-{
+class HealthConditionsController extends MyController {
 
-    public function get_all()
-    {
+    public function get_all() {
         $result = array();
 
-        $healths = Health_condition::select('id', 'name')
-            ->orderBy('name', 'ASC')
-            ->get();
+        $healths = Health_condition::select('id', 'name')->orderBy('name', 'ASC')->get();
         if (!empty($healths)) {
             foreach ($healths as $health) {
                 $result[] = $health->attributesToArray();
@@ -30,4 +26,5 @@ class HealthConditionsController extends MyController
         }
         return $this->sendError('No data found', $result, 400);
     }
+
 }
