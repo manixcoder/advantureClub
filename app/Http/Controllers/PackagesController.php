@@ -47,58 +47,67 @@ class PackagesController extends MyController
         //dd($request->all());
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
-                'package_duration' => 'required|numeric|min:1|max:4',
-                'package_name' => 'required|min:3|max:200',
-                'package_cost' => 'required|numeric',
-                'includes.*' => 'required|string|distinct|min:1|max:200',
-                'excludes.*' => 'string|distinct|min:1|max:200',
+                'duration'      => 'required|numeric',
+                'title'         => 'required|min:3|max:200',
+                'cost'          => 'required|numeric',
+                'includes.*'    => 'required|string|distinct|min:1|max:200',
+                'excludes.*'    => 'string|distinct|min:1|max:200',
             ], [], [
                 'includes.*' => 'include',
                 'excludes.*' => 'exclude',
             ]);
             if ($validator->fails()) {
                 $validation = array();
-                foreach ($validator->messages()
-                    ->getMessages() as $field_name => $messages) {
+                foreach ($validator->messages()->getMessages() as $field_name => $messages) {
                     $validation[$field_name] = $messages[0];
                 }
             } else {
                 if (DB::table('packages')->insert([
-                    'title' => $request->package_name,
-                    'duration' => $request->package_duration,
-                    'cost' => $request->package_cost
+                    'title'         => $request->title,
+                    'duration'      => $request->duration,
+                    'days'          => $request->days,
+                    'symbol'        => '$',
+                    'cost'          => $request->cost,
+                    'offer_cost'    => $request->offer_cost
                 ])) {
                     $package_id = DB::getPdo()->lastInsertId();
                     DB::table('package_detail')
-                        ->where(['package_id' => $package_id])
-                        ->delete();
+                    ->where(['package_id' => $package_id])
+                    ->delete();
                     $pkg_det = [];
                     foreach ($request->includes as $val) {
                         $pkg_det[] = [
-                            'package_id' => $package_id,
-                            'title' => $val,
-                            'detail_type' => 1
+                            'package_id'    => $package_id, 
+                            'title'         => $val,
+                            'detail_type'   => 1
                         ];
                     }
                     foreach ($request->excludes as $val) {
                         $pkg_det[] = [
-                            'package_id' => $package_id,
-                            'title' => $val,
-                            'detail_type' => 0
+                            'package_id'    => $package_id,
+                            'title'         => $val,
+                            'detail_type'   => 0
                         ];
                     }
                     DB::table('package_detail')
-                        ->insert($pkg_det);
-                    $request->session()->flash('success', 'Record has been added successfully.');
+                    ->insert($pkg_det);
+                    $request->session()->flash(
+                        'success', 
+                        'Record has been added successfully.'
+                        );
                 } else {
-                    $request->session()->flash('error', 'Something went wrong. Please try again.');
+                    $request->session()->flash(
+                        'error', 
+                        'Something went wrong. Please try again.'
+                        );
                 }
                 return redirect('/sub-packages/add');
             }
         }
         $packages = DB::table('packages')->get();
         $data['content'] = 'admin.pages.update_packages';
-        return view('layouts.content', compact('data'))->with([
+        return view('layouts.content', compact('data'))
+        ->with([
             'validation' => $validation ?? [],
             'packages' => $packages
         ]);
@@ -141,9 +150,15 @@ class PackagesController extends MyController
                 }
                 DB::table('privacy_policy')->truncate();
                 if (DB::table('privacy_policy')->insert($term_data)) {
-                    $request->session()->flash('success', 'Record has been added successfully.');
+                    $request->session()->flash(
+                        'success', 
+                        'Record has been added successfully.'
+                        );
                 } else {
-                    $request->session()->flash('error', 'Something went wrong. Please try again.');
+                    $request->session()->flash(
+                        'error', 
+                        'Something went wrong. Please try again.'
+                        );
                 }
                 return redirect('/privacy-policy/add');
             }
@@ -179,8 +194,7 @@ class PackagesController extends MyController
             } else {
                 DB::table('about_us')->truncate();
                 if (DB::table('about_us')->insert(['content' => $request->description])) {
-                    $request->session()
-                        ->flash('success', 'Record has been added successfully.');
+                    $request->session()->flash('success', 'Record has been added successfully.');
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
@@ -211,10 +225,12 @@ class PackagesController extends MyController
     public function update_pkg_status($id)
     {
         $Data = array(
-            'id' => $_GET['id'],
-            'status' => $_GET['status'],
+            'id'        => $_GET['id'],
+            'status'    => $_GET['status'],
         );
-        $edituserData = DB::table('packages')->where('id', $id)->update($Data);
+        $edituserData = DB::table('packages')
+        ->where('id', $id)
+        ->update($Data);
         return response()->json(array('msg' => $edituserData), 200);
     }
     /* Update status ends */
@@ -225,9 +241,15 @@ class PackagesController extends MyController
         $pkg = Packages::find($id);
         if ($pkg) {
             $destroy = Packages::destroy($id);
-            $request->session()->flash('success', 'Package has been deleted successfully.');
+            $request->session()->flash(
+                'success',
+                'Package has been deleted successfully.'
+                );
         } else {
-            $request->session()->flash('error', 'Something went wrong. Please try again.');
+            $request->session()->flash(
+                'error', 
+                'Something went wrong. Please try again.'
+                );
         }
         return redirect()->back();
     }

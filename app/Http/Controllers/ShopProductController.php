@@ -79,14 +79,11 @@ class ShopProductController extends Controller
     }
 
     if ($request->edit_id != '') {
-      $updateData = DB::table('ShopProduct')
-        ->where('id', $request->edit_id)
-        ->update($data);
+      $updateData = DB::table('ShopProduct')->where('id', $request->edit_id)->update($data);
       Session::flash('success', 'Updated successfully..!');
       return redirect('shop-product');
     } else {
-      $insertData = DB::table('ShopProduct')
-        ->insertgetId($data);
+      $insertData = DB::table('ShopProduct')->insertgetId($data);
       Session::flash('success', 'Inserted successfully..!');
       return redirect('shop-product');
     }
@@ -95,9 +92,7 @@ class ShopProductController extends Controller
   public function shop_product_listing()
   {
     if (Session::get('userRole') == 1) {
-      $shopproductdata = DB::table('ShopProduct')
-      ->orderBy('id', 'desc')
-      ->get();
+      $shopproductdata = DB::table('ShopProduct')->orderBy('id', 'desc')->get();
     } else {
       $shopproductdata = DB::table('ShopProduct')->orderBy('id', 'desc')->where('CreatorVendorId', Session::get('user_id'))->get();
     }

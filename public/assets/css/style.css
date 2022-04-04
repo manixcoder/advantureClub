@@ -333,6 +333,9 @@ a:focus {
 
 }
 
+img {
+    border-style: hidden !important;
+}
 
 
 #wrapper {

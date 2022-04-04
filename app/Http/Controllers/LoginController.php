@@ -83,21 +83,14 @@ class LoginController extends Controller
 
   public function vendor_approve($id)
   {
-    $approvedata = User::where('id', $id)
-      ->update([
-        'status' => '1',
-        'users_role' => '2'
-      ]);
+    $approvedata = User::where('id', $id)->update(['status' => '1', 'users_role' => '2']);
     Session::flash('success', 'Vendor approved successfully..!');
     return back();
   }
 
   public function vendor_notapprove($id)
   {
-    $approvedata = User::where('id', $id)
-      ->update([
-        'status' => '2'
-      ]);
+    $approvedata = User::where('id', $id)->update(['status' => '2']);
     Session::flash('error', 'Vendor Declined ..!');
     return back();
   }
@@ -119,8 +112,7 @@ class LoginController extends Controller
         if ($request->u_ids != '') {
           $udata['username'] = $request->username;
           $udata['password'] = Hash::make($request->new_password);
-          User::where('id', $request->u_ids)
-            ->update($udata);
+          User::where('id', $request->u_ids)->update($udata);
         }
         Session::flash('success', 'Profile updated successfully');
         return back();
@@ -128,8 +120,7 @@ class LoginController extends Controller
     } else {
       $data = $request->all();
       $udata['username'] = $request->username;
-      User::where('id', $request->u_ids)
-        ->update($udata);
+      User::where('id', $request->u_ids)->update($udata);
       Session::flash('success', 'Profile updated successfully');
       return back();
     }
@@ -137,15 +128,11 @@ class LoginController extends Controller
 
   public function UserProfile(Request $request)
   {
-    $companydata = User::where('id', Session::get('user_id'))
-      ->first();
+    $companydata = User::where('id', Session::get('user_id'))->first();
     $profileData = Auth()->user();
 
     $data['content'] = 'admin.user.user-profile';
-    return view('layouts.content', compact('data'))
-      ->with([
-        'companydata' => $companydata
-      ]);
+    return view('layouts.content', compact('data'))->with(['companydata' => $companydata]);
   }
 
   public function Dashboard(Request $request)
@@ -158,30 +145,13 @@ class LoginController extends Controller
       $usredata = DB::table('users')->where('users_role', 2)->count();
       $customerdata = DB::table('users')->where('users_role', 3)->count();
       $categorydata = DB::table('home_categories')->count();
-      $vendor_requests = DB::table('users')
-        ->Where('status', '0')
-        ->Where('users_role', '3')
-        ->count();
-      $countrydata = DB::table('countries')
-        ->count();
-      $adventure_programdata = DB::table('adventure_programs')
-        ->orderBy('id', 'Desc')
-        ->count();
-      $productdata = DB::table('home_products')
-        ->orderBy('id', 'desc')
-        ->count();
+      $vendor_requests = DB::table('users')->Where('status', '0')->Where('users_role', '3')->count();
+      $countrydata = DB::table('countries')->count();
+      $adventure_programdata = DB::table('adventure_programs')->orderBy('id', 'Desc')->count();
+      $productdata = DB::table('home_products')->orderBy('id', 'desc')->count();
 
       $data['content'] = 'admin.home';
-      return view('layouts.content', compact('data'))
-        ->with([
-          'usredata' => $usredata,
-          'customerdata' => $customerdata,
-          'vendor_requests' => $vendor_requests,
-          'categorydata' => $categorydata,
-          'countrydata' => $countrydata,
-          'adventure_programdata' => $adventure_programdata,
-          'productdata' => $productdata
-        ]);
+      return view('layouts.content', compact('data'))->with(['usredata' => $usredata, 'customerdata' => $customerdata, 'vendor_requests' => $vendor_requests, 'categorydata' => $categorydata, 'countrydata' => $countrydata, 'adventure_programdata' => $adventure_programdata, 'productdata' => $productdata]);
     } elseif ($userRole == '2') {
       $usredata = DB::table('users')->count();
       $data['content'] = 'admin.home';

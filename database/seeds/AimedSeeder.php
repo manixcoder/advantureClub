@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class GetAllPaymentmodeTableSeeder extends Seeder
+class AimedSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,39 +11,40 @@ class GetAllPaymentmodeTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('get_all_paymentmode')->delete();
+        DB::table('aimed')->delete();
         $userData = array(
             array(
                 'id' => 1,
-                'payment_name' => 'Oman debit card',
-                'payment_image' => 'oman_debitCards.png',
+                'AimedName' => 'Kids',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 2,
-                'payment_name' => 'International visa card',
-                'payment_image' => 'oman_debitCards.png',
+                'AimedName' => 'Youngsters',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 3,
-                'payment_name' => 'pay on arrival',
-                'payment_image' => 'oman_debitCards.png',
+                'AimedName' => 'Gents',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
             array(
                 'id' => 4,
-                'payment_name' => 'PayPal',
-                'payment_image' => 'oman_debitCards.png',
+                'AimedName' => 'Ladies',
+                'created_at' =>  date("Y-m-d H:i:s"),
+                'updated_at' =>  date("Y-m-d H:i:s"),
+            ),
+            array(
+                'id' => 5,
+                'AimedName' => 'Multigender',
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
 
-
         );
-        DB::table('get_all_paymentmode')->insert($userData);
+        DB::table('aimed')->insert($userData);
     }
 }

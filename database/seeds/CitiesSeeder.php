@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class CitiesTableSeeder extends Seeder
+class CitiesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,7 +11,7 @@ class CitiesTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('countries')->delete();
+        DB::table('cities')->delete();
         $userData = array(
             array(
                 'id' => 1,
@@ -49,9 +49,7 @@ class CitiesTableSeeder extends Seeder
                 'created_at' =>  date("Y-m-d H:i:s"),
                 'updated_at' =>  date("Y-m-d H:i:s"),
             ),
-
-
         );
-        DB::table('countries')->insert($userData);
+        DB::table('cities')->insert($userData);
     }
 }
