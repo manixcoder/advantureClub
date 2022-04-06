@@ -1,3 +1,3 @@
 @include('layouts.header')
-@include($data['content'])
+@include($data['content']) 
 @include('layouts.footer')

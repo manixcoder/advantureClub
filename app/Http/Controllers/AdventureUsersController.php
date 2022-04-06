@@ -31,7 +31,7 @@ class AdventureUsersController extends MyController
 
     /* Users Listing Starts */
 
-    function list_adventure_users()
+    function list_adventure_users() 
     {
         $usersdata = DB::table('users')
             ->select(['users.*', 'countries.country'])
@@ -43,10 +43,7 @@ class AdventureUsersController extends MyController
             ->orderBy('users.id', 'desc')
             ->get();
         $data['content'] = 'admin.adventure_users.list_adventure_users';
-        return view(
-            'layouts.content',
-            compact('data')
-        )->with([
+        return view('layouts.content',compact('data'))->with([
             'usersdata' => $usersdata
         ]);
     }

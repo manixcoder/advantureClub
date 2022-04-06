@@ -38,7 +38,10 @@ class PromocodeController extends Controller
       ->get();
     $data['content'] = 'admin.promocode.list_promocode';
 
-    return view('layouts.content', compact('data'))->with(['promocodeData' => $promocodeData]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'promocodeData' => $promocodeData
+      ]);
   }
   /* Adventure Users listing ends */
 
@@ -93,7 +96,8 @@ class PromocodeController extends Controller
           return back();
         } else {
           Session::flash('success', 'Inserted successfully..!');
-          $insertData = DB::table('promocode')->insert($data);
+          $insertData = DB::table('promocode')
+            ->insert($data);
           return redirect('/add-promocodes');
         }
       }
@@ -135,8 +139,16 @@ class PromocodeController extends Controller
       'id' => $_GET['id'],
       'status' => $_GET['status'],
     );
-    $edituserData = DB::table('promocode')->where('id', $id)->update($Data);
-    return response()->json(array('msg' => $edituserData), 200);
+    $edituserData = DB::table('promocode')
+      ->where('id', $id)
+      ->update($Data);
+    return response()
+      ->json(
+        array(
+          'msg' => $edituserData
+        ),
+        200
+      );
   }
   /* Update status ends */
 
@@ -146,9 +158,17 @@ class PromocodeController extends Controller
     $promo = Promocode::find($id);
     if ($promo) {
       $destroy = Promocode::destroy($id);
-      $request->session()->flash('success', 'Promocode has been deleted successfully.');
+      $request->session()
+        ->flash(
+          'success',
+          'Promocode has been deleted successfully.'
+        );
     } else {
-      $request->session()->flash('error', 'Something went wrong. Please try again.');
+      $request->session()
+        ->flash(
+          'error',
+          'Something went wrong. Please try again.'
+        );
     }
     return redirect()->back();
   }

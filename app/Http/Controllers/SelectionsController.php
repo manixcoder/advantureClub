@@ -175,6 +175,7 @@ class SelectionsController extends MyController
 
     public function add(Request $request)
     {
+        //dd($request->all());
         $under = array(
             1 => 'Service Sectors',
             2 => 'Service Category',
@@ -207,6 +208,8 @@ class SelectionsController extends MyController
                     case 1:
                         $sector = new Service_sector();
                         $sector->sector = $request->selection_name;
+                        $sector->created_at = date("Y-m-d H:i:s");
+                        $sector->updated_at = date("Y-m-d H:i:s");
                         if ($sector->save()) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
@@ -217,6 +220,8 @@ class SelectionsController extends MyController
                     case 2:
                         $sector = new Service_categorie();
                         $sector->category = $request->selection_name;
+                        $sector->created_at = date("Y-m-d H:i:s");
+                        $sector->updated_at = date("Y-m-d H:i:s");
                         if ($sector->save()) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
@@ -227,6 +232,8 @@ class SelectionsController extends MyController
                     case 3:
                         $sector = new Service_type();
                         $sector->type = $request->selection_name;
+                        $sector->created_at = date("Y-m-d H:i:s");
+                        $sector->updated_at = date("Y-m-d H:i:s");
                         if ($sector->save()) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
@@ -237,6 +244,8 @@ class SelectionsController extends MyController
                     case 4:
                         $sector = new Service_level();
                         $sector->level = $request->selection_name;
+                        $sector->created_at = date("Y-m-d H:i:s");
+                        $sector->updated_at = date("Y-m-d H:i:s");
                         if ($sector->save()) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
@@ -246,7 +255,11 @@ class SelectionsController extends MyController
                         break;
                     case 5:
 
-                        if (DB::table('durations')->insert(['duration' => $request->selection_name])) {
+                        if (DB::table('durations')->insert([
+                            'duration' => $request->selection_name,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -254,7 +267,11 @@ class SelectionsController extends MyController
                         return redirect('/selections/5');
                         break;
                     case 6:
-                        if (DB::table('activities')->insert(['activity' => $request->selection_name])) {
+                        if (DB::table('activities')->insert([
+                            'activity' => $request->selection_name,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -263,7 +280,9 @@ class SelectionsController extends MyController
                         break;
                     case 7:
                         if (DB::table('aimed')->insert([
-                            'AimedName' => $request->selection_name
+                            'AimedName' => $request->selection_name,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
                         ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
@@ -272,7 +291,11 @@ class SelectionsController extends MyController
                         return redirect('/selections/7');
                         break;
                     case 8:
-                        if (DB::table('dependency')->insert(['dependency_name' => $request->selection_name])) {
+                        if (DB::table('dependency')->insert([
+                            'dependency_name' => $request->selection_name,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -280,7 +303,11 @@ class SelectionsController extends MyController
                         return redirect('/selections/8');
                         break;
                     case 9:
-                        if (DB::table('currencies')->insert(['name' => $request->selection_name])) {
+                        if (DB::table('currencies')->insert([
+                            'name' => $request->selection_name,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
+                        ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
                             $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -291,7 +318,9 @@ class SelectionsController extends MyController
 
                     case 10:
                         if (DB::table('health_conditions')->insert([
-                            'name' => $request->selection_name
+                            'name' => $request->selection_name,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
                         ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
@@ -302,7 +331,9 @@ class SelectionsController extends MyController
 
                     case 11:
                         if (DB::table('heights')->insert([
-                            'heightname' => $request->selection_name
+                            'heightname' => $request->selection_name,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
                         ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
@@ -313,7 +344,9 @@ class SelectionsController extends MyController
 
                     case 12:
                         if (DB::table('weights')->insert([
-                            'weightName' => $request->selection_name
+                            'weightName' => $request->selection_name,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
                         ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {
@@ -324,7 +357,9 @@ class SelectionsController extends MyController
 
                     case 13:
                         if (DB::table('contactuspurposes')->insert([
-                            'contactuspurposeName' => $request->selection_name
+                            'contactuspurposeName' => $request->selection_name,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
                         ])) {
                             $request->session()->flash('success', "Record has been added successfully.");
                         } else {

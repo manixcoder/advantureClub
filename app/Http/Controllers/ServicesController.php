@@ -457,13 +457,13 @@ class ServicesController extends MyController
             'categories'        => $categories_res,
             'types'             => $types_res,
             'levels'            => $levels_res,
-            'durations'         => $durations_list,
             'dependencies'      => $dependencies,
             'service_for'       => $service_for,
             'currencies'        => $currencies,
             'service_plans'     => $service_plans,
             'weekdays'          => $weekdays,
             'activities_list'   => $activities_list,
+            'durations'         => $durations_list,
             'regions_list'      => $region_list
         ]);
     }
