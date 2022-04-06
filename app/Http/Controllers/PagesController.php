@@ -68,9 +68,15 @@ class PagesController extends MyController
                 if (DB::table('terms_conditions')
                     ->insert($term_data)
                 ) {
-                    $request->session()->flash('success', 'Record has been added successfully.');
+                    $request->session()->flash(
+                        'success',
+                        'Record has been added successfully.'
+                    );
                 } else {
-                    $request->session()->flash('error', 'Something went wrong. Please try again.');
+                    $request->session()->flash(
+                        'error', 
+                        'Something went wrong. Please try again.'
+                    );
                 }
                 return redirect('/terms-conditions/add');
             }
@@ -164,9 +170,11 @@ class PagesController extends MyController
                 }
             } else {
                 DB::table('about_us')->truncate();
-                if (DB::table('about_us')->insert([
-                    'content' => $request->description
-                ])) {
+                if (DB::table('about_us')
+                    ->insert([
+                        'content' => $request->description
+                    ])
+                ) {
                     $request->session()->flash('success', 'Record has been added successfully.');
                 } else {
                     $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -174,7 +182,8 @@ class PagesController extends MyController
                 return redirect('/about-us/add');
             }
         }
-        $terms = DB::table('about_us')->first();
+        $terms = DB::table('about_us')
+            ->first();
         $data['content'] = 'admin.pages.update_about_us';
         return view('layouts.content', compact('data'))
             ->with([

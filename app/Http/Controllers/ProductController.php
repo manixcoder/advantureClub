@@ -55,7 +55,10 @@ class ProductController extends Controller
           'image' => $image,
           'home_product_id' => $request->product_id
         ]);
-      session()->flash('success', 'Image Add successfully..!');
+      session()->flash(
+        'success',
+        'Image Add successfully..!'
+      );
       return back();
     }
   }
@@ -65,7 +68,10 @@ class ProductController extends Controller
     $delete = DB::table('home_products_gallery')
       ->where('id', $id)
       ->delete();
-    session()->flash('error', 'Deleted Successfully..!');
+    session()->flash(
+      'error',
+      'Deleted Successfully..!'
+    );
     return redirect()->back();
   }
 
@@ -148,8 +154,12 @@ class ProductController extends Controller
           $profileImage = date('YmdHis') . "-" . $img->getClientOriginalName();
           $path =  $img->move($destinationPath, $profileImage);
           $image = $insert['photo'] = "$profileImage";
-          $data = array('home_product_id' => $insertData, 'image' => $image);
-          $insertIamge = DB::table('home_products_gallery')->insert($data);
+          $data = array(
+            'home_product_id' => $insertData,
+            'image' => $image
+          );
+          $insertIamge = DB::table('home_products_gallery')
+            ->insert($data);
         }
       }
       Session::flash('success', 'Inserted successfully..!');
@@ -228,7 +238,8 @@ class ProductController extends Controller
       ->where('Service_Category_Id', $service_cat_id)
       ->get();
     /* print_r($data); die;*/
-    return response()->json($data);
+    return response()
+      ->json($data);
   }
   /* Product Functions End */
 }

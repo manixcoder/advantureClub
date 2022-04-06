@@ -23,6 +23,10 @@ class DatabaseSeeder extends Seeder
         $this->call(HealthConditionsSeeder::class);
         $this->call(HeightsSeeder::class);
         $this->call(LanguagesSeeder::class);
-        $this->Call(PackagesSeeder::class);
+        $this->call(PackagesSeeder::class);
+        $this->call(ServicelevelsSeeder::class);
+        $this->call(ServiceSectorsSeeder::class);
+        $this->call(ServiceCategoriesSeeder::class);
+        $this->call(ServiceTypesSeeder::class);
     }
 }

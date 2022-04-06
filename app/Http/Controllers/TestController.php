@@ -1343,8 +1343,12 @@ class ServicesController extends MyController {
                     'bkng.total_amount as total_cost',
                     'pmnt.payment_method as payment_channel',
                     'crnci.sign as currency',
-                    'client.dob', 'client.Height', 'client.Weight', 'bkng.message',
-                    'bkng.status', 'bkng.payment_status',
+                    'client.dob', 
+                    'client.Height', 
+                    'client.Weight', 
+                    'bkng.message',
+                    'bkng.status', 
+                    'bkng.payment_status',
                     DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
                     DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
                     'catg.category'
@@ -1368,13 +1372,12 @@ class ServicesController extends MyController {
                             ])
                         ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
                         ->where('s_dep.service_id', $service_id)
-                        ->get()->toArray();
+                        ->get()
+                        ->toArray();
         $service->dependencies = $dependencies ?? [];
         $data['content'] = 'admin.services.booked_client_view';
         return view('layouts.content', compact('data'))
-        ->with([
-            'service' => $service
-        ]);
+        ->with(['service' => $service]);
     }
 
     public function adventures(Request $request, $id = null) {
@@ -1391,10 +1394,11 @@ class ServicesController extends MyController {
                     'ssec.sector as service_sector',
                     'styp.type as service_type', 
                     'slvl.level as service_level', 
-                    'cntri.country', 
+                    'cntri.country',
                     'crnci.sign as currency_sign', 
                     'rgns.region', 
-                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")])
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")
+                    ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
@@ -1429,7 +1433,12 @@ class ServicesController extends MyController {
                             'rg.region'
                             )
                         ->leftJoin('countries as cnt', 'cnt.id', '=', 'rg.country_id')
-                        ->where(['rg.country_id' => $id, 'rg.deleted_at' => NULL])->orderBy('rg.region', 'ASC')->get();
+                        ->where([
+                            'rg.country_id' => $id, 
+                            'rg.deleted_at' => NULL
+                            ])
+                            ->orderBy('rg.region', 'ASC')
+                            ->get();
         $options = '';
         if (!$regions->isEmpty()) {
             $options .= '<option value="">Select</option>';
@@ -1473,7 +1482,8 @@ class ServicesController extends MyController {
                              ->join('users as usr','usr.id','=','srvc.owner')
                              ->leftJoin('countries as cntri', 'cntri.id','=' , 'srvc.country' )
                             ->groupBy('rev.service_id')
-                            ->get()->toArray();
+                            ->get()
+                            ->toArray();
                           //  echo "<pre>";print_r( $reviewData);exit;
               $likesData= DB::table('service_likes as srvclks')
                         ->select([
@@ -1482,10 +1492,15 @@ class ServicesController extends MyController {
                             ])
                         ->join('service_reviews as rev','rev.service_id','=','srvclks.service_id')
                         ->groupBy('rev.service_id')
-                        ->get()->toArray();
+                        ->get()
+                        ->toArray();
                         //   echo "<pre>";print_r( $likes);exit;
         $data['content'] = 'admin.services.list_reviews';
-        return view('layouts.content', compact('data'))->with(['reviewdata' => $reviewData,'likesData'=>$likesData]);
+        return view('layouts.content', compact('data'))
+        ->with([
+            'reviewdata' => $reviewData,
+            'likesData'=>$likesData
+        ]);
     }
 
     public function deleteServiceReviews(Request $request, $id) {
@@ -1494,7 +1509,10 @@ class ServicesController extends MyController {
             $destroy = Service::destroy($id);
             $request->session()->flash('success', 'Service Review has been blocked successfully.');
         } else {
-            $request->session()->flash('error', 'Something went wrong. Please try again.');
+            $request->session()->flash(
+                'error', 
+                'Something went wrong. Please try again.'
+            );
         }
         return redirect()->back();
     }
@@ -1505,7 +1523,8 @@ class ServicesController extends MyController {
             'id' => $_GET['id'],
             'status' => $_GET['status'],
         );
-        $edituserData = DB::table('service_likes')->insert($Data);
+        $edituserData = DB::table('service_likes')
+        ->insert($Data);
         return response()->json(array('msg'=> $edituserData), 200);
         }
 

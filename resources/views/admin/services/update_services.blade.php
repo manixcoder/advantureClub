@@ -12,7 +12,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="box-header with-border" style="margin-bottom: 15px;">
-                                <h4 class="box-title">Description1</h4>
+                                <h4 class="box-title">Description</h4>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
