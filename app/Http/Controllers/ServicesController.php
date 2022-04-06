@@ -740,7 +740,7 @@ class ServicesController extends MyController
                 'rg.region'
             )
             ->leftJoin('countries as cnt', 'cnt.id', '=', 'rg.country_id')
-            ->where(['rg.country_id' => $id, 'rg.deleted_at' => NULL])
+            ->where('rg.country_id', $id)
             ->orderBy('rg.region', 'ASC')
             ->get();
         $options = '';
@@ -786,12 +786,14 @@ class ServicesController extends MyController
             ->join('users as usr', 'usr.id', '=', 'srvc.owner')
             ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
             ->groupBy('rev.service_id')
-            ->get()->toArray();
+            ->get()
+            ->toArray();
         $likesData = DB::table('service_likes as srvclks')
             ->select(['rev.*', 'srvclks.is_like'])
             ->join('service_reviews as rev', 'rev.service_id', '=', 'srvclks.service_id')
             ->groupBy('rev.service_id')
-            ->get()->toArray();
+            ->get()
+            ->toArray();
         //   echo "<pre>";print_r( $likes);exit;
         $data['content'] = 'admin.services.list_reviews';
         return view('layouts.content', compact('data'))

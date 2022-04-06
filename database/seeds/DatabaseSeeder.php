@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Prophecy\Call\Call;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,12 +12,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(UsersTableSeeder::class);
         $this->call(ActivitiesSeeder::class);
         $this->call(AimedSeeder::class);
-        $this->call(UsersTableSeeder::class);
-        $this->call(DependencySeeder::class);
         $this->call(CountriesSeeder::class);
         $this->call(CitiesSeeder::class);
+        $this->call(DependencySeeder::class);
         $this->call(DurationsSeeder::class);
         $this->call(GetAllPaymentmodeSeeder::class);
         $this->call(HealthConditionsSeeder::class);
