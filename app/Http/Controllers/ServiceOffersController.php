@@ -106,8 +106,8 @@ class ServiceOffersController extends MyController
                             $files = $request->banner;
                             $filepath = $files->move($destinationPath, $filename);
                             DB::table('service_offers')
-                            ->where(['id' => $user_id])
-                            ->update(['banner' => 'offer_image/' . $filename]);
+                                ->where(['id' => $user_id])
+                                ->update(['banner' => 'offer_image/' . $filename]);
                         }
                     }
                     Session::flash('success', 'Offer has been inserted successfully.');
@@ -141,8 +141,8 @@ class ServiceOffersController extends MyController
             'status'    => $_GET['status'],
         );
         $edituserData = DB::table('service_offers')
-        ->where('id', $id)
-        ->update($Data);
+            ->where('id', $id)
+            ->update($Data);
         return response()->json(array('msg' => $edituserData), 200);
     }
     /* Update status ends */

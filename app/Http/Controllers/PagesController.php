@@ -74,7 +74,7 @@ class PagesController extends MyController
                     );
                 } else {
                     $request->session()->flash(
-                        'error', 
+                        'error',
                         'Something went wrong. Please try again.'
                     );
                 }

@@ -37,11 +37,15 @@ class ShopProductController extends Controller
     if ($productdata->status = 1) {
       $updateData = DB::table('home_products')
         ->where('id', $id)
-        ->update(['status' => 0]);
+        ->update([
+          'status' => 0
+        ]);
     } else {
       $updateData = DB::table('home_products')
         ->where('id', $id)
-        ->update(['status' => 1]);
+        ->update([
+          'status' => 1
+        ]);
     }
     return back();
   }
@@ -50,31 +54,31 @@ class ShopProductController extends Controller
   {
     /*print_r($request->all()); die; */
     if ($files = $request->ProductImage) {
-      $destinationPath = public_path('/shop_product_image/');
-      $profileImage = date('YmdHis') . "-" . $files->getClientOriginalName();
-      $path =  $files->move($destinationPath, $profileImage);
-      $image = $insert['photo'] = "$profileImage";
+      $destinationPath    = public_path('/shop_product_image/');
+      $profileImage       = date('YmdHis') . "-" . $files->getClientOriginalName();
+      $path               =  $files->move($destinationPath, $profileImage);
+      $image              = $insert['photo'] = "$profileImage";
     }
     if ($request->ProductImage != '') {
       $data = array(
-        'CreatorVendorId' => Session::get('user_id'),
-        'ProductName' => $request->ProductName,
-        'ProductPrice' => $request->ProductPrice,
-        'CurrencyId' => $request->CurrencyId,
-        'ProductCategoryId' => $request->ProductCategoryId,
-        'ProductDescription' => $request->ProductDescription,
-        'ProductCreatedDate' => date('Y-m-d H:i'),
-        'ProductImage' => $image ?? '',
+        'CreatorVendorId'     => Session::get('user_id'),
+        'ProductName'         => $request->ProductName,
+        'ProductPrice'        => $request->ProductPrice,
+        'CurrencyId'          => $request->CurrencyId,
+        'ProductCategoryId'   => $request->ProductCategoryId,
+        'ProductDescription'  => $request->ProductDescription,
+        'ProductCreatedDate'  => date('Y-m-d H:i'),
+        'ProductImage'        => $image ?? '',
       );
     } else {
       $data = array(
-        'CreatorVendorId' => Session::get('user_id'),
-        'ProductName' => $request->ProductName,
-        'ProductPrice' => $request->ProductPrice,
-        'CurrencyId' => $request->CurrencyId,
-        'ProductCategoryId' => $request->ProductCategoryId,
-        'ProductDescription' => $request->ProductDescription,
-        'ProductCreatedDate' => date('Y-m-d H:i'),
+        'CreatorVendorId'     => Session::get('user_id'),
+        'ProductName'         => $request->ProductName,
+        'ProductPrice'        => $request->ProductPrice,
+        'CurrencyId'          => $request->CurrencyId,
+        'ProductCategoryId'   => $request->ProductCategoryId,
+        'ProductDescription'  => $request->ProductDescription,
+        'ProductCreatedDate'  => date('Y-m-d H:i'),
       );
     }
 
@@ -131,9 +135,8 @@ class ShopProductController extends Controller
       ->where('id', $id)
       ->first();
 
-    $data['content'] = 'admin.shop_product.view_shop_product';
-    return view('layouts.content', compact('data'))
-      ->with([
+    $data['content']    = 'admin.shop_product.view_shop_product';
+    return view('layouts.content', compact('data'))->with([
         'shop_product_view_data' => $shop_product_view_data
       ]);
   }

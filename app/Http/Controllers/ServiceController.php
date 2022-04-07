@@ -174,7 +174,7 @@ class ServiceController extends Controller
     $data['content'] = 'admin.service.manage_service_activitytype';
     return view('layouts.content', compact('data'))
       ->with([
-        'serviceactivity_data' => $serviceactivity_data
+        'serviceactivity_data'    => $serviceactivity_data
       ]);
   }
 
@@ -182,9 +182,9 @@ class ServiceController extends Controller
   {
     /* print_r($request->all()); die;*/
     $data = array(
-      'Service_Id' => $request->Service_Id,
-      'Service_Category_Id' => $request->Service_Category_Id,
-      'Name' => $request->Name,
+      'Service_Id'            => $request->Service_Id,
+      'Service_Category_Id'   => $request->Service_Category_Id,
+      'Name'                  => $request->Name,
     );
 
     if ($request->ids != '') {

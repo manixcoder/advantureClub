@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Service_level extends Authenticatable {
+class Service_level extends Authenticatable
+{
 
     use SoftDeletes;
 
     protected $fillable = [
         'level', 'status'
     ];
-
 }

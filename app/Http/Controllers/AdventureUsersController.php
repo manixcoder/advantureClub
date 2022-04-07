@@ -31,7 +31,7 @@ class AdventureUsersController extends MyController
 
     /* Users Listing Starts */
 
-    function list_adventure_users() 
+    function list_adventure_users()
     {
         $usersdata = DB::table('users')
             ->select(['users.*', 'countries.country'])
@@ -43,9 +43,7 @@ class AdventureUsersController extends MyController
             ->orderBy('users.id', 'desc')
             ->get();
         $data['content'] = 'admin.adventure_users.list_adventure_users';
-        return view('layouts.content',compact('data'))->with([
-            'usersdata' => $usersdata
-        ]);
+        return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
     }
 
     /* Adventure Users listing ends */
@@ -53,7 +51,8 @@ class AdventureUsersController extends MyController
     /* Add new Adventure user starts */
 
     public function add_adventure_user(Request $request)
-    {  //echo"<pre>";print_r($request->all());exit;
+    {
+        //echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
                 'name'              => 'required|min:3|max:50|unique:users',
@@ -80,15 +79,15 @@ class AdventureUsersController extends MyController
                     'name'              => $request->name,
                     'email'             => $request->email,
                     'mobile'            => $request->mobile,
-                    'mobile_code' => $request->mobile_code,
-                    'status' => ($request->status == 2) ? '0' : '1',
-                    'country_id' => $request->country,
-                    'city_id' => $request->region,
-                    'dob' => date('Y-m-d', strtotime($request->dob)),
-                    'weight' => $request->weight,
-                    'height' => $request->height,
+                    'mobile_code'       => $request->mobile_code,
+                    'status'            => ($request->status == 2) ? '0' : '1',
+                    'country_id'        => $request->country,
+                    'city_id'           => $request->region,
+                    'dob'               => date('Y-m-d', strtotime($request->dob)),
+                    'weight'            => $request->weight,
+                    'height'            => $request->height,
                     'health_conditions' => implode(',', (array) $request->health_condition),
-                    'users_role' => 3,
+                    'users_role'        => 3,
                 );
                 if (DB::table('users')->insert($user_data)) {
                     $user_id = DB::getPdo()->lastInsertId();
@@ -136,7 +135,8 @@ class AdventureUsersController extends MyController
             ->select(['users.*', 'countries.country', 'regions.region'])
             ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
             ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
-            ->where('users.id', $id)->first();
+            ->where('users.id', $id)
+            ->first();
         $health_conditions = $editdata->health_conditions ? explode(',', $editdata->health_conditions) : [];
         if (count($health_conditions)) {
             $cond = DB::table('health_conditions')

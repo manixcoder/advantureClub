@@ -13,12 +13,18 @@ class User extends Authenticatable
 
 
     protected $fillable = [
-        'name', 'email', 'password','username','users_role','is_wiretransfer',
+        'name',
+        'email',
+        'password',
+        'username',
+        'users_role',
+        'is_wiretransfer',
     ];
 
-    
+
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 
+        'remember_token',
     ];
 
 
@@ -29,7 +35,6 @@ class User extends Authenticatable
     public function roles()
     {
         return $this
-        ->belongsToMany('App\Role');
+            ->belongsToMany('App\Role');
     }
-
 }

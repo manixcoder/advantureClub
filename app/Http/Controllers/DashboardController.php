@@ -66,14 +66,14 @@ class DashboardController extends MyController
                 ->whereRaw('DATE_FORMAT(created_at, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
                 ->count();
             $with_data = [
-                'total_partner' => $total_partner,
-                'new_partner' => $new_partner,
-                'total_customer' => $total_customer,
-                'new_customer' => $new_customer,
-                'total_subscription' => $total_subscription,
-                'new_subscription' => $new_subscription,
-                'total_booking' => $total_booking,
-                'new_booking' => $new_booking
+                'total_partner'         => $total_partner,
+                'new_partner'           => $new_partner,
+                'total_customer'        => $total_customer,
+                'new_customer'          => $new_customer,
+                'total_subscription'    => $total_subscription,
+                'new_subscription'      => $new_subscription,
+                'total_booking'         => $total_booking,
+                'new_booking'           => $new_booking
             ];
         } elseif ($userRole == '2') {
             echo "Access not allowed";
@@ -99,7 +99,8 @@ class DashboardController extends MyController
                 'bkng.total_amount as total_cost',
                 'pmnt.payment_method as payment_channel',
                 'crnci.sign as currency',
-                'bkng.status', 'bkng.payment_status',
+                'bkng.status',
+                'bkng.payment_status',
                 DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
                 DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
             ])

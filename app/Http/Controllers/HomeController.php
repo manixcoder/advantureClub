@@ -53,7 +53,8 @@ class HomeController extends Controller
             $image = $insert['photo'] = "$profileImage";
         }
 
-        $updatedata = DB::table('users')->where('id', $request->ids)
+        $updatedata = DB::table('users')
+            ->where('id', $request->ids)
             ->update(['profile_image' => $image]);
         Session::flash('success', 'Image Update successfully..!');
         return back();
@@ -110,22 +111,18 @@ class HomeController extends Controller
                 'password' => 'required',
                 'new_password' => 'required|min:8',
             ]);
-
             $data = $request->all();
-
-            if (!\Hash::check($data['password'], auth()
-                ->user()
-                ->password)) {
+            if (!\Hash::check($data['password'], auth()->user()->password)) {
                 Session::flash('error', 'Please Enter valid Current password');
                 return back();
             } else {
                 if ($request->u_ids != '') {
-
                     if ($request->name) {
                         $udata['name'] = $request->name;
                     }
                     $udata['password'] = Hash::make($request->new_password);
-                    User::where('id', $request->u_ids)->update($udata);
+                    User::where('id', $request->u_ids)
+                        ->update($udata);
                 }
                 Session::flash('success', 'Profile updated successfully');
                 return back();
@@ -135,7 +132,8 @@ class HomeController extends Controller
             if ($request->name) {
                 $udata['name'] = $request->name;
             }
-            User::where('id', $request->u_ids)->update($udata);
+            User::where('id', $request->u_ids)
+                ->update($udata);
             Session::flash('success', 'Profile updated successfully');
             return back();
         }

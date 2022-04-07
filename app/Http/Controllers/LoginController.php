@@ -326,7 +326,6 @@ class LoginController extends Controller
   function customer_view()
   {
     $customersdata = User::where('users_role', 3)->get();
-
     $data['content'] = 'admin.customer.manage_customer';
     return view('layouts.content', compact('data'))
       ->with([

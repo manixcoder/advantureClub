@@ -47,7 +47,13 @@ class AdventureController extends Controller
 
     if ($request->adventure_program_editid) {
       foreach ($request->program_titles ?? '' as $item) {
-        $imageinsert = DB::table('programs')->where('id', $request->program_titles)->update(['title' => $item, 'status' => 1, 'created_at' => date('Y-m-d H:i:s')]);
+        $imageinsert = DB::table('programs')
+          ->where('id', $request->program_titles)
+          ->update([
+            'title' => $item,
+            'status' => 1,
+            'created_at' => date('Y-m-d H:i:s')
+          ]);
       }
 
       $insertdata = DB::table('adventure_programs')
@@ -95,7 +101,9 @@ class AdventureController extends Controller
 
   public function view_adventure_program($id)
   {
-    $view_adventure_program = DB::table('adventure_programs')->where('id', $id)->first();
+    $view_adventure_program = DB::table('adventure_programs')
+      ->where('id', $id)
+      ->first();
 
     $data['content'] = 'admin.adventure_program.view_adventure_program';
     return view('layouts.content', compact('data'))
@@ -119,15 +127,21 @@ class AdventureController extends Controller
 
   public function delete_adventure_program($id)
   {
-    $data = DB::table('adventure_programs')->where('id', $id)->first();
+    $data = DB::table('adventure_programs')
+      ->where('id', $id)
+      ->first();
     $explodedata = explode(',', $data->program_ids ?? '');
     if ($explodedata != '') {
       foreach ($explodedata as $key => $value) {
-        $delete = DB::table('programs')->where('id', $value)->delete();
+        $delete = DB::table('programs')
+          ->where('id', $value)
+          ->delete();
       }
     }
 
-    $delete = DB::table('adventure_programs')->where('id', $id)->delete();
+    $delete = DB::table('adventure_programs')
+      ->where('id', $id)
+      ->delete();
     session()->flash('error', 'Deleted Successfully..!');
     return redirect()->back();
   }

@@ -319,9 +319,11 @@ class AdventurePartnersController extends Controller
       'id' => $_GET['id'],
       'status' => $_GET['status'],
     );
-    $edituserData = DB::table('users')->where('id', $id)
+    $edituserData = DB::table('users')
+      ->where('id', $id)
       ->update($Data);
-    DB::table('become_partner')->where('user_id', $id)
+    DB::table('become_partner')
+      ->where('user_id', $id)
       ->update([
         'is_approved' => '1',
       ]);
@@ -333,9 +335,11 @@ class AdventurePartnersController extends Controller
       'is_approved' => '0'
     ]);
     if ($_GET['become'] == '1') {
-      DB::table('become_partner')->where('user_id', $id)->update([
-        'is_approved' => '1',
-      ]);
+      DB::table('become_partner')
+        ->where('user_id', $id)
+        ->update([
+          'is_approved' => '1',
+        ]);
       DB::table('notifications')->insert([
         'sender_id' => Auth::user()->id,
         'user_id' => $id,
@@ -365,15 +369,18 @@ class AdventurePartnersController extends Controller
     $update = array(
       'is_approved' => $_GET['status']
     );
-    $approveData = DB::table('become_partner')->where('user_id', $id)->update($update);
+    $approveData = DB::table('become_partner')
+      ->where('user_id', $id)
+      ->update($update);
 
-    $editpartnerData = DB::table('notifications')->insert([
-      'sender_id' => Auth::user()->id,
-      'user_id' => $_GET['id'],
-      'is_approved' => $is_approved,
-      'title' => 'Your request has been ' . $statusMsg,
-      'message' => 'Now you may proceed to buy subscription package & will be able to provide your service.'
-    ]);
+    $editpartnerData = DB::table('notifications')
+      ->insert([
+        'sender_id' => Auth::user()->id,
+        'user_id' => $_GET['id'],
+        'is_approved' => $is_approved,
+        'title' => 'Your request has been ' . $statusMsg,
+        'message' => 'Now you may proceed to buy subscription package & will be able to provide your service.'
+      ]);
     // }
     // $Data = array(
     //   'id' => $_GET['id'],
@@ -390,7 +397,9 @@ class AdventurePartnersController extends Controller
     $user = Users::find($id);
     if ($user) {
       // dd($id);
-      DB::table('become_partner')->where('user_id', $id)->delete();
+      DB::table('become_partner')
+        ->where('user_id', $id)
+        ->delete();
       //$destroy = Users::destroy($id);
       $request->session()->flash('success', 'Partner has been deleted successfully.');
     } else {

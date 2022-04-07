@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Banner extends Authenticatable {
+class Banner extends Authenticatable
+{
 
-    use SoftDeletes;
+    protected $table = 'banners';
+    public $timestamps = true;
 
     protected $fillable = [
-        'banner', 'title', 'link','status'
+        'banner', 'title', 'link', 'status'
     ];
-
 }
