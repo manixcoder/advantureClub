@@ -33,7 +33,8 @@ class BannersController extends MyController
         $result = array();
         $usersdata = DB::table('users')
             ->rightjoin('countries', 'users.country_id', '=', 'countries.id')
-            ->where('users.users_role', 3)->get();
+            ->where('users.users_role', 3)
+            ->get();
         $where = array(
             'banners.deleted_at' => NULL
         );

@@ -94,7 +94,9 @@ class CategoryController extends Controller
 
   public function product_view($id)
   {
-    $editdata = DB::table('products')->where('id', $id)->first();
+    $editdata = DB::table('products')
+      ->where('id', $id)
+      ->first();
 
     $data['content'] = 'admin.product.view_product';
     return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
