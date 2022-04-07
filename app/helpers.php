@@ -1,14 +1,17 @@
 <?php
 
-function image_path() {
+function image_path()
+{
     return str_replace('n2p/public/', 'public_html', public_path() . '/uploads');
 }
 
-function testfun() {
+function testfun()
+{
     die('Helpers are working fine now.');
 }
 
-function resize_crop_image($source_file, $dst_dir, $quality = 80) {
+function resize_crop_image($source_file, $dst_dir, $quality = 80)
+{
     $imgsize = getimagesize($source_file);
     $width = $imgsize[0];
     $height = $imgsize[1];
@@ -44,18 +47,18 @@ function resize_crop_image($source_file, $dst_dir, $quality = 80) {
 
     $width_new = $height * $max_width / $max_height;
     $height_new = $width * $max_height / $max_width;
-//if the new width is greater than the actual width of the image, then the height is too large and the rest cut off, or vice versa
+    //if the new width is greater than the actual width of the image, then the height is too large and the rest cut off, or vice versa
     if ($width_new > $width) {
-//cut point by height
+        //cut point by height
         $h_point = (($height - $height_new) / 2);
-//copy image
+        //copy image
         imagecopyresampled($dst_img, $src_img, 0, 0, 0, $h_point, $max_width, $max_height, $width, $height_new);
     } else {
-//cut point by width
+        //cut point by width
         $w_point = (($width - $width_new) / 2);
         imagecopyresampled($dst_img, $src_img, 0, 0, $w_point, 0, $max_width, $max_height, $width_new, $height);
     }
-//    imagejpeg($dst_img);
+    //    imagejpeg($dst_img);
     $image($dst_img, $dst_dir, $quality);
 
     if ($dst_img)
@@ -64,7 +67,8 @@ function resize_crop_image($source_file, $dst_dir, $quality = 80) {
         imagedestroy($src_img);
 }
 
-function getOldAge($dob) {
+function getOldAge($dob)
+{
     $date1 = date_create($dob);
     $date2 = date_create(date('Y-m-d'));
     $diff = date_diff($date1, $date2);
@@ -75,17 +79,17 @@ function getOldAge($dob) {
     }
 }
 
-function pr($data) {
+function pr($data)
+{
     echo '<pre>';
     print_r($data);
     echo '</pre>';
 }
 
-function prx($data) {
+function prx($data)
+{
     echo '<pre>';
     print_r($data);
     echo '</pre>';
     die();
 }
-
-?>
