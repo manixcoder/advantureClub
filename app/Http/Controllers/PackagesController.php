@@ -90,9 +90,9 @@ class PackagesController extends MyController
                     }
                     DB::table('package_detail')
                         ->insert($pkg_det);
-                    $request->session()->flash('success','Record has been added successfully.');
+                    $request->session()->flash('success', 'Record has been added successfully.');
                 } else {
-                    $request->session()->flash('error','Something went wrong. Please try again.');
+                    $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 return redirect('/sub-packages/add');
             }
@@ -145,9 +145,9 @@ class PackagesController extends MyController
                 if (DB::table('privacy_policy')
                     ->insert($term_data)
                 ) {
-                    $request->session()->flash('success','Record has been added successfully.');
+                    $request->session()->flash('success', 'Record has been added successfully.');
                 } else {
-                    $request->session()->flash('error','Something went wrong. Please try again.');
+                    $request->session()->flash('error', 'Something went wrong. Please try again.');
                 }
                 return redirect('/privacy-policy/add');
             }
@@ -242,7 +242,7 @@ class PackagesController extends MyController
                 'Package has been deleted successfully.'
             );
         } else {
-            $request->session()->flash('error','Something went wrong. Please try again.');
+            $request->session()->flash('error', 'Something went wrong. Please try again.');
         }
         return redirect()->back();
     }

@@ -32,8 +32,8 @@ class TransactionsController extends MyController {
     /* transactions Listing Starts */
 
     function list_transactions() {
-        $usersdata = DB::table('transactions')->get();
-        $data['content'] = 'admin.transactions.list_transaction_users';
+        $usersdata          = DB::table('transactions')->get();
+        $data['content']    = 'admin.transactions.list_transaction_users';
         return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
     }
 
@@ -56,18 +56,18 @@ class TransactionsController extends MyController {
     public function add_admin_user(Request $request) {  //echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
-                        'name' => 'required|min:3|max:50|unique:users',
-                        'mobile_code' => 'required|numeric',
-                        'mobile' => 'required|numeric|digits:10|unique:users',
-                        'email' => 'required|email:filter|unique:users',
-                        'country' => 'required|numeric',
-                        'region' => 'required|numeric',
-                        'dob' => 'required|date_format:Y-m-d',
-                        'health_condition' => 'required',
-                        'height' => 'required',
-                        'weight' => 'required',
-                        'status' => 'required|numeric|min:1|max:2',
-                        'image' => 'required'
+                        'name'              => 'required|min:3|max:50|unique:users',
+                        'mobile_code'       => 'required|numeric',
+                        'mobile'            => 'required|numeric|digits:10|unique:users',
+                        'email'             => 'required|email:filter|unique:users',
+                        'country'           => 'required|numeric',
+                        'region'            => 'required|numeric',
+                        'dob'               => 'required|date_format:Y-m-d',
+                        'health_condition'  => 'required',
+                        'height'            => 'required',
+                        'weight'            => 'required',
+                        'status'            => 'required|numeric|min:1|max:2',
+                        'image'             => 'required'
             ]);
             if ($validator->fails()) {
                 $errors = array();
@@ -77,18 +77,18 @@ class TransactionsController extends MyController {
                 $data['validation'] = $errors;
             } else {
                 $user_data = array(
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'mobile' => $request->mobile,
-                    'mobile_code' => $request->mobile_code,
-                    'status' => ($request->status == 2) ? '0' : '1',
-                    'country_id' => $request->country,
-                    'city_id' => $request->region,
-                    'dob' => date('Y-m-d', strtotime($request->dob)),
-                    'weight' => $request->weight,
-                    'height' => $request->height,
+                    'name'              => $request->name,
+                    'email'             => $request->email,
+                    'mobile'            => $request->mobile,
+                    'mobile_code'       => $request->mobile_code,
+                    'status'            => ($request->status == 2) ? '0' : '1',
+                    'country_id'        => $request->country,
+                    'city_id'           => $request->region,
+                    'dob'               => date('Y-m-d', strtotime($request->dob)),
+                    'weight'            => $request->weight,
+                    'height'            => $request->height,
                     'health_conditions' => implode(',', (array) $request->health_condition),
-                    'users_role' => 3,
+                    'users_role'        => 3,
                 );
                 if (DB::table('users')->insert($user_data)) {
                     $user_id = DB::getPdo()->lastInsertId();

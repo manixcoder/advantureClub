@@ -712,16 +712,22 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            /*->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
-                ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')*/
+            /*
+            ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
+            ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
+            */
             ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
-            ->where(['srvc.deleted_at' => NULL, 'srvc.status' => 0])
+            ->where([
+                'srvc.deleted_at' => NULL,
+                'srvc.status' => 0
+            ])
             ->whereRaw($where)
             ->orderBy('srvc.id', 'DESC')
             ->get();
-        if (!$services[0]->id) {
-            $services = [];
-        }
+        // dd($services);
+        // if (!$services[0]->id) {
+        //     $services = [];
+        // }
         $data['content'] = 'admin.services.adventure_request';
         return view('layouts.content', compact('data'))
             ->with([
@@ -822,10 +828,7 @@ class ServicesController extends MyController
             'id' => $_GET['id'],
             'status' => $_GET['status'],
         );
-        $edituserData = DB::table('service_likes')
-            ->insert($Data);
-        return response()->json(array(
-            'msg' => $edituserData
-        ), 200);
+        $edituserData = DB::table('service_likes')->insert($Data);
+        return response()->json(array('msg' => $edituserData), 200);
     }
 }

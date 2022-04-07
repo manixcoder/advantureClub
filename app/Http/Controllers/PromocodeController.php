@@ -52,14 +52,14 @@ class PromocodeController extends Controller
     if ($request->post()) {
 
       $rules =  [
-        'promocode_name'  => 'required|min:4|max:12|unique:promocode,promocode_name' . ($request->edit_id ? ",$request->edit_id" : ''),
-        'code'     => 'required|min:8|unique:promocode' . ($request->edit_id ? ",id,$request->edit_id" : ''),
-        'discount_type' => 'required',
-        'discount_amount' => 'required',
-        'redeemed_count' => 'required',
-        'start_date' => 'required|before:end_date',
-        'end_date' => 'required',
-        'description' => 'required'
+        'promocode_name'      => 'required|min:4|max:12|unique:promocode,promocode_name' . ($request->edit_id ? ",$request->edit_id" : ''),
+        'code'                => 'required|min:8|unique:promocode' . ($request->edit_id ? ",id,$request->edit_id" : ''),
+        'discount_type'       => 'required',
+        'discount_amount'     => 'required',
+        'redeemed_count'      => 'required',
+        'start_date'          => 'required|before:end_date',
+        'end_date'            => 'required',
+        'description'         => 'required'
       ];
       $validator = Validator::make($request->all(), $rules);
 
@@ -77,14 +77,14 @@ class PromocodeController extends Controller
         $request->start_date = date("Y-m-d", strtotime($request->start_date));
         $request->end_date = date("Y-m-d", strtotime($request->end_date));
         $data = array(
-          'promocode_name' => !empty($request->promocode_name) ? $request->promocode_name : '',
-          'code' => !empty($request->code) ? $request->code : '',
-          'discount_type' => !empty($request->discount_type) ? $request->discount_type : '',
-          'discount_amount' => !empty($request->discount_amount) ? $request->discount_amount : '',
-          'redeemed_count' => !empty($request->redeemed_count) ? $request->redeemed_count : '',
-          'start_date' => !empty($request->start_date) ? $request->start_date : '',
-          'end_date' => !empty($request->end_date) ? $request->end_date : '',
-          'description' => !empty($request->description) ? $request->description : '',
+          'promocode_name'        => !empty($request->promocode_name) ? $request->promocode_name : '',
+          'code'                  => !empty($request->code) ? $request->code : '',
+          'discount_type'         => !empty($request->discount_type) ? $request->discount_type : '',
+          'discount_amount'       => !empty($request->discount_amount) ? $request->discount_amount : '',
+          'redeemed_count'        => !empty($request->redeemed_count) ? $request->redeemed_count : '',
+          'start_date'            => !empty($request->start_date) ? $request->start_date : '',
+          'end_date'              => !empty($request->end_date) ? $request->end_date : '',
+          'description'           => !empty($request->description) ? $request->description : '',
         );
 
 
@@ -111,7 +111,8 @@ class PromocodeController extends Controller
     $editdata = DB::table('Users')
       ->rightjoin('countries', 'users.country_id', '=', 'countries.country_id')
       ->rightjoin('region', 'users.country_id', '=', 'region.country_id')
-      ->where('id', $id)->first();
+      ->where('id', $id)
+      ->first();
 
     $data['content'] = 'admin.adventure_users.view_adventure_user';
     return view('layouts.content', compact('data'))
@@ -142,13 +143,7 @@ class PromocodeController extends Controller
     $edituserData = DB::table('promocode')
       ->where('id', $id)
       ->update($Data);
-    return response()
-      ->json(
-        array(
-          'msg' => $edituserData
-        ),
-        200
-      );
+    return response()->json(array('msg' => $edituserData), 200);
   }
   /* Update status ends */
 
@@ -158,17 +153,9 @@ class PromocodeController extends Controller
     $promo = Promocode::find($id);
     if ($promo) {
       $destroy = Promocode::destroy($id);
-      $request->session()
-        ->flash(
-          'success',
-          'Promocode has been deleted successfully.'
-        );
+      $request->session()->flash('success', 'Promocode has been deleted successfully.');
     } else {
-      $request->session()
-        ->flash(
-          'error',
-          'Something went wrong. Please try again.'
-        );
+      $request->session()->flash('error', 'Something went wrong. Please try again.');
     }
     return redirect()->back();
   }
