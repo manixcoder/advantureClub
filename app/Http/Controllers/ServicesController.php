@@ -595,6 +595,12 @@ class ServicesController extends MyController
         $service = Service::find($id);
         if ($service) {
             $destroy = Service::destroy($id);
+            DB::table('service_plan_day_date')->where('service_id', '=', $id)->delete();
+            DB::table('service_plan_day_date')->where('service_id', '=', $id)->delete();
+            DB::table('service_activities')->where('service_id', '=', $id)->delete();
+            DB::table('service_dependencies')->where('service_id', '=', $id)->delete();
+            DB::table('service_service_for')->where('service_id', '=', $id)->delete();
+            DB::table('service_images')->where('service_id', '=', $id)->delete();
             $request->session()->flash('success', 'Service has been deleted successfully.');
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');
