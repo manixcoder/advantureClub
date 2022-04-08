@@ -9,7 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Contactuspurpose extends Authenticatable{
 
     protected $fillable = [
-        'id', 'contactuspurposeName'
+        'id', 
+        'contactuspurposeName'
     ];
 
 }

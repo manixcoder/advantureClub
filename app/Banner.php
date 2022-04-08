@@ -16,6 +16,9 @@ class Banner extends Authenticatable
     public $timestamps = true;
 
     protected $fillable = [
-        'banner', 'title', 'link', 'status'
+        'banner',
+        'title',
+        'link',
+        'status'
     ];
 }

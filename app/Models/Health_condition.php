@@ -9,7 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Health_condition extends Authenticatable{
 
     protected $fillable = [
-        'id', 'name'
+        'id', 
+        'name'
     ];
 
 }

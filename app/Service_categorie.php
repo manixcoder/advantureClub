@@ -9,10 +9,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Service_categorie extends Authenticatable
 {
-
     use SoftDeletes;
 
     protected $fillable = [
-        'category', 'status'
+        'category',
+        'status'
     ];
 }

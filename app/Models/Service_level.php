@@ -13,7 +13,8 @@ class Service_level extends Authenticatable {
     use SoftDeletes;
 
     protected $fillable = [
-        'level', 'status'
+        'level', 
+        'status'
     ];
 
 }
