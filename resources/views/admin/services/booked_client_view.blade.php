@@ -1,4 +1,3 @@
-
 <?php
 $segment = Request::segment(3);
 $base_url = URL::to('/');
@@ -54,7 +53,13 @@ $base_url = URL::to('/');
                                 </tr>
                                 <tr>
                                     <td class="th">Profile Pic :</td>
-                                    <td><img src="{{asset('public/profile_image/'.$service->profile_image)}}" class="user-image-thumb" /></td>
+                                    <td>
+                                        @if($service->profile_image !='')
+                                        <img src="{{asset('public/profile_image/'.$service->profile_image)}}" class="user-image-thumb" />
+                                        @else
+                                        <img src="{{asset('public/uploads/profile.png')}}" class="user-image-thumb" />
+                                        @endif
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

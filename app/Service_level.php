@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Service_level extends Authenticatable
 {
     protected $fillable = [
-        'level', 'status'
+        'level', 
+        'status'
     ];
 }

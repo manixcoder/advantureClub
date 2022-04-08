@@ -658,7 +658,11 @@ class ServicesController extends MyController
                 'bkng.total_amount as total_cost',
                 'pmnt.payment_method as payment_channel',
                 'crnci.sign as currency',
-                'client.dob', 'client.Height', 'client.Weight', 'bkng.message',
+                'client.dob',
+                'client.Height',
+                'client.Weight',
+                'client.profile_image',
+                'bkng.message',
                 'bkng.status', 'bkng.payment_status',
                 DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
                 DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
@@ -683,6 +687,7 @@ class ServicesController extends MyController
             ->get()
             ->toArray();
         $service->dependencies = $dependencies ?? [];
+        //dd($service);
         $data['content'] = 'admin.services.booked_client_view';
         return view('layouts.content', compact('data'))
             ->with([
@@ -692,7 +697,7 @@ class ServicesController extends MyController
 
     public function adventures(Request $request, $id = null)
     {
-        $where = ' 1 ';
+        $where = '1';
         if ($id) {
             $where .= ' && srvc.id = ' . $id;
         }
