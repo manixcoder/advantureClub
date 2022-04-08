@@ -416,17 +416,17 @@
                                         </div>
                                         <div class="row calender_days_div" style="display:none">
                                             <?php
-                                            // $particular_date = '';
-                                            // if (request('particular_date')) {
-                                            //     $particular_date = request('particular_date');
-                                            // } elseif (!empty($service_detail) && (request('particular_date') == '')) {
-                                            //     $particular_date = $service_detail['particular_date'];
-                                            // }
+                                            $particular_date = '';
+                                            if (request('particular_date')) {
+                                                $particular_date = request('particular_date');
+                                            } elseif (!empty($service_detail) && (request('particular_date') == '')) {
+                                                $particular_date = $service_detail['particular_date'];
+                                            }
                                             ?>
                                             <!-- <div class="col-md-12">
-                                                <input type="text" id="particular_date" name="particular_date" class="form-control datepicker" value="<?php // echo $particular_date; 
-                                                                                                                                                        ?>" placeholder="Select multiple date" readonly>
+                                                <input type="text" id="particular_date" name="particular_date" class="form-control datepicker" value="<?php //echo $particular_date; ?>" placeholder="Select multiple date" readonly>
                                             </div> -->
+
 
 
                                             <div class="col-md-6">
@@ -461,8 +461,16 @@
                                                     <?php } ?>
                                                 </div>
                                             </div>
-                                        </div>
 
+
+
+                                        </div>
+                                        <?php if (isset($validation['service_plan_days'])) { ?>
+                                            <label class="error">{{ $validation['service_plan_days'] }}</label>
+                                        <?php } elseif (isset($validation['particular_date'])) { ?>
+                                            <label class="error">{{ $validation['particular_date'] }}</label>
+                                        <?php }
+                                        ?>
                                     </div>
                                 </div>
                                 <div class="col-md-12">

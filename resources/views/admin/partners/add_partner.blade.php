@@ -27,7 +27,7 @@
                         <div class="col-md-12">
                            <div class="form-group search_part">
                               <input type="text" id="UserName" name="search" class="form-control" required="" aria-required="true" placeholder="Search by user id,name,email,mobile....">
-                              <button><img src="https://162.241.87.160/Adventureworld/public/images/search.png"></button>
+                              <button><img src="{{ asset('public/images/search.png') }}"></button>
                            </div>
                         </div>
                         <div class="col-md-6">
@@ -71,7 +71,7 @@
                         <div class="col-md-6">
                            <div class="form-group date_of_birth">
                               <input type="text" onfocus="(this.type='date')" onblur="(this.value == '' ? this.type='text' : this.type='date')" id="date_of_birth" name="date_of_birth" class="form-control" required="" aria-required="true" placeholder="Date of Birth">
-                              <span><img src="https://162.241.87.160/Adventureworld/public/images/calender.png"></span>
+                              <span><img src="{{ asset('public/images/calender.png') }}"></span>
                            </div>
                         </div>
                         <div class="col-md-6">
@@ -151,7 +151,7 @@
                         <div class="col-md-12 date_of_birth">
                            <div class="form-group">
                               <input type="text" id="company_location" name="mobileNo" class="form-control" required="" aria-required="true" placeholder="Geo Location">
-                              <span><img src="https://162.241.87.160/Adventureworld/public/images/map.png"></span>
+                              <span><img src="{{ asset('public/images/map.png') }}"></span>
                            </div>
                         </div>
                      </div>
@@ -185,7 +185,7 @@
                            <div class="col-md-6 attach_cr_copy">
                               <div class="form-group">
                                  <div class="cr_copy">
-                                    <span><img src="https://162.241.87.160/Adventureworld/public/images/map.png"></span>
+                                    <span><img src="{{ asset('public/images/map.png') }}"></span>
                                     <p>Attach CR copy</p>
                                  </div>
                               </div>

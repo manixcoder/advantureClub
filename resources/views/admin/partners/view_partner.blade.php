@@ -49,7 +49,7 @@
                   <li>
                      <p>Profile Pic :</p>
                      <h3>
-                        <figure><img src="https://162.241.87.160/Adventureworld/public/images/profile.png"></figure>
+                        <figure><img src="{{ asset('public/images/profile.png') }}"></figure>
                      </h3>
                   </li>
                   <li>
@@ -109,7 +109,7 @@
                   <li>
                      <p>Profile Pic :</p>
                      <h3>
-                        <figure class="cr_card"><img src="https://162.241.87.160/Adventureworld/public/images/cr_card.png"></figure>
+                        <figure class="cr_card"><img src="{{ asset('public/images/cr_card.png') }}"></figure>
                      </h3>
                   </li>
                   <li>

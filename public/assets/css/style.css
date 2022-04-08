@@ -9033,7 +9033,7 @@ table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, 
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url(https://162.241.87.160/Adventureworld/public/images/arrow_down_dark.png);
+    background-image: url(../images/arrow_down_dark.png);
     background-repeat: no-repeat;
     background-position: 98% center;
     cursor: pointer;
