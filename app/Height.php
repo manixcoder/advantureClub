@@ -11,6 +11,7 @@ class Height extends Authenticatable
     protected $table = 'heights';
     public $timestamps = true;
     protected $fillable = [
-        'id', 'hieghtName'
+        'id',
+        'hieghtName'
     ];
 }

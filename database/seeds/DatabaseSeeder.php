@@ -28,5 +28,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ServiceSectorsSeeder::class);
         $this->call(ServiceCategoriesSeeder::class);
         $this->call(ServiceTypesSeeder::class);
+        $this->call(ServicesForSeeder::class);
+        $this->call(RegionsSeeder::class);
+        $this->call(ServicePlanSeeder::class);
+        $this->call(WeekdaysSeeder::class);
     }
 }

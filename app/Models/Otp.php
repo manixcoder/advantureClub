@@ -8,12 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Otp extends Authenticatable {
+class Otp extends Authenticatable
+{
     use Notifiable;
 
     protected $table = 'otp';
     protected $fillable = [
-        'user_id', 'type', 'otp', 'expire', 'status'
+        'user_id',
+        'type',
+        'otp',
+        'expire',
+        'status'
     ];
-
 }

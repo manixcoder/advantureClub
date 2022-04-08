@@ -263,6 +263,7 @@ class ServicesController extends MyController
                         //                        prx($request->file('banners'));
                         $service_id = $service->id;
                         $banner_data = [];
+                        DB::table('service_images')->where('service_id', '=', $service_id)->delete();
                         if (count($request->file('banners'))) {
                             foreach ($request->file('banners') as $key => $banner) {
 
@@ -291,6 +292,7 @@ class ServicesController extends MyController
                                     }
                                 }
                             }
+
                             DB::table('service_images')->insert($banner_data);
                         }
                         $ssfor = array();
@@ -348,19 +350,15 @@ class ServicesController extends MyController
                                     'description' => $p_desc[$key]
                                 );
                             }
-                            DB::table('service_programs')
-                                ->insert($serv_programs);
+                            DB::table('service_programs')->insert($serv_programs);
                         }
                         if ($request->service_plan == 1) {
                             $spd_data = [];
-                            DB::table('service_plan_day_date')
-                                ->where('service_id', '=', $service_id)
-                                ->delete();
+                            DB::table('service_plan_day_date')->where('service_id', '=', $service_id)->delete();
                             foreach ($request->service_plan_days as $spd) {
                                 $spd_data[] = array('service_id' => $service_id, 'day' => $spd);
                             }
-                            DB::table('service_plan_day_date')
-                                ->insert($spd_data);
+                            DB::table('service_plan_day_date')->insert($spd_data);
                         }
                         if ($request->service_plan == 2) {
                             $pd_data = [];
@@ -597,6 +595,12 @@ class ServicesController extends MyController
         $service = Service::find($id);
         if ($service) {
             $destroy = Service::destroy($id);
+            DB::table('service_plan_day_date')->where('service_id', '=', $id)->delete();
+            DB::table('service_plan_day_date')->where('service_id', '=', $id)->delete();
+            DB::table('service_activities')->where('service_id', '=', $id)->delete();
+            DB::table('service_dependencies')->where('service_id', '=', $id)->delete();
+            DB::table('service_service_for')->where('service_id', '=', $id)->delete();
+            DB::table('service_images')->where('service_id', '=', $id)->delete();
             $request->session()->flash('success', 'Service has been deleted successfully.');
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');

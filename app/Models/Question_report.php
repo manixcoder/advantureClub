@@ -9,9 +9,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Question_report extends Authenticatable
 {
-
-    
-
     protected $fillable = [
         'username',
         'emailid',

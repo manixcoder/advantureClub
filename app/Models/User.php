@@ -9,13 +9,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 //use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable {
+class User extends Authenticatable
+{
 
     use SoftDeletes;
     use Notifiable;
 
     protected $fillable = [
-        'name', 'mobile', 'email', 'password', 'mobile_verified_at', 'deleted_at'
+        'name',
+        'mobile',
+        'email',
+        'password',
+        'mobile_verified_at',
+        'deleted_at'
     ];
 
     /**
@@ -35,5 +41,4 @@ class User extends Authenticatable {
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
 }

@@ -55,7 +55,7 @@
                                         @if($editdata->profile_image!='')
                                         <img src="{{ asset('public/images').'/'.$editdata->profile_image }}" alt="image" width="100" height="100">
                                         @else
-                                        <img src="https://162.241.87.160/Adventureworld/public/images/avatar-5.png" alt="image" width="100" height="100">
+                                        <img src="{{ asset('public/images/avatar-5.png') }}" alt="image" width="100" height="100">
                                         @endif
                                     </h3>
                                 </li>

@@ -14,7 +14,10 @@ class Banner extends Authenticatable {
     use SoftDeletes;
 
     protected $fillable = [
-        'banner', 'title', 'link','status'
+        'banner', 
+        'title', 
+        'link',
+        'status'
     ];
 
 }

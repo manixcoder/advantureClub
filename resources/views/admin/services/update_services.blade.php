@@ -281,38 +281,7 @@
                                         <?php } ?>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <?php
-                                        $start_date = '';
-                                        if (request('start_date')) {
-                                            $start_date = request('start_date');
-                                        } elseif (!empty($service_detail) && (request('start_date') == '')) {
-                                            $start_date = $service_detail['start_date'];
-                                        }
-                                        ?>
-                                        <input type="text" id="start_date" name="start_date" class="form-control datepicker" value="{{$start_date}}" placeholder="Start date" readonly>
-                                        <?php if (isset($validation['start_date'])) { ?>
-                                            <label class="error">{{ $validation['start_date'] }}</label>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <?php
-                                        $end_date = '';
-                                        if (request('end_date')) {
-                                            $end_date = request('end_date');
-                                        } elseif (!empty($service_detail) && (request('end_date') == '')) {
-                                            $end_date = $service_detail['end_date'];
-                                        }
-                                        ?>
-                                        <input type="text" id="end_date" name="end_date" class="form-control datepicker" value="{{$end_date}}" placeholder="End date" readonly>
-                                        <?php if (isset($validation['end_date'])) { ?>
-                                            <label class="error">{{ $validation['end_date'] }}</label>
-                                        <?php } ?>
-                                    </div>
-                                </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <?php
@@ -454,9 +423,47 @@
                                                 $particular_date = $service_detail['particular_date'];
                                             }
                                             ?>
-                                            <div class="col-md-12">
-                                                <input type="text" id="particular_date" name="particular_date" class="form-control datepicker" value="<?php echo $particular_date; ?>" placeholder="Select multiple date" readonly>
+                                            <!-- <div class="col-md-12">
+                                                <input type="text" id="particular_date" name="particular_date" class="form-control datepicker" value="<?php //echo $particular_date; ?>" placeholder="Select multiple date" readonly>
+                                            </div> -->
+
+
+
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <?php
+                                                    $start_date = '';
+                                                    if (request('start_date')) {
+                                                        $start_date = request('start_date');
+                                                    } elseif (!empty($service_detail) && (request('start_date') == '')) {
+                                                        $start_date = $service_detail['start_date'];
+                                                    }
+                                                    ?>
+                                                    <input type="text" id="start_date" name="start_date" class="form-control datepicker" value="{{$start_date}}" placeholder="Start date" readonly>
+                                                    <?php if (isset($validation['start_date'])) { ?>
+                                                        <label class="error">{{ $validation['start_date'] }}</label>
+                                                    <?php } ?>
+                                                </div>
                                             </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <?php
+                                                    $end_date = '';
+                                                    if (request('end_date')) {
+                                                        $end_date = request('end_date');
+                                                    } elseif (!empty($service_detail) && (request('end_date') == '')) {
+                                                        $end_date = $service_detail['end_date'];
+                                                    }
+                                                    ?>
+                                                    <input type="text" id="end_date" name="end_date" class="form-control datepicker" value="{{$end_date}}" placeholder="End date" readonly>
+                                                    <?php if (isset($validation['end_date'])) { ?>
+                                                        <label class="error">{{ $validation['end_date'] }}</label>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+
+
+
                                         </div>
                                         <?php if (isset($validation['service_plan_days'])) { ?>
                                             <label class="error">{{ $validation['service_plan_days'] }}</label>

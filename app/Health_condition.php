@@ -12,6 +12,7 @@ class Health_condition extends Authenticatable
     protected $table = 'health_conditions';
     public $timestamps = true;
     protected $fillable = [
-        'id', 'name'
+        'id',
+        'name'
     ];
 }
