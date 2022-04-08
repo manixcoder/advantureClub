@@ -113,11 +113,10 @@ class ServicesController extends MyController
                 }
                 $services[0]->baseurl = $s_img;
                 $services[0]->images =  $imageData;
-                $activities = DB::table('service_activities as s_act')
-                    ->select([
-                        's_act.*',
-                        'act.activity'
-                    ])
+                $activities = DB::table('service_activities as s_act')->select([
+                    's_act.*',
+                    'act.activity'
+                ])
                     ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
                     ->where('s_act.service_id', $id)
                     ->get()
