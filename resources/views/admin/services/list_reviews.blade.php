@@ -48,18 +48,18 @@
 
                            <td>{{ $data->date}}</td>
                            <td>{{ $data->likes}}</td>
-
                            <td class="actions">
                               <ul class="edit_icon action_icons dashboard_icons">
                                  <li>
-                                    <a href="{{URL::to('view-adventure-user',$data->user_id)}}" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply"><img src="{{ asset('/public/images/reply.png')}}"></a>
+                                    <a href="{{URL::to('view-adventure-user',$data->user_id)}}" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply">
+                                       <img src="{{ asset('/public/images/reply.png')}}">
+                                    </a>
                                  </li>
                                  <li>
                                     <?php ?>
                                     <a href="#" class="like-Unlike" id="like_<?php echo $data->id; ?>" data-toggle="tooltip" data-placement="top" title="" data-original-title="like">
                                        <img src="{{ asset('/public/images/unlike.png')}}">
                                     </a>
-
                                  </li>
                                  <li>
                                     <?php
@@ -80,7 +80,6 @@
 
                            </td>
                         </tr>
-
                         @endforeach
                      </tbody>
                   </table>
