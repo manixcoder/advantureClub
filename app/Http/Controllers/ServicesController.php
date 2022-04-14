@@ -116,7 +116,7 @@ class ServicesController extends MyController
     public function add(Request $request)
     {
 
-
+       
         if ($request->post()) {
             if ($request->service_plan == 1) {
                 $validator = Validator::make($request->all(), [
@@ -130,7 +130,7 @@ class ServicesController extends MyController
                     'service_level'         => 'required|numeric',
                     'duration'              => 'required|numeric',
                     'available_seats'       => 'required|numeric',
-
+                    
                     'write_information'     => 'required|max:500',
                     'service_plan'          => 'required|numeric',
                     'service_plan_days'     => 'required',
@@ -359,7 +359,7 @@ class ServicesController extends MyController
                             DB::table('service_plan_day_date')->where('service_id', '=', $service_id)->delete();
                             foreach ($request->service_plan_days as $spd) {
                                 $spd_data[] = array(
-                                    'service_id' => $service_id,
+                                    'service_id' => $service_id, 
                                     'day' => $spd
                                 );
                             }
@@ -814,7 +814,7 @@ class ServicesController extends MyController
             ->groupBy('rev.service_id')
             ->get()
             ->toArray();
-            //   echo "<pre>";print_r( $likes);exit;
+        //   echo "<pre>";print_r( $likes);exit;
         $data['content'] = 'admin.services.list_reviews';
         return view('layouts.content', compact('data'))
             ->with([

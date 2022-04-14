@@ -137,7 +137,7 @@ class AdventureUsersController extends MyController
             ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
             ->where('users.id', $id)
             ->first();
-			dd($editdata);
+			//dd($editdata);
         /*
 		$health_conditions = $editdata->health_conditions ? explode(',', $editdata->health_conditions) : [];
         if (count($health_conditions)) {
