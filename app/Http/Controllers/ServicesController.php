@@ -116,6 +116,7 @@ class ServicesController extends MyController
     public function add(Request $request)
     {
 
+        dd($request->all());
         if ($request->post()) {
             if ($request->service_plan == 1) {
                 $validator = Validator::make($request->all(), [
@@ -376,7 +377,7 @@ class ServicesController extends MyController
                     } else {
                         $request->session()->flash('error', 'Something went wrong. Please try again.');
                     }
-                    return redirect('/services/add');
+                    return redirect('/services');
                 }
             }
         }
