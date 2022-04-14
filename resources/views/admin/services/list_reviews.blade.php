@@ -52,7 +52,7 @@
                            <td class="actions">
                               <ul class="edit_icon action_icons dashboard_icons">
                                  <li>
-                                    <a href="{{URL::to('view-adventure-user',$data->id)}}" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply"><img src="{{ asset('/public/images/reply.png')}}"></a>
+                                    <a href="{{URL::to('view-adventure-user',$data->user_id)}}" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply"><img src="{{ asset('/public/images/reply.png')}}"></a>
                                  </li>
                                  <li>
                                     <?php ?>

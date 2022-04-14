@@ -137,13 +137,16 @@ class AdventureUsersController extends MyController
             ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
             ->where('users.id', $id)
             ->first();
-        $health_conditions = $editdata->health_conditions ? explode(',', $editdata->health_conditions) : [];
+			dd($editdata);
+        /*
+		$health_conditions = $editdata->health_conditions ? explode(',', $editdata->health_conditions) : [];
         if (count($health_conditions)) {
             $cond = DB::table('health_conditions')
                 ->select(['name'])
                 ->whereIn('id', $health_conditions)->get();
             $editdata->health_conditions = $cond;
         }
+		*/
         $data['content'] = 'admin.adventure_users.view_adventure_user';
         return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
     }

@@ -58,6 +58,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/check_promocode', 'Api\V1\ServicesController@checkPromoCode');
     Route::post('/update_payments', 'Api\V1\ServicesController@updatePayment');
     Route::any('/get_favourite', 'Api\V1\ServicesController@getFavourite');
+    Route::any('/services_filter', 'Api\V1\ServicesController@servicesFilter');
     Route::post('/add_favourite', 'Api\V1\ServicesController@addFavourite');
     Route::post('/remove_favourite', 'Api\V1\ServicesController@removeFavourite');
     Route::post('/get_wallet_points', 'Api\V1\ServicesController@getPoints');
