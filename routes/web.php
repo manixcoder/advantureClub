@@ -40,7 +40,7 @@ Route::get('home', function () {
 });
 Route::get('dashboard', 'DashboardController@dashboard');
 Route::post('update-profile-image/{id}', 'HomeController@update_profile_image');
-Route::post('update-user-profile-image', 'HomeController@update_user_profile_image');
+Route::post('update-user-profile-image','HomeController@update_user_profile_image');
 
 Route::get('/forgot-password', 'ForgotPasswordController@getEmail');
 Route::post('/forgot-password', 'ForgotPasswordController@postEmail');
@@ -95,7 +95,6 @@ Route::any('delete-user/{id}', 'HomeController@user_delete');
 Route::any('update-user-status/{id}', 'AdventureUsersController@update_user_status');
 
 Route::any('update-partner-status/{id}', 'AdventurePartnersController@update_partner_status');
-
 /* AdventureUsersController all routes End */
 /*Admin users*/
 Route::any('list-admin-users', 'AdminUsersController@list_admin_users');

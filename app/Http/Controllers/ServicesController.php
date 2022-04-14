@@ -116,7 +116,7 @@ class ServicesController extends MyController
     public function add(Request $request)
     {
 
-        dd($request->all());
+       
         if ($request->post()) {
             if ($request->service_plan == 1) {
                 $validator = Validator::make($request->all(), [
@@ -130,8 +130,7 @@ class ServicesController extends MyController
                     'service_level'         => 'required|numeric',
                     'duration'              => 'required|numeric',
                     'available_seats'       => 'required|numeric',
-                    'start_date'            => 'required|date_format:Y-m-d|before:end_date',
-                    'end_date'              => 'required|date_format:Y-m-d',
+                    
                     'write_information'     => 'required|max:500',
                     'service_plan'          => 'required|numeric',
                     'service_plan_days'     => 'required',
@@ -169,7 +168,9 @@ class ServicesController extends MyController
                     'end_date' => 'required|date_format:Y-m-d',
                     'write_information' => 'required|max:500',
                     'service_plan' => 'required|numeric',
-                    'particular_date' => 'required',
+                    'start_date'            => 'required|date_format:Y-m-d|before:end_date',
+                    'end_date'              => 'required|date_format:Y-m-d',
+                    //'particular_date' => 'required',
                     'service_for' => 'required',
                     'dependency' => 'required',
                     'schedule_title' => 'required',
@@ -357,7 +358,10 @@ class ServicesController extends MyController
                             $spd_data = [];
                             DB::table('service_plan_day_date')->where('service_id', '=', $service_id)->delete();
                             foreach ($request->service_plan_days as $spd) {
-                                $spd_data[] = array('service_id' => $service_id, 'day' => $spd);
+                                $spd_data[] = array(
+                                    'service_id' => $service_id, 
+                                    'day' => $spd
+                                );
                             }
                             DB::table('service_plan_day_date')->insert($spd_data);
                         }
