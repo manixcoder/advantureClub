@@ -573,13 +573,13 @@ class ServicesController extends MyController
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
-            $promocode = DB::table('promocode')->select([
-                '*',
-                DB::raw("IF(discount_type = '1','Amount','Percentage') AS discount_type")
-            ])
-                ->where(['code' => $request->promo_code])
+            $promocode = DB::table('promocode')->select(['*', DB::raw("IF(discount_type = '1','Amount','Percentage') AS discount_type")])
+                ->where('code' ,'=', $request->promo_code)
                 ->first();
+              //  dd(time());
+              //  dd(strtotime($promocode->start_date));
             if ($promocode) {
+                return $this->sendResponse('Valid code', $promocode, 200);
                 if (strtotime($promocode->start_date) <= time() && strtotime($promocode->end_date) >= time()) {
                     return $this->sendResponse('Valid code', $promocode, 200);
                 } else {
@@ -958,25 +958,25 @@ class ServicesController extends MyController
                     ->get()
                     ->toArray();
                 $services[$key]->included_activities = $activities ?? [];
-                $dependencies = DB::table('service_dependencies as s_dep')
-                    ->select(['dep.*', 'dep.dependency_name'])
-                    ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
-                    ->where('s_dep.service_id', $service_id)
-                    ->get()
-                    ->toArray();
-                $services[$key]->dependencies = $dependencies ?? [];
-                $programs = DB::table('service_programs')
-                    ->select([
-                        'id',
-                        'service_id',
-                        'title',
-                        'start_datetime',
-                        'end_datetime',
-                        'description'
-                    ])
-                    ->where('service_id', $service_id)
-                    ->get();
-                $services[$key]->programs = $programs;
+                // $dependencies = DB::table('service_dependencies as s_dep')
+                //     ->select(['dep.*', 'dep.dependency_name'])
+                //     ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
+                //     ->where('s_dep.service_id', $service_id)
+                //     ->get()
+                //     ->toArray();
+                // $services[$key]->dependencies = $dependencies ?? [];
+                // $programs = DB::table('service_programs')
+                //     ->select([
+                //         'id',
+                //         'service_id',
+                //         'title',
+                //         'start_datetime',
+                //         'end_datetime',
+                //         'description'
+                //     ])
+                //     ->where('service_id', $service_id)
+                //     ->get();
+                // $services[$key]->programs = $programs;
                 if ($services[$key]->service_plan == 1) {
                     $availability = DB::table('service_plan_day_date as spdd')
                         ->select(['spdd.id', 'wkd.day'])
@@ -1020,6 +1020,12 @@ class ServicesController extends MyController
 
                 $services[$key]->aimed_for = $aimedforData;
                 $services[$key]->remaining_seats = $services[0]->available_seats - $booked_seats;
+
+
+
+
+
+                /*-------------*/
             }
             return $this->sendResponse(config('constants.DATA_FOUND'), $services, 200);
         }
@@ -1174,7 +1180,9 @@ class ServicesController extends MyController
 
     public function scheduledSession(Request $request)
     {
+
         $url = asset('public');
+        $s_img = asset('public/uploads') . '/';
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric',
             'date' => 'required|date_format:Y-m-d',
@@ -1208,6 +1216,7 @@ class ServicesController extends MyController
                     'cntri.country',
                     'rgn.region',
                     'srvc.adventure_name',
+                    'srvc.service_plan',
                     'srvc.service_level',
                     'usr.name as provider_name',
                     DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
@@ -1241,8 +1250,72 @@ class ServicesController extends MyController
             if (!$booking->isEmpty()) {
                 foreach ($booking as $key => $ser) {
                     $service_id = $ser->service_id;
+                    $aimedforData = DB::table('service_service_for as ssfor')
+                        ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+                        ->select('sfor.*', 'ssfor.service_id')
+                        ->where('ssfor.service_id', $service_id)
+                        ->get();
+
+                    $booking[$key]->aimed_for = $aimedforData;
                     $booking[$key]->is_liked = in_array($service_id, $liked_services) ? 1 : 0;
+
+                    $imageData = DB::table('service_images')->where('service_id', $service_id)->get();
+                    $booking[$key]->is_liked = 0;
+                    if ($request->user_id >= 1) {
+                        $is_liked = DB::table('service_likes')
+                            ->select(['service_id'])
+                            ->where('user_id', $request->user_id)
+                            ->first();
+                        $booking[$key]->is_liked = isset($is_liked->service_id) ? 1 : 0;
+                    }
+                    $booking[$key]->baseurl = $s_img;
+                    $booking[$key]->images =  $imageData;
+                    $activities = DB::table('service_activities as s_act')->select([
+                        's_act.*',
+                        'act.activity'
+                    ])
+                        ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
+                        ->where('s_act.service_id', $service_id)
+                        ->get()
+                        ->toArray();
+                    $booking[$key]->included_activities = $activities ?? [];
                 }
+
+                if ($booking[$key]->service_plan == 1) {
+                    $availability = DB::table('service_plan_day_date as spdd')
+                        ->select(['spdd.id', 'wkd.day'])
+                        ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
+                        ->where('spdd.service_id', $service_id)
+                        ->get()
+                        ->toArray();
+                    $booking[$key]->availability = $availability ?? [];
+                } else if ($booking[$key]->service_plan == 2) {
+                    $availability = DB::table('service_plan_day_date as spdd')
+                        ->select(['spdd.id', 'spdd.date'])
+                        ->where('spdd.service_id', $service_id)
+                        ->get()
+                        ->toArray();
+                    $booking[$key]->availability = $availability ?? [];
+                }
+                $star_ratings_res = DB::table('service_reviews')
+                    ->select(
+                        [
+                            'service_id',
+                            DB::raw("AVG(star) AS stars"),
+                            DB::raw("COUNT(user_id) AS reviewd_by")
+                        ]
+                    )
+                    ->where('service_id', $service_id)
+                    ->groupBy('service_id')
+                    ->first();
+                $booking[$key]->stars = $star_ratings_res ? number_format($star_ratings_res->stars, 2, '.', '') : 0;
+                $booking[$key]->reviewd_by = $star_ratings_res ? $star_ratings_res->reviewd_by : 0;
+                $booked_seats_qry = DB::table('bookings')
+                    ->select(['id'])
+                    ->where(['service_id' => $service_id, 'status' => 1])
+                    ->get();
+                $booked_seats = $booked_seats_qry->count();
+                $booking[$key]->booked_seats = $booked_seats;
                 return $this->sendResponse("Request list", $booking, 200);
             } else {
                 return $this->sendError('No record found', [], 401);

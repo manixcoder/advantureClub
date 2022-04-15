@@ -112,6 +112,10 @@ Route::any('get-roles', 'UsersController@get_roles');
 Route::any('save-country-session', 'UsersController@save_country_session');
 
 /*Announcement*/
+Route::get('add-announcement', function () {
+    $data['content'] = 'admin.transactions.add_announcement';
+    return view('layouts.content', compact('data'));
+});
 Route::any('announcement', 'TransactionsController@list_announcement');
 Route::any('delete-announcement/{id}', 'TransactionsController@announcement_delete');
 
@@ -128,7 +132,7 @@ Route::get('add-adventure-partners', function () {
 Route::any('add-adventure-partner', 'AdventurePartnersController@add_adventure_partner');
 Route::any('view-adventure-partner/{id}', 'AdventurePartnersController@view_adventure_partner');
 Route::get('delete-adventure-partner/delete/{id}', 'AdventurePartnersController@deleteUser')->where(['id' => '[0-9]+']);
-/* AdventurePartnersController all routes ends */
+/* AdventurePartnersController all routes ends */ 
 
 
 Route::get('banners/{id?}', 'BannersController@index')->where(['id' => '[0-9]+']);
