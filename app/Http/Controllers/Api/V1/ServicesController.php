@@ -879,6 +879,8 @@ class ServicesController extends MyController
         $s_img = asset('public/uploads') . '/';
         if ($request->service_id) {
             $where = 'srvc.id = ' . $request->service_id . ' ';
+        } else {
+            $where = '1';
         }
 
         if ($request->type) {
