@@ -97,22 +97,26 @@
 
                            <td>{{ $data->date}}</td>
                            <td>{{ $data->likes}}</td>
-
                            <td class="actions">
                               <ul class="edit_icon action_icons dashboard_icons">
                                  <li>
+<<<<<<< HEAD
                                     <!-- <a href="" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply">
                                        <img src="{{ asset('/public/images/reply.png')}}">
                                     </a> -->
                                     <button id="myBtn"><img src="{{ asset('/public/images/reply.png')}}"></button>
                                     <!-- <a href="{{URL::to('view-adventure-user',$data->id)}}" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply"><img src="{{ asset('/public/images/reply.png')}}"></a> -->
+=======
+                                    <a href="{{URL::to('view-adventure-user',$data->user_id)}}" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply">
+                                       <img src="{{ asset('/public/images/reply.png')}}">
+                                    </a>
+>>>>>>> e27815ee5ab0783bba30b8bf729d815a7f602c75
                                  </li>
                                  <li>
                                     <?php ?>
                                     <a href="#" class="like-Unlike" id="like_<?php echo $data->id; ?>" data-toggle="tooltip" data-placement="top" title="" data-original-title="like">
                                        <img src="{{ asset('/public/images/unlike.png')}}">
                                     </a>
-
                                  </li>
                                  <li>
                                     <?php
@@ -133,7 +137,6 @@
 
                            </td>
                         </tr>
-
                         @endforeach
                      </tbody>
                   </table>
