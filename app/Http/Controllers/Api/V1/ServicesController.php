@@ -887,6 +887,9 @@ class ServicesController extends MyController
         if ($request->country) {
             $where .= ' && srvc.country = ' . $request->country;
         }
+        if ($request->provider_name) {
+            $where .= ' && usr.name LIKE "%' . $request->provider_name . '%"';
+        }
          if ($request->region) {
             $where .= ' && srvc.region = ' . $request->region;
         }
