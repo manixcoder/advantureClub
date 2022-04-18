@@ -148,12 +148,7 @@ class BookingsController extends MyController
     {
         if ($id) {
             $user_id = Auth::user()->id;
-            DB::table('bookings')
-                ->where(['id' => $id])
-                ->update([
-                    'status' => 1,
-                    'updated_by' => $user_id
-                ]);
+            DB::table('bookings')->where(['id' => $id])->update(['status' => 1, 'updated_by' => $user_id]);
             $request->session()->flash('success', 'Request has been accepted successfully.');
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');
