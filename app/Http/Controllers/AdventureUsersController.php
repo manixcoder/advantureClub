@@ -138,7 +138,7 @@ class AdventureUsersController extends MyController
             ->where('users.id', $id)
             ->first();
 			//dd($editdata);
-        /*
+        
 		$health_conditions = $editdata->health_conditions ? explode(',', $editdata->health_conditions) : [];
         if (count($health_conditions)) {
             $cond = DB::table('health_conditions')
@@ -146,7 +146,7 @@ class AdventureUsersController extends MyController
                 ->whereIn('id', $health_conditions)->get();
             $editdata->health_conditions = $cond;
         }
-		*/
+		
         $data['content'] = 'admin.adventure_users.view_adventure_user';
         return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
     }

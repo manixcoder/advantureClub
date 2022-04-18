@@ -76,7 +76,7 @@ class BookingsController extends MyController
             $services = DB::table('services as srvc')
                 ->select([
                     'srvc.*',
-                    'usr.name as provided_by',
+                    'usr.name as provider_name',
                     DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                     'scat.category as service_category',
                     'ssec.sector as service_sector',
@@ -148,7 +148,12 @@ class BookingsController extends MyController
     {
         if ($id) {
             $user_id = Auth::user()->id;
-            DB::table('bookings')->where(['id' => $id])->update(['status' => 1, 'updated_by' => $user_id]);
+            DB::table('bookings')
+                ->where(['id' => $id])
+                ->update([
+                    'status' => 1,
+                    'updated_by' => $user_id
+                ]);
             $request->session()->flash('success', 'Request has been accepted successfully.');
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');

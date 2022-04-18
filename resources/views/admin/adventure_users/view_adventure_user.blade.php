@@ -6,11 +6,6 @@
         margin: 10px;
     }
 </style>
-<?php 
-//echo "<pre>";
-//print_r($editdata);
-//die();
-?>
 <div class="content">
     <div class="container-fluid">
         <div class="row">

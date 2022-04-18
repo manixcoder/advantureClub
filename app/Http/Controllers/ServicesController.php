@@ -76,9 +76,16 @@ class ServicesController extends MyController
         } else { // Service list
             $services = DB::table('services as srvc')
                 ->select([
-                    'srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
-                    'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type',
-                    'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region'
+                    'srvc.*',
+                    'usr.name as provider_name',
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    'scat.category as service_category',
+                    'ssec.sector as service_sector',
+                    'styp.type as service_type',
+                    'slvl.level as service_level',
+                    'cntri.country',
+                    'crnci.sign as currency_sign',
+                    'rgns.region'
                 ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
@@ -116,7 +123,7 @@ class ServicesController extends MyController
     public function add(Request $request)
     {
 
-       
+
         if ($request->post()) {
             if ($request->service_plan == 1) {
                 $validator = Validator::make($request->all(), [
@@ -130,7 +137,7 @@ class ServicesController extends MyController
                     'service_level'         => 'required|numeric',
                     'duration'              => 'required|numeric',
                     'available_seats'       => 'required|numeric',
-                    
+
                     'write_information'     => 'required|max:500',
                     'service_plan'          => 'required|numeric',
                     'service_plan_days'     => 'required',
@@ -359,7 +366,7 @@ class ServicesController extends MyController
                             DB::table('service_plan_day_date')->where('service_id', '=', $service_id)->delete();
                             foreach ($request->service_plan_days as $spd) {
                                 $spd_data[] = array(
-                                    'service_id' => $service_id, 
+                                    'service_id' => $service_id,
                                     'day' => $spd
                                 );
                             }
@@ -479,7 +486,7 @@ class ServicesController extends MyController
             ->select([
                 'srvc.*',
                 'srvc.id as service_id',
-                'usr.name as provided_by',
+                'usr.name as provider_name',
                 DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
                 DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                 'scat.category as service_category',
@@ -709,7 +716,7 @@ class ServicesController extends MyController
         $services = DB::table('services as srvc')
             ->select([
                 'srvc.*',
-                'usr.name as provided_by',
+                'usr.name as provider_name',
                 DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                 'scat.category as service_category',
                 'ssec.sector as service_sector',
