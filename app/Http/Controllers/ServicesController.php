@@ -76,7 +76,7 @@ class ServicesController extends MyController
         } else { // Service list
             $services = DB::table('services as srvc')
                 ->select([
-                    'srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    'srvc.*', 'usr.name as provider_name', DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                     'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type',
                     'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region'
                 ])
@@ -479,7 +479,7 @@ class ServicesController extends MyController
             ->select([
                 'srvc.*',
                 'srvc.id as service_id',
-                'usr.name as provided_by',
+                'usr.name as provider_name',
                 DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
                 DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                 'scat.category as service_category',
@@ -709,7 +709,7 @@ class ServicesController extends MyController
         $services = DB::table('services as srvc')
             ->select([
                 'srvc.*',
-                'usr.name as provided_by',
+                'usr.name as provider_name',
                 DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                 'scat.category as service_category',
                 'ssec.sector as service_sector',
