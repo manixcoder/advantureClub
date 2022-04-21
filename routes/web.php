@@ -146,6 +146,8 @@ Route::get('service/decline/{id}', 'ServicesController@declineService')->where([
 Route::get('service/participant/{id}', 'ServicesController@participant')->where(['id' => '[0-9]+']);
 Route::get('requests/vendors/{id?}', 'UsersController@vendors')->where(['id' => '[0-9]+']);
 Route::get('requests/adventures/{id?}', 'ServicesController@adventures')->where(['id' => '[0-9]+']);
+Route::get('requests/adventures/view/{id?}', 'ServicesController@viewRequests')->where(['id' => '[0-9]+']);
+
 
 /*Service Offer starts*/
 Route::get('list-service-offers/{id?}', 'ServiceOffersController@listServiceOffers');

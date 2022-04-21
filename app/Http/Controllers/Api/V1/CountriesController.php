@@ -44,7 +44,12 @@ class CountriesController extends MyController {
         $cities = DB::table('regions as rg')
                         ->select('cnt.id as country_id', 'cnt.country', 'rg.id as region_id', 'rg.region')
                         ->leftJoin('countries as cnt', 'cnt.id', '=', 'rg.country_id')
-                        ->where(['rg.country_id' => $id, 'rg.deleted_at' => NULL])->orderBy('rg.region', 'ASC')->get();
+                        ->where([
+                            'rg.country_id' => $id, 
+                            'rg.deleted_at' => NULL
+                        ])
+                        ->orderBy('rg.region', 'ASC')
+                        ->get();
         if (!$cities->isEmpty()) {
             return $this->sendResponse('Regions listing', $cities, 200);
         }

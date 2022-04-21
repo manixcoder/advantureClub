@@ -116,7 +116,7 @@ class ServicesController extends MyController
     public function add(Request $request)
     {
 
-       
+
         if ($request->post()) {
             if ($request->service_plan == 1) {
                 $validator = Validator::make($request->all(), [
@@ -130,7 +130,7 @@ class ServicesController extends MyController
                     'service_level'         => 'required|numeric',
                     'duration'              => 'required|numeric',
                     'available_seats'       => 'required|numeric',
-                    
+
                     'write_information'     => 'required|max:500',
                     'service_plan'          => 'required|numeric',
                     'service_plan_days'     => 'required',
@@ -359,7 +359,7 @@ class ServicesController extends MyController
                             DB::table('service_plan_day_date')->where('service_id', '=', $service_id)->delete();
                             foreach ($request->service_plan_days as $spd) {
                                 $spd_data[] = array(
-                                    'service_id' => $service_id, 
+                                    'service_id' => $service_id,
                                     'day' => $spd
                                 );
                             }
@@ -594,6 +594,100 @@ class ServicesController extends MyController
             'bookings' => $bookings
         ]);
     }
+    public function viewRequests(Request $request, $id)
+    {
+       // dd($id);
+       $url = asset('public/profile_image/');
+       $where = 'srvc.id = ' . $id . ' ';
+       $services = DB::table('services as srvc')
+           ->select([
+               'srvc.*',
+               'srvc.id as service_id',
+               'usr.name as provider_name',
+               DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
+               DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+               'scat.category as service_category',
+               'ssec.sector as service_sector',
+               'styp.type as service_type',
+               'slvl.level as service_level',
+               'cntri.country',
+               'rgn.region',
+               'curr.code as currency',
+               DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
+               'slike.is_like'
+           ])
+           ->join('users as usr', 'usr.id', '=', 'srvc.owner')
+           ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
+           ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
+           ->leftJoin('service_categories as scat', 'scat.id', '=', 'srvc.service_category')
+           ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
+           ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
+           ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
+           ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+           ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
+           ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
+           ->leftJoin('service_likes as slike', 'slike.service_id', '=', 'srvc.id')
+           ->groupBy('ssfor.service_id')
+           ->whereRaw($where)
+           ->get();
+       if (!$services->isEmpty()) {
+           $activities = DB::table('service_activities as s_act')
+               ->select(['act.id', 'act.activity'])
+               ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
+               ->where('s_act.service_id', $id)
+               ->get()
+               ->toArray();
+           $services[0]->included_activities = $activities ?? [];
+           $dependencies = DB::table('service_dependencies as s_dep')
+               ->select(['dep.id', 'dep.dependency_name'])
+               ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
+               ->where('s_dep.service_id', $id)
+               ->get()
+               ->toArray();
+           $services[0]->dependencies = $dependencies ?? [];
+           $programs = DB::table('service_programs')
+               ->select([
+                   'id',
+                   'service_id',
+                   'title',
+                   'start_datetime',
+                   'end_datetime',
+                   'description'
+               ])
+               ->where('service_id', $id)
+               ->get();
+           $services[0]->programs = $programs;
+           if ($services[0]->service_plan == 1) {
+               $availability = DB::table('service_plan_day_date as spdd')
+                   ->select(['spdd.id', 'wkd.day'])
+                   ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
+                   ->where('spdd.service_id', $id)
+                   ->get()
+                   ->toArray();
+               $services[0]->availability = $availability ?? [];
+           } else if ($services[0]->service_plan == 2) {
+               $availability = DB::table('service_plan_day_date as spdd')
+                   ->select(['spdd.id', 'spdd.date'])
+                   ->where('spdd.service_id', $id)
+                   ->get()
+                   ->toArray();
+               $services[0]->availability = $availability ?? [];
+           }
+           $star_ratings_res = DB::table('service_reviews')
+               ->select(['service_id', DB::raw("AVG(star) AS stars"), DB::raw("COUNT(user_id) AS reviewd_by")])
+               ->where('service_id', $id)
+               ->groupBy('service_id')
+               ->first();
+           $services[0]->stars = $star_ratings_res ? number_format($star_ratings_res->stars, 2, '.', '') : 0;
+           $services[0]->reviewd_by = $star_ratings_res ? $star_ratings_res->reviewd_by : 0;
+       }
+
+       
+       $data['content'] = 'admin.adventureRequests.requests_detail';
+       return view('layouts.content', compact('data'))->with([
+           'service' => $services[0],
+       ]);
+    }
 
     public function deleteService(Request $request, $id)
     {
@@ -726,10 +820,6 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            /*
-            ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
-            ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
-            */
             ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
             ->where([
                 'srvc.deleted_at' => NULL,
@@ -738,15 +828,8 @@ class ServicesController extends MyController
             ->whereRaw($where)
             ->orderBy('srvc.id', 'DESC')
             ->get();
-        // dd($services);
-        // if (!$services[0]->id) {
-        //     $services = [];
-        // }
         $data['content'] = 'admin.services.adventure_request';
-        return view('layouts.content', compact('data'))
-            ->with([
-                'services' => $services
-            ]);
+        return view('layouts.content', compact('data'))->with(['services' => $services]);
     }
 
     public function getRegions(Request $request, $id)

@@ -219,6 +219,22 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <select class="form-control" id="gender" name="gender">
+                                            <option value="">Select gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                        <?php if (isset($validation['gender'])) { ?>
+                                            <label class="error">{{ $validation['gender'] }}</label>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <p class="control-label"><b>Status</b>
                                             <font color="red">*</font>
                                         </p>
@@ -264,9 +280,7 @@
                                 <?php if (isset($validation['health_condition'])) { ?>
                                     <label class="error">{{ $validation['health_condition'] }}</label>
                                 <?php } ?>
-
                             </div>
-
                             <div class="modal-footer text-center">
                                 <button type="cancel" id="canceltbtn" class="btn btn-default cancel"><a href="{{url()->previous()}}">Cancel</a></button>
                                 <button type="submit" id="submitbtn" class="btn btn-primary save">Save</button>
