@@ -245,7 +245,7 @@ class AdventurePartnersController extends Controller
     $services = DB::table('services as srvc')
       ->select([
         'srvc.*',
-        'usr.name as provided_by',
+        'usr.name as provider_name',
         DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
         'scat.category as service_category',
         'ssec.sector as service_sector',
@@ -295,7 +295,7 @@ class AdventurePartnersController extends Controller
 
   // public function getService() {
   //     $services = DB::table('services as srvc')
-  //     ->select(['srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type', 'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region'])
+  //     ->select(['srvc.*', 'usr.name as provider_name', DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type', 'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region'])
   //     ->join('users as usr', 'usr.id', '=', 'srvc.owner')
   //     ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
   //     ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')

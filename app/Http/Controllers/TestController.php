@@ -72,7 +72,7 @@ class ServicesController extends MyController {
             ]);
         } else {// Service list
             $services = DB::table('services as srvc')
-                    ->select(['srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    ->select(['srvc.*', 'usr.name as provider_name', DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                     'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type',
                     'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region'])
                     ->join('users as usr', 'usr.id', '=', 'srvc.owner')
@@ -442,7 +442,7 @@ class ServicesController extends MyController {
         $url = asset('public/profile_image/');
         $where = 'srvc.id = ' . $id . ' ';
         $services = DB::table('services as srvc')
-                ->select(['srvc.*', 'srvc.id as service_id', 'usr.name as provided_by', DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
+                ->select(['srvc.*', 'srvc.id as service_id', 'usr.name as provider_name', DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
                     DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector',
                     'styp.type as service_type', 'slvl.level as service_level', 'cntri.country',
                     'rgn.region', 'curr.code as currency', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 'slike.is_like'])
@@ -627,7 +627,7 @@ class ServicesController extends MyController {
             $where .= ' && srvc.id = ' . $id;
         }
         $services = DB::table('services as srvc')
-                ->select(['srvc.*', 'usr.name as provided_by', DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type', 'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")])
+                ->select(['srvc.*', 'usr.name as provider_name', DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type', 'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
@@ -798,7 +798,7 @@ class ServicesController extends MyController {
             $services = DB::table('services as srvc')
                     ->select([
                         'srvc.*', 
-                        'usr.name as provided_by',
+                        'usr.name as provider_name',
                          DB::raw("CONCAT(srvc.duration,'Min') AS duration"),
                          'scat.category as service_category', 
                          'ssec.sector as service_sector', 
@@ -1184,7 +1184,7 @@ class ServicesController extends MyController {
                 ->select([
                     'srvc.*', 
                     'srvc.id as service_id', 
-                    'usr.name as provided_by',
+                    'usr.name as provider_name',
                      DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
                     DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
                     'scat.category as service_category',
@@ -1388,7 +1388,7 @@ class ServicesController extends MyController {
         $services = DB::table('services as srvc')
                 ->select([
                     'srvc.*', 
-                    'usr.name as provided_by', 
+                    'usr.name as provider_name', 
                     DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
                     'scat.category as service_category', 
                     'ssec.sector as service_sector',

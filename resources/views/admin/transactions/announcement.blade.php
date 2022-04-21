@@ -5,7 +5,7 @@
          <div class="col-sm-12">
             <h4 class="pull-left page-title">Transactions </h4>
             <ul class="breadcrumb pull-right">
-               <!--<li><a href="{{URL::to('add-admin-user')}}" class="waves-effect"><img src="{{ asset('/public/images/add_user.png')}}">&nbsp;&nbsp;<span>Add User</span></a>-->
+               <li><a href="{{URL::to('add-announcement')}}" class="waves-effect"><img src="{{ asset('/public/images/add_user.png')}}">&nbsp;&nbsp;<span>Add Announcement</span></a>
             </ul>
          </div>
       </div>

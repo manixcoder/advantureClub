@@ -61,6 +61,7 @@ class AdventureUsersController extends MyController
                 'email'             => 'required|email:filter|unique:users',
                 'country'           => 'required|numeric',
                 'region'            => 'required|numeric',
+                'gender'            => 'required',
                 'dob'               => 'required|date_format:Y-m-d',
                 'health_condition'  => 'required',
                 'height'            => 'required',
@@ -83,6 +84,7 @@ class AdventureUsersController extends MyController
                     'status'            => ($request->status == 2) ? '0' : '1',
                     'country_id'        => $request->country,
                     'city_id'           => $request->region,
+                    'gender'            => $request->gender,
                     'dob'               => date('Y-m-d', strtotime($request->dob)),
                     'weight'            => $request->weight,
                     'height'            => $request->height,
@@ -137,16 +139,16 @@ class AdventureUsersController extends MyController
             ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
             ->where('users.id', $id)
             ->first();
-			//dd($editdata);
-        /*
-		$health_conditions = $editdata->health_conditions ? explode(',', $editdata->health_conditions) : [];
+        //dd($editdata);
+
+        $health_conditions = $editdata->health_conditions ? explode(',', $editdata->health_conditions) : [];
         if (count($health_conditions)) {
             $cond = DB::table('health_conditions')
                 ->select(['name'])
                 ->whereIn('id', $health_conditions)->get();
             $editdata->health_conditions = $cond;
         }
-		*/
+
         $data['content'] = 'admin.adventure_users.view_adventure_user';
         return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
     }

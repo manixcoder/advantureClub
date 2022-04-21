@@ -132,6 +132,7 @@ class UsersController extends MyController
     }
     public function getOtp(Request $request)
     {
+        // dd($request->all());
         if (is_numeric($request->mobile)) {
             $validator = Validator::make($request->all(), [
                 'mobile' => 'required|numeric'
@@ -828,11 +829,11 @@ class UsersController extends MyController
     public function updateProfile(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|numeric',
-            'name' => 'required|min:3|max:50',
-            'mobile_code' => 'required|numeric',
-            'mobile' => 'required|numeric|digits:10',
-            'email' => 'required|email:filter',
+            'user_id' => 'required',
+            'name' => 'required',
+            'mobile_code' => 'required',
+            'mobile' => 'required',
+            'email' => 'required',
         ]);
         if ($validator->fails()) {
             $errors = array();

@@ -1,3 +1,52 @@
+<style>
+   /* The Modal (background) */
+   .modal {
+      display: none;
+      /* Hidden by default */
+      position: fixed;
+      /* Stay in place */
+      z-index: 1;
+      /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%;
+      /* Full width */
+      height: 100%;
+      /* Full height */
+      overflow: auto;
+      /* Enable scroll if needed */
+      background-color: rgb(0, 0, 0);
+      /* Fallback color */
+      background-color: rgba(0, 0, 0, 0.4);
+      /* Black w/ opacity */
+   }
+
+   /* Modal Content/Box */
+   .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      /* 15% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      /* Could be more or less, depending on screen size */
+   }
+
+   /* The Close Button */
+   .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+   }
+
+   .close:hover,
+   .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+   }
+</style>
 <div class="content">
    <div class="container-fluid">
       <!-- Page-Title -->
@@ -48,18 +97,22 @@
 
                            <td>{{ $data->date}}</td>
                            <td>{{ $data->likes}}</td>
+
                            <td class="actions">
                               <ul class="edit_icon action_icons dashboard_icons">
                                  <li>
-                                    <a href="{{URL::to('view-adventure-user',$data->user_id)}}" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply">
+                                    <!-- <a href="" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply">
                                        <img src="{{ asset('/public/images/reply.png')}}">
-                                    </a>
+                                    </a> -->
+                                    <button id="myBtn"><img src="{{ asset('/public/images/reply.png')}}"></button>
+                                    <!-- <a href="{{URL::to('view-adventure-user',$data->id)}}" class="waves-effect" data-toggle="tooltip" data-placement="top" title="" data-original-title="reply"><img src="{{ asset('/public/images/reply.png')}}"></a> -->
                                  </li>
                                  <li>
                                     <?php ?>
                                     <a href="#" class="like-Unlike" id="like_<?php echo $data->id; ?>" data-toggle="tooltip" data-placement="top" title="" data-original-title="like">
                                        <img src="{{ asset('/public/images/unlike.png')}}">
                                     </a>
+
                                  </li>
                                  <li>
                                     <?php
@@ -80,20 +133,65 @@
 
                            </td>
                         </tr>
+
                         @endforeach
                      </tbody>
                   </table>
+
+                  <!-- The Modal -->
+                  <div id="myModal" class="modal">
+                     <!-- Modal content -->
+                     <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <h4 class="pull-left page-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. </h4>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
                </div>
                <!-- end card-body -->
+
+
+
             </div>
          </div>
          <!-- container -->
+
       </div>
    </div>
 </div>
+
+
+
 <!-- content -->
 <script type="text/javascript">
+   // Get the modal
+   var modal = document.getElementById("myModal");
 
+   // Get the button that opens the modal
+   var btn = document.getElementById("myBtn");
+
+   // Get the <span> element that closes the modal
+   var span = document.getElementsByClassName("close")[0];
+
+   // When the user clicks on the button, open the modal
+   btn.onclick = function() {
+      modal.style.display = "block";
+   }
+
+   // When the user clicks on <span> (x), close the modal
+   span.onclick = function() {
+      modal.style.display = "none";
+   }
+
+   // When the user clicks anywhere outside of the modal, close it
+   window.onclick = function(event) {
+      if (event.target == modal) {
+         modal.style.display = "none";
+      }
+   }
 </script>
 <script type="text/javascript">
    $(document).ready(function() {

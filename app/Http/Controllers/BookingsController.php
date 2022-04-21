@@ -76,7 +76,7 @@ class BookingsController extends MyController
             $services = DB::table('services as srvc')
                 ->select([
                     'srvc.*',
-                    'usr.name as provided_by',
+                    'usr.name as provider_name',
                     DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                     'scat.category as service_category',
                     'ssec.sector as service_sector',
