@@ -903,7 +903,6 @@ class ServicesController extends MyController
 
             if (!$services->isEmpty()) {
                 foreach ($services as $key => $ser) {
-                    //dd($ser);
                     $service_id = $ser->service_id;
                     $aimedforData = DB::table('service_service_for as ssfor')
                         ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')

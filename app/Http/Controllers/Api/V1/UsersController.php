@@ -963,8 +963,7 @@ class UsersController extends MyController
                 'message'    => $request->post('message'),
                 'created_at' => date('Y-m-d H:i:s')
             );
-            DB::table('notifications')
-                ->insert($wallet_data);
+            DB::table('notifications')->insert($wallet_data);
             $responseData = $this->sendResponse('Notification Created Successfully.', [], 200);
             return $responseData;
         }
