@@ -911,7 +911,7 @@ class UsersController extends MyController
             }
             $data = User::find($id);
             if ($request->file('profile_picture')) {
-                $data->profile_image = '/profile_image/' . $fileName;
+                $data->profile_image = 'profile_image/' . $fileName;
             }
             $data->save();
             return $this->sendResponse('Image uploaded', 200);

@@ -28,12 +28,6 @@
                      <tbody>
                         <?php $i = 1; ?>
                         @foreach($usersdata as $key => $data)
-                        <?php
-                        // echo "<pre>";
-                        // print_r($data);
-                        // exit; 
-                        ?>
-
                         <tr class="gradeX">
                            <td>#{{ $key+1 }}</td>
                            <td>{{ $data->name }}</td>
