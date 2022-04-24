@@ -17,10 +17,12 @@
                      <thead>
                         <tr>
                            <th>User ID</th>
-                           <th class="no-sort">User Name</th>
+                           <th class="no-sort">Partner Name</th>
                            <th class="no-sort">Email Address</th>
                            <th class="no-sort">Mobile No.</th>
-                           <th class="no-sort">Nationality</th>
+                           <th class="no-sort">Country</th>
+                           <th class="no-sort">Services</th>
+                           <th class="no-sort">Rating</th>
                            <th>Status</th>
                            <th class="no-sort">Actions</th>
                         </tr>
@@ -28,24 +30,23 @@
                      <tbody>
                         <?php $i = 1; ?>
                         @foreach($usersdata as $key => $data)
-                        <?php
-                        // echo "<pre>";
-                        // print_r($data);
-                        // exit; 
+                        <?php 
+                        $sevices = DB::table('services as s')->where('s.owner',$data->id)->get()->count();
                         ?>
-
                         <tr class="gradeX">
                            <td>#{{ $key+1 }}</td>
                            <td>{{ $data->name }}</td>
                            <td>{{ $data->email }}</td>
                            <td>{{ $data->mobile }}</td>
-                           <td>{{ $data->mobile }}
+                           <td>{{ $data->country }}</td>
+                           <td>{{ $sevices }}
                               <!-- @if($data->profile_image!='')
                               <img src="{{ asset('public/profile_image/').'/'.$data->profile_image }}" alt="profile image" height="50" width="50">
                               @else
                                  <img src="{{ asset('public/no-image.jpg')}}" alt="profile image" height="50" width="50">
                               @endif -->
                            </td>
+                           <td><span class="fa fa-star"></span> Rating</td>
 
                            <?php
                            if ($data->is_approved == 1) {
@@ -119,7 +120,7 @@
             [0, "desc"]
          ],
          columnDefs: [{
-            orderable: false,
+            orderable: true,
             targets: "no-sort"
          }],
          bLengthChange: false, // hide showing entries in dropdown

@@ -112,6 +112,18 @@
                                         <?php } ?>
                                     </div>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <?php $cities = DB::table('cities')->get(); ?>
+                                        <select class="form-control" id="cities" name="cities">
+
+                                        </select>
+                                        <?php if (isset($validation['cities'])) { ?>
+                                            <label class="error">{{ $validation['cities'] }}</label>
+                                        <?php } ?>
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <div class="row">
                                         <div class="col-md-3">
@@ -152,7 +164,7 @@
                                                     $mobile = $user_detail['mobile'];
                                                 }
                                                 ?>
-                                                <input type="text" id="mobile" name="mobile" class="form-control" value="{{$mobile}}" aria-required="true" placeholder="Mobile Number">
+                                                <input type="text" id="mobile" name="mobile" class="form-control" value="{{$mobile}}" aria-required="true" placeholder="Mobile Number" maxlength="10" required oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
                                                 <?php if (isset($validation['mobile'])) { ?>
                                                     <label class="error">{{ $validation['mobile'] }}</label>
                                                 <?php } ?>
@@ -219,6 +231,22 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <select class="form-control" id="gender" name="gender">
+                                            <option value="">Select gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                        <?php if (isset($validation['gender'])) { ?>
+                                            <label class="error">{{ $validation['gender'] }}</label>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <p class="control-label"><b>Status</b>
                                             <font color="red">*</font>
                                         </p>
@@ -264,9 +292,7 @@
                                 <?php if (isset($validation['health_condition'])) { ?>
                                     <label class="error">{{ $validation['health_condition'] }}</label>
                                 <?php } ?>
-
                             </div>
-
                             <div class="modal-footer text-center">
                                 <button type="cancel" id="canceltbtn" class="btn btn-default cancel"><a href="{{url()->previous()}}">Cancel</a></button>
                                 <button type="submit" id="submitbtn" class="btn btn-primary save">Save</button>
@@ -297,6 +323,18 @@
                 count: $country_id
             }, function(data) {
                 $('#region').html(data);
+            });
+        });
+
+        $('#region').change(function() {
+            base_url = '<?php echo URL::to('/'); ?>';
+            $region_id = $('#region').val();
+            $('#region').val($region_id);
+            $.post(base_url + '/get_city/' + $region_id, {
+                "_token": "{{ csrf_token() }}",
+                count: $region_id
+            }, function(data) {
+                $('#cities').html(data);
             });
         });
     });

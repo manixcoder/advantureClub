@@ -14,8 +14,11 @@ use DB;
 use Response;
 
 class FiltersController extends MyController {
+
     function __construct() {
+        
     }
+
     public function get(Request $request) {
         $result = array();
         $result['sectors'] = Service_sector::get();

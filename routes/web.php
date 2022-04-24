@@ -146,6 +146,8 @@ Route::get('service/decline/{id}', 'ServicesController@declineService')->where([
 Route::get('service/participant/{id}', 'ServicesController@participant')->where(['id' => '[0-9]+']);
 Route::get('requests/vendors/{id?}', 'UsersController@vendors')->where(['id' => '[0-9]+']);
 Route::get('requests/adventures/{id?}', 'ServicesController@adventures')->where(['id' => '[0-9]+']);
+Route::get('requests/adventures/view/{id?}', 'ServicesController@viewRequests')->where(['id' => '[0-9]+']);
+
 
 /*Service Offer starts*/
 Route::get('list-service-offers/{id?}', 'ServiceOffersController@listServiceOffers');
@@ -196,3 +198,4 @@ Route::any('update-pkg-status/{id}', 'PackagesController@update_pkg_status');
 Route::get('sub-packages/delete/{id}', 'PackagesController@delete_sub_pkg')->where(['id' => '[0-9]+']);
 
 Route::post('/get_regions/{id}', 'ServicesController@getRegions')->where(['id' => '[0-9]+']);
+Route::post('/get_city/{id}', 'ServicesController@getCity')->where(['id' => '[0-9]+']);

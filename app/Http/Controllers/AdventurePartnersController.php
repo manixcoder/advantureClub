@@ -60,14 +60,16 @@ class AdventurePartnersController extends Controller
         'bp.is_approved',
         'bp.packages_id',
         'bp.start_date',
+        'c.country',
         'bp.end_date'
       )
       ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
+      ->join('countries as c', 'c.id', '=', 'u.country_id')
       //->where('users.users_role', 2)
       //->where(['u.deleted_at' => NULL])
       ->get();
     // dd($usersdata);
-    $data['content'] = 'admin.adventure_partners.list_adventure_partners';
+    $data['content'] = 'admin.adventure_partners.list_adventure_partners'; 
     return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
   }
   /* Adventure Users listing ends */
