@@ -30,8 +30,8 @@
                      <tbody>
                         <?php $i = 1; ?>
                         @foreach($usersdata as $key => $data)
-                        <?php 
-                        $sevices = DB::table('services as s')->where('s.owner',$data->id)->get()->count();
+                        <?php
+                        $sevices = DB::table('services as s')->where('s.owner', $data->id)->get()->count();
                         ?>
                         <tr class="gradeX">
                            <td>#{{ $key+1 }}</td>
