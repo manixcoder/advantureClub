@@ -13,7 +13,9 @@
                 <h4 class="pull-left page-title"><a href="{{URL::to('list-adventure-users')}}">Users </a>  > #{{$editdata->id}}</h4>
             </div>
         </div>
-
+<?php 
+//dd($editdata);
+?>
         <div class="content partner_details">
             <div class="container-fluid">
 
@@ -35,7 +37,7 @@
                                 </li>
                                 <li>
                                     <p>Mobile No. :</p>
-                                    <h3>+{{$editdata->mobile_code}}- {{$editdata->mobile}}</h3>
+                                    <h3>{{$editdata->mobile_code}} - {{$editdata->mobile}}</h3>
                                 </li>
                                 <li>
                                     <p>Nationality :</p>
@@ -70,8 +72,6 @@
                                             <li>{{$hc->name}}</li>
                                         <?php } ?>
                                     </ul>
-
-
                                 </li>
                                 <li>
                                     <p>Weight in Kg :</p>
@@ -95,7 +95,7 @@
                                             $checked = '';
                                             $stat = 'InActive';
                                          }
-                                            ?>
+                                         ?>
                                       <input type="checkbox" class="togBtn" id="togBtn_{{$editdata->id}}" name="togBtn_{{$editdata->id}}" value="{{ $statVal}}" <?php echo $checked;?> />
                                       <span class="slider round"></span>
                                       </label>

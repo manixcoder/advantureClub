@@ -14,6 +14,7 @@ class HealthConditionsController extends MyController {
 
     public function get_all() {
         $result = array();
+
         $healths = Health_condition::select('id', 'name')->orderBy('name', 'ASC')->get();
         if (!empty($healths)) {
             foreach ($healths as $health) {

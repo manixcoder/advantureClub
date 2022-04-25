@@ -47,7 +47,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/get_service_categories', 'Api\V1\ServicesController@getservice_categories');
     Route::get('/get_service_type', 'Api\V1\ServicesController@getservice_type');
     Route::get('/get_service_level', 'Api\V1\ServicesController@getservice_level');
-    //Route::get('/get_regions', 'Api\V1\ServicesController@get_regions');
+    Route::get('/get_currencies', 'Api\V1\VendorsController@getCurrencies');
     
     Route::get('/get_countries', 'Api\V1\ServicesController@getCountries');
     

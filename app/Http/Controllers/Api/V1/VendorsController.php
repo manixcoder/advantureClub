@@ -19,7 +19,11 @@ class VendorsController extends MyController
 
     public function getPackages(Request $request)
     {
-        $result = DB::table('packages')->select(['*'])->where(['deleted_at' => NULL])->get();
+        $result = DB::table('packages')
+            ->select(['*'])
+            ->where(['deleted_at' => NULL])
+            ->get();
+
         foreach ($result as $key => $res) {
             $includes = DB::table('package_detail')->where('package_id', $res->id)->where('detail_type', '1')->get();
             $Exclude = DB::table('package_detail')->where('package_id', $res->id)->where('detail_type', '0')->get();
@@ -33,7 +37,11 @@ class VendorsController extends MyController
         return $this->sendError('Data not found.', [], 404);
     }
 
-    public function addPackage(Request $request)
+    public function getCurrencies(Request $request)
     {
+        $result = DB::table('currencies')
+            ->select(['*'])
+            ->get();
+            return $this->sendResponse(config('constants.DATA_FOUND'), $result, 200);
     }
 }

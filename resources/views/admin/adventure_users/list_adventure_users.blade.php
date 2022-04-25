@@ -20,7 +20,8 @@
                            <th class="no-sort">User Name</th>
                            <th class="no-sort">Email Address</th>
                            <th class="no-sort">Mobile No.</th>
-                           <th class="no-sort">Nationality</th>
+                           <th class="no-sort">Country</th>
+                           <th class="no-sort">Completed</th>
                            <th>Status</th>
                            <th class="no-sort">Actions</th>
                         </tr>
@@ -35,6 +36,7 @@
                            <td>{{ $data->email }}</td>
                            <td>{{ $data->mobile }}</td>
                            <td>{{ $data->country}}</td>
+                           <td>Static</td>
                            <?php
                            if ($data->status == 1) {
                               $status = 'Active';
@@ -114,9 +116,9 @@
          searching: true,
          paging: true,
          info: false, // hide showing entries
-         ordering: false, // hide sorting
+         ordering: true, // hide sorting
          columnDefs: [{
-            orderable: false,
+            orderable: true,
             targets: "no-sort"
          }],
          bLengthChange: false, // hide showing entries in dropdown

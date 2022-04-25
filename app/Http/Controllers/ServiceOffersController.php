@@ -47,7 +47,7 @@ class ServiceOffersController extends MyController
             ])
             ->leftjoin('services', 'services.id', '=', 'service_offers.service_id')
             ->where('services.id', '<>', NULL)
-            ->where(['service_offers.deleted_at' => NULL])
+            ->where(['service_offers.deleted_at' => NULL]) 
             ->get();
         //  echo "<pre>";print_r( $usersdata);exit;
         $data['content'] = 'admin.service_offers.list_service_offers';

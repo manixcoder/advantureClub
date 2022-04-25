@@ -211,7 +211,7 @@ class ServicesController extends MyController
                 }
             }
 
-            $services = DB::table('services1 as srvc')
+            $services = DB::table('services as srvc')
                 ->select([
                     'srvc.*',
                     'usr.name as provided_name',
@@ -903,6 +903,7 @@ class ServicesController extends MyController
 
             if (!$services->isEmpty()) {
                 foreach ($services as $key => $ser) {
+                    //dd($ser);
                     $service_id = $ser->service_id;
                     $aimedforData = DB::table('service_service_for as ssfor')
                         ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
@@ -1197,10 +1198,12 @@ class ServicesController extends MyController
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
             $type = $request->type;
-            $where = ' bkng.booking_date >= CURDATE() and bkng.status !=2 ';
-            if ($type == 1) {
+            
+            if ($type == '1') {
                 $where = ' bkng.booking_date < CURDATE() and bkng.status !=2 ';
-            };
+            }else{
+                $where = ' bkng.booking_date > CURDATE() and bkng.status !=2 ';
+            }
             $booking = DB::table('bookings as bkng')
                 ->select([
                     'bkng.id as booking_id',
@@ -1546,97 +1549,60 @@ class ServicesController extends MyController
                 ->where('deleted_at', NULL)
                 ->orderBy('id', 'desc')
                 ->get();
-            //dd($services);
-            $servicesimages = array();
-            $serviceprograms = array();
-            $servicesreview = array();
-            $servicedependencies = array();
+           
+            
             $serviceactivities = array();
-            $serviceservice_for = array();
             $servicesname = array();
             $countryname = array();
             $servicesname1 = array();
             foreach ($services as $key => $val) {
-
                 $images = DB::table('service_images')
                     ->where('service_id', $val->id)
                     ->get();
-                $servicesimages['image_url'] = $images;
-                // foreach ($images as $image) {
-                //     $servicesimages['is_default'] = $image->is_default;
-                //     $servicesimages['image_url'] = $image_url . $image->image_url;
-                //     $servicesimages['thumbnail'] = $image_url . $image->thumbnail;
-                // }
-                $serviceac = DB::table('service_activities')->where('service_id', $val->id)->get();
-                foreach ($serviceac as $serviceactivit) {
-                    $serviceactivities['activities'] = $serviceactivit->activity_id;
+                $serviceactivities['image_url'] = $images;
+                // $serviceac = DB::table('service_activities')->where('service_id', $val->id)->get();
+                // $serviceactivities['activities'] = $serviceac;
+                
+                // $serviceservicefor = DB::table('service_service_for')->where('service_id', $val->id)->get();
+                // $serviceactivities['service_for'] = $serviceservicefor;
+                // $dependencies = DB::table('service_dependencies')->where('service_id', $val->id)->get();
+                // $serviceactivities['dependency'] = $dependencies;
+                if($val->service_plan=='1'){
+                  $availability = DB::table('service_plan_day_date as spdd')
+                        ->select(['spdd.id', 'wkd.day'])
+                        ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
+                        ->where('spdd.service_id', $val->id)
+                        ->get()
+                        ->toArray();
+                    $serviceactivities['availability'] = $availability ?? [];  
+                }else{
+                    //dd("Hello Here");
+                    $serviceactivities['availability']=array(
+                        // 'start_date'=>$val->start_date,
+                        // 'end_date'=>$val->end_date
+                    );
                 }
-                $serviceservicefor = DB::table('service_service_for')->where('service_id', $val->id)->get();
-                $serviceservice_for['service_for'] = $serviceservicefor;
-                // foreach ($serviceservicefor as $serviceservice) {
-                //     $serviceservice_for['service_for'] = $serviceservice->sfor_id;
-                // }
-                $dependencies = DB::table('service_dependencies')->where('service_id', $val->id)->get();
-                $servicedependencies['dependency'] = $dependencies;
-                // foreach ($dependencies as $dependency) {
-                //     $servicedependencies['dependency'] = $dependency->dependency_id;
-                // }
-                $reviews = DB::table('service_reviews')->where('service_id', $val->id)->get();
-                $servicesreview['service_reviews'] = $reviews;
-                // foreach ($reviews as $review) {
-                //     $servicesreview['star'] = $review->star;
-                //     $servicesreview['remark'] = $review->remark;
-                // }
-                $countries = DB::table('countries')->where('id', $val->country)->first();
-                $servicesreview['countries'] = $countries;
-                // if ($countries) {
-                //     $country = $countries->country;
-                // } else {
-                //     $country = 'null';
-                // }
-                $regions = DB::table('regions')->where('id', $val->region)->first();
-                $servicesreview['regions'] = $regions;
-                // if ($regions) {
-                //     $region = $regions->region;
-                // } else {
-                //     $region = 'null';
-                // }
-                $categories = DB::table('service_categories')->where('id', $val->service_category)->first();
-                $servicesreview['categories'] = $categories;
-                // if ($categories) {
-                //     $categories = $categories->category;
-                // } else {
-                //     $categories = 'null';
-                // }
-                $sectors = DB::table('service_sectors')->where('id', $val->service_sector)->first();
-                $servicesreview['sectors'] = $sectors;
-                // if (!empty($sectors)) {
-                //     $sectors = @$sectors->sector;
-                // } else {
-                //     $sectors = 'null';
-                // }
-                $type = DB::table('service_types')->where('id', $val->service_type)->first();
-                $servicesreview['type'] = $type;
-                // if ($type) {
-                //     $type = $type->type;
-                // } else {
-                //     $type = 'null';
-                // }
-                $service_levels = DB::table('service_levels')->where('id', $val->service_level)->first();
-                $servicesreview['service_levels'] = $service_levels;
-                // if ($service_levels) {
-                //     $levels = $service_levels->level;
-                // } else {
-                //     $levels = 'null';
-                // }
-                $serviceprogra = DB::table('service_programs')->where('service_id', $val->id)->get();
-                $serviceprograms['service_programs'] = $serviceprogra;
+                // $reviews = DB::table('service_reviews')->where('service_id', $val->id)->get();
+                // $serviceactivities['service_reviews'] = $reviews;
+                
+                // $countries = DB::table('countries')->where('id', $val->country)->first();
+                // $serviceactivities['countries'] = $countries;
+                
+                // $regions = DB::table('regions')->where('id', $val->region)->first();
+                // $serviceactivities['regions'] = $regions;
+                // $categories = DB::table('service_categories')->where('id', $val->service_category)->first();
+                // $serviceactivities['categories'] = $categories;
 
+                // $sectors = DB::table('service_sectors')->where('id', $val->service_sector)->first();
+                // $serviceactivities['sectors'] = $sectors;
+
+                // $type = DB::table('service_types')->where('id', $val->service_type)->first();
+                // $serviceactivities['type'] = $type;
+
+                // $service_levels = DB::table('service_levels')->where('id', $val->service_level)->first();
+                // $serviceactivities['service_levels'] = $service_levels;
                 // $serviceprogra = DB::table('service_programs')->where('service_id', $val->id)->get();
-                // foreach ($serviceprogra as $serviceprogram) {
-                //     $serviceprograms['gathering_start_date'] = $serviceprogram->start_datetime;
-                //     $serviceprograms['gathering_end_date'] = $serviceprogram->end_datetime;
-                // }
+                // $serviceactivities['service_programs'] = $serviceprogra;
                 if ($val->status == '0') {
                     $status = 'Pending';
                 } else if ($val->status == '1') {
@@ -1652,13 +1618,8 @@ class ServicesController extends MyController
                 $servicesname['cost_exclude'] = $val->cost_exc;
                 $servicesname['currency'] = $val->currency;
                 $servicesname['service_plan'] = $val->service_plan;
-                //$servicesname['region'] = $region;
                 $servicesname['available_seats'] = $val->available_seats;
                 $servicesname['specific_address'] = $val->specific_address;
-                $servicesname['categories'] = $categories;
-                $servicesname['sectors'] = $sectors;
-                $servicesname['type'] = $type;
-                //$servicesname['levels'] = $levels;
                 $servicesname['duration'] = $val->duration;
                 $servicesname['start_date'] = $val->start_date;
                 $servicesname['end_date'] = $val->end_date;
@@ -1670,10 +1631,13 @@ class ServicesController extends MyController
                 $servicesname['provider_image'] = $url . $serviceuser->profile_image;
                 $servicesname['status'] = $status;
 
-                $servicesname1[] = array_merge($servicesname, $servicesimages, $servicesreview, $servicedependencies, $serviceactivities, $serviceservice_for, $serviceprograms);
+                $servicesname1[] = array_merge(
+                    $servicesname, 
+                    $serviceactivities,
+                );
             }
 
-            return $this->sendResponse('Services', $servicesname1, 200);
+            return $this->sendResponse('Services data found successfully', $servicesname1, 200);
         }
     }
     public function hillclimblingdelete(Request $request)
@@ -1778,7 +1742,7 @@ class ServicesController extends MyController
                                             'service_id' => $service_id,
                                             'is_default' => $key == 0 ? 1 : 0,
                                             'image_url' => $filepath,
-                                            'thumbnail' => '/services/thumbs/' . $filename
+                                            'thumbnail' => 'services/thumbs/' . $filename
                                         );
                                     }
                                 }

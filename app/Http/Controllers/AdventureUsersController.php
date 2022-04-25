@@ -57,7 +57,7 @@ class AdventureUsersController extends MyController
             $validator = Validator::make($request->all(), [
                 'name'              => 'required|min:3|max:50|unique:users',
                 'mobile_code'       => 'required|numeric',
-                'mobile'            => 'required|numeric|digits:10|unique:users',
+                'mobile'            => 'required|numeric|digits:15|unique:users',
                 'email'             => 'required|email:filter|unique:users',
                 'country'           => 'required|numeric',
                 'region'            => 'required|numeric',
@@ -112,7 +112,12 @@ class AdventureUsersController extends MyController
                         }
                     }
                     Session::flash('success', 'User has been successfully.');
-                    return back();
+                    return redirect('/list-adventure-users')->with(array(
+                        'status' => 'success',
+                        'message' => 'User has been successfully.!'
+                    ));
+
+                    // return back();
                 }
             }
         }

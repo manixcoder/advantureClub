@@ -282,7 +282,7 @@ class ServicesController extends MyController {
                                             'service_id' => $service_id,
                                             'is_default' => $key == 0 ? 1 : 0,
                                             'image_url' => $filepath,
-                                            'thumbnail' => '/services/thumbs/' . $filename
+                                            'thumbnail' => 'services/thumbs/' . $filename
                                         );
                                     }
                                 }
@@ -1024,7 +1024,7 @@ class ServicesController extends MyController {
                                             'service_id' => $service_id,
                                             'is_default' => $key == 0 ? 1 : 0,
                                             'image_url' => $filepath,
-                                            'thumbnail' => '/services/thumbs/' . $filename
+                                            'thumbnail' => 'services/thumbs/' . $filename
                                         );
                                     }
                                 }

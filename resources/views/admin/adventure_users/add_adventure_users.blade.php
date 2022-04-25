@@ -50,7 +50,7 @@
                                             $name = $user_detail['name'];
                                         }
                                         ?>
-                                        <input type="text" id="name" name="name" class="form-control" aria-required="true" value="{{$name}}" placeholder="User Name">
+                                        <input type="text" id="name" name="name" class="form-control" aria-required="true" value="{{$name}}" placeholder="User Name" onkeypress="return /[0-9a-zA-Z]/i.test(event.key)">
                                         <?php if (isset($validation['name'])) { ?>
                                             <label class="error">{{ $validation['name'] }}</label>
                                         <?php } ?>
@@ -112,6 +112,18 @@
                                         <?php } ?>
                                     </div>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <?php $cities = DB::table('cities')->get(); ?>
+                                        <select class="form-control" id="cities" name="cities">
+
+                                        </select>
+                                        <?php if (isset($validation['cities'])) { ?>
+                                            <label class="error">{{ $validation['cities'] }}</label>
+                                        <?php } ?>
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <div class="row">
                                         <div class="col-md-3">
@@ -130,11 +142,11 @@
                                                     <?php
                                                     foreach ($countries as $value) {
                                                         $sel = '';
-                                                        if ($mobile_code == $value->id) {
+                                                        if ($mobile_code == $value->code) {
                                                             $sel = 'selected';
                                                         }
                                                     ?>
-                                                        <option value="{{ $value->id }}" <?php echo $sel; ?>>{{ $value->code.' - '.$value->country }}</option>
+                                                        <option value="{{ $value->code }}" <?php echo $sel; ?>>{{ $value->code.' - '.$value->country }}</option>
                                                     <?php } ?>
                                                 </select>
                                                 <?php if (isset($validation['mobile_code'])) { ?>
@@ -152,7 +164,7 @@
                                                     $mobile = $user_detail['mobile'];
                                                 }
                                                 ?>
-                                                <input type="text" id="mobile" name="mobile" class="form-control" value="{{$mobile}}" aria-required="true" placeholder="Mobile Number">
+                                                <input type="text" id="mobile" name="mobile" class="form-control" value="{{$mobile}}" aria-required="true" placeholder="Mobile Number" maxlength="15" required oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
                                                 <?php if (isset($validation['mobile'])) { ?>
                                                     <label class="error">{{ $validation['mobile'] }}</label>
                                                 <?php } ?>
@@ -311,6 +323,18 @@
                 count: $country_id
             }, function(data) {
                 $('#region').html(data);
+            });
+        });
+
+        $('#region').change(function() {
+            base_url = '<?php echo URL::to('/'); ?>';
+            $region_id = $('#region').val();
+            $('#region').val($region_id);
+            $.post(base_url + '/get_city/' + $region_id, {
+                "_token": "{{ csrf_token() }}",
+                count: $region_id
+            }, function(data) {
+                $('#cities').html(data);
             });
         });
     });

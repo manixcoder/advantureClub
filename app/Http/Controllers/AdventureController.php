@@ -78,7 +78,9 @@ class AdventureController extends Controller
           ]);
         $array[] = $imageinsert;
       }
+
       $programsIds = implode(',', $array);
+
       $insertdata = DB::table('adventure_programs')
         ->insert([
           'title' => $request->adventure_title_desc,
@@ -92,6 +94,8 @@ class AdventureController extends Controller
         ]);
       session()->flash('success', 'Data Insert Successfully..!');
     }
+
+
     return redirect('manage-adventure-program');
   }
 
@@ -102,9 +106,10 @@ class AdventureController extends Controller
       ->first();
 
     $data['content'] = 'admin.adventure_program.view_adventure_program';
-    return view('layouts.content', compact('data'))->with([
-      'view_adventure_program' => $view_adventure_program
-    ]);
+    return view('layouts.content', compact('data'))
+      ->with([
+        'view_adventure_program' => $view_adventure_program
+      ]);
   }
 
   public function edit_adventure_program($id)
@@ -112,11 +117,14 @@ class AdventureController extends Controller
     $edit_adventure_program = DB::table('adventure_programs')
       ->where('id', $id)
       ->first();
-      $data['content'] = 'admin.adventure_program.edit_adventure_program';
-      return view('layouts.content', compact('data'))->with([
+
+    $data['content'] = 'admin.adventure_program.edit_adventure_program';
+    return view('layouts.content', compact('data'))
+      ->with([
         'edit_adventure_program' => $edit_adventure_program
       ]);
   }
+
   public function delete_adventure_program($id)
   {
     $data = DB::table('adventure_programs')
