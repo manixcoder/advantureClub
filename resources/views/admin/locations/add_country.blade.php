@@ -8,6 +8,7 @@
         </div>
         <form  action="{{ URL::to('countries/add') }}" method="POST" enctype="multipart/form-data">
             @csrf
+           
             <div class="row" id="example-basic">
                 <div class="col-md-8 offset-2">
                     <div class="card">
@@ -45,7 +46,7 @@
                                         <?php
                                         $short_name = !empty(request('short_name')) ? request('short_name') : '';
                                         ?>
-                                        <input type="text" class="form-control" id="short_name" placeholder="Country's Short Name" name="short_name" aria-required="true" aria-invalid="true" value="<?php echo $short_name; ?>" >
+                                        <input type="text" class="form-control" id="short_name" placeholder="Nationality" name="short_name" aria-required="true" aria-invalid="true" value="<?php echo $short_name; ?>" >
                                         <?php if (isset($validation['short_name'])) { ?>
                                             <label class="error">{{ $validation['short_name'] }}</label>
                                         <?php } ?>
@@ -59,6 +60,18 @@
                                         <input type="text" class="form-control" id="currency" placeholder="Country's currency" name="currency" aria-required="true" aria-invalid="true" value="<?php echo $currency; ?>" >
                                         <?php if (isset($validation['currency'])) { ?>
                                             <label class="error">{{ $validation['currency'] }}</label>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">         
+                                    <div class="form-group"> 
+                                        <?php
+                                        $flag = !empty(request('flag')) ? request('flag') : '';
+                                        ?>
+                                        <input type="file" class="form-control" id="flag"  name="flag" aria-required="true" aria-invalid="true">
+                                        <?php if (isset($validation['flag'])) { ?>
+                                            <label class="error">{{ $validation['flag'] }}</label>
                                         <?php } ?>
                                     </div>
                                 </div>

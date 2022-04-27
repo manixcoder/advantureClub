@@ -201,7 +201,7 @@ class UsersController extends MyController
                 }
                 $otp_model->otp = $this->getRandomNumber();
                 if ($field == 'mobile') {
-                    $otp_model->mobile_code = $request->mobile_code;
+                    $otp_model->mobile_code ="+". $request->mobile_code;
                     $otp_model->mobile = $user_mobile;
                 } else {
                     $otp_model->otp_on = 2;

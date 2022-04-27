@@ -11,11 +11,13 @@ class Countrie extends Authenticatable
     protected $table = 'countries';
     public $timestamps = true;
     protected $fillable = [
-        'country_id',
+        'id',
+        'country',
+        'short_name',
         'code',
-        'phone_code',
-        'country_name',
+        'currency',
         'description',
-        'country_status'
+        'status',
+        'flag'
     ];
 }

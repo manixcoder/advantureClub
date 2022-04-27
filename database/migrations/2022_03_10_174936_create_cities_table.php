@@ -15,7 +15,7 @@ class CreateCitiesTable extends Migration
     {
         Schema::create('cities', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('country_id');
+            $table->integer('region_id');
             $table->string('city')->nullable();
             $table->datetime('deleted_at')->nullable();
             $table->timestamps();

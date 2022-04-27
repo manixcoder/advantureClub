@@ -15,6 +15,7 @@ class Countrie extends Authenticatable
         'phone_code',
         'country_name',
         'description',
-        'country_status'
+        'country_status',
+        'flag'
     ];
 }

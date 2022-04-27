@@ -54,10 +54,10 @@ $base_url = URL::to('/');
                     if (count($services)) {
                         foreach ($services as $key => $service) {
                            // dd($service);
-                            //$service_for = DB::table('service_service_for')->where('service_id', $service->id)->first();
-                            //dd($service_for);
-                            //$role_exist = DB::table('service_for')->where('id', $service->sforid)->get();
-                            //dd($role_exist);
+                           // $service_for = DB::table('service_service_for')->where('service_id', $service->id)->first();
+                           // dd($service_for);
+                           // $role_exist = DB::table('service_for')->where('id', $service->sforid)->get();
+                           // dd($role_exist);
                     ?>
                             <tr class="gradeX">
                                 <td>#{{ $service->id }}</td>
