@@ -40,7 +40,7 @@ Route::get('home', function () {
 });
 Route::get('dashboard', 'DashboardController@dashboard');
 Route::post('update-profile-image/{id}', 'HomeController@update_profile_image');
-Route::post('update-user-profile-image','HomeController@update_user_profile_image');
+Route::post('update-user-profile-image', 'HomeController@update_user_profile_image');
 
 Route::get('/forgot-password', 'ForgotPasswordController@getEmail');
 Route::post('/forgot-password', 'ForgotPasswordController@postEmail');
@@ -147,6 +147,9 @@ Route::get('service/participant/{id}', 'ServicesController@participant')->where(
 Route::get('requests/vendors/{id?}', 'UsersController@vendors')->where(['id' => '[0-9]+']);
 Route::get('requests/adventures/{id?}', 'ServicesController@adventures')->where(['id' => '[0-9]+']);
 Route::get('requests/adventures/view/{id?}', 'ServicesController@viewRequests')->where(['id' => '[0-9]+']);
+
+
+Route::get('partner-requests/view/{id?}', 'ServicesController@viewPartnerRequests')->where(['id' => '[0-9]+']);
 
 
 /*Service Offer starts*/

@@ -388,87 +388,83 @@ class ServicesController extends MyController
         $vendors = User::where(['deleted_at' => NULL])
             ->whereIn('users_role', [1, 2])
             ->get();
-        //dd($vendors);
-        if (!empty($vendors)) {
-            foreach ($vendors as $vendor) {
-                $result[] = $vendor->attributesToArray();
+            if (!empty($vendors)) {
+                foreach ($vendors as $vendor) {
+                    $result[] = $vendor->attributesToArray();
+                }
             }
-        }
-        $countries = Countrie::where(['deleted_at' => NULL])
-            ->get();
-        if (!empty($countries)) {
-            foreach ($countries as $countrie) {
-                $countries_res[] = $countrie->attributesToArray();
+            $countries = Countrie::where(['deleted_at' => NULL])->get();
+            if (!empty($countries)) {
+                foreach ($countries as $countrie) {
+                    $countries_res[] = $countrie->attributesToArray();
+                }
             }
-        }
-        $sectors = Service_sector::get();
-        if (!empty($sectors)) {
-            foreach ($sectors as $sector) {
-                $sectors_res[] = $sector->attributesToArray();
+            $sectors = Service_sector::get();
+            if (!empty($sectors)) {
+                foreach ($sectors as $sector) {
+                    $sectors_res[] = $sector->attributesToArray();
+                }
             }
-        }
-        $categories = Service_categorie::get();
-        if (!empty($categories)) {
-            foreach ($categories as $categorie) {
-                $categories_res[] = $categorie->attributesToArray();
+            $categories = Service_categorie::get();
+            if (!empty($categories)) {
+                foreach ($categories as $categorie) {
+                    $categories_res[] = $categorie->attributesToArray();
+                }
             }
-        }
-        $types = Service_type::get();
-        if (!empty($types)) {
-            foreach ($types as $type) {
-                $types_res[] = $type->attributesToArray();
+            $types = Service_type::get();
+            if (!empty($types)) {
+                foreach ($types as $type) {
+                    $types_res[] = $type->attributesToArray();
+                }
             }
-        }
-        $levels = Service_level::get();
-        if (!empty($levels)) {
-            foreach ($levels as $level) {
-                $levels_res[] = $level->attributesToArray();
+            $levels = Service_level::get();
+            if (!empty($levels)) {
+                foreach ($levels as $level) {
+                    $levels_res[] = $level->attributesToArray();
+                }
             }
-        }
-
-
-        $dependencies = DB::table('dependency')
+            $dependencies = DB::table('dependency')
             ->select('id', 'dependency_name')
             ->get();
-        $service_for = DB::table('service_for')
+            $service_for = DB::table('service_for')
             ->select('id', 'sfor')
             ->get();
-        $service_plans = DB::table('service_plan')
+            $service_plans = DB::table('service_plan')
             ->select('id', 'plan', 'title')
             ->get();
-        $currencies = DB::table('currencies')
+            $currencies = DB::table('currencies')
             ->select('id', 'code', 'sign', 'name')
             ->get();
-        $weekdays = DB::table('weekdays')
+            $weekdays = DB::table('weekdays')
             ->select('id', 'day')
             ->get();
-        $activities_list = DB::table('activities')
+            $activities_list = DB::table('activities')
             ->select('id', 'activity')
             ->get();
-        $durations_list = DB::table('durations')
+            $durations_list = DB::table('durations')
             ->select('id', 'duration')
             ->get();
-        $region_list = DB::table('regions')
+            $region_list = DB::table('regions')
             ->select('id', 'region')
             ->get();
-        $data['content'] = 'admin.services.update_services';
-        return view('layouts.content', compact('data'))->with([
-            'validation'        => $validation ?? [],
-            'vendors'           => $result ?? [],
-            'countries'         => $countries_res,
-            'sectors'           => $sectors_res,
-            'categories'        => $categories_res,
-            'types'             => $types_res,
-            'levels'            => $levels_res,
-            'dependencies'      => $dependencies,
-            'service_for'       => $service_for,
-            'currencies'        => $currencies,
-            'service_plans'     => $service_plans,
-            'weekdays'          => $weekdays,
-            'activities_list'   => $activities_list,
-            'durations'         => $durations_list,
-            'regions_list'      => $region_list
-        ]);
+            $data['content'] = 'admin.services.update_services';
+            return view('layouts.content', compact('data'))->with([
+                'validation'        => $validation ?? [],
+                'vendors'           => $result ?? [],
+                'countries'         => $countries_res,
+                'sectors'           => $sectors_res,
+                'categories'        => $categories_res,
+                'types'             => $types_res,
+                'levels'            => $levels_res,
+                'dependencies'      => $dependencies,
+                'service_for'       => $service_for,
+                'currencies'        => $currencies,
+                'service_plans'     => $service_plans,
+                'weekdays'          => $weekdays,
+                'activities_list'   => $activities_list,
+                'durations'         => $durations_list,
+                'regions_list'      => $region_list
+            ]);
     }
 
     public function viewService(Request $request, $id)
@@ -594,9 +590,26 @@ class ServicesController extends MyController
             'bookings' => $bookings
         ]);
     }
+    public function viewPartnerRequests(Request $request, $id){
+        $services= DB::table('become_partner as bp')
+        ->select('bp.*', 'cntri.country', 'pk.title','bp.created_at as request_date','u.name')
+        ->leftJoin('users as u','bp.user_id','=','u.id')
+        ->leftJoin('countries as cntri','cntri.id','=', 'u.country_id')
+        ->leftJoin('packages as pk','pk.id','=','bp.packages_id')
+        ->where([
+            'u.deleted_at' => NULL,
+            'u.status' => '1'
+        ])
+        ->where('bp.id',$id)
+        ->first();
+        $data['content'] = 'admin.adventureRequests.adventureRequestsDetails';
+        return view('layouts.content', compact('data'))->with([
+            'service' => $services,
+        ]);
+
+    }
     public function viewRequests(Request $request, $id)
     {
-        // dd($id);
         $url = asset('public/profile_image/');
         $where = 'srvc.id = ' . $id . ' ';
         $services = DB::table('services as srvc')
@@ -646,14 +659,7 @@ class ServicesController extends MyController
                 ->toArray();
             $services[0]->dependencies = $dependencies ?? [];
             $programs = DB::table('service_programs')
-                ->select([
-                    'id',
-                    'service_id',
-                    'title',
-                    'start_datetime',
-                    'end_datetime',
-                    'description'
-                ])
+                ->select(['id','service_id','title','start_datetime','end_datetime','description'])
                 ->where('service_id', $id)
                 ->get();
             $services[0]->programs = $programs;
@@ -683,7 +689,9 @@ class ServicesController extends MyController
         }
 
 
-        $data['content'] = 'admin.adventureRequests.requests_detail';
+        //$data['content'] = 'admin.services.service_detail';
+
+       $data['content'] = 'admin.adventureRequests.requests_detail';
         return view('layouts.content', compact('data'))->with([
             'service' => $services[0],
         ]);
@@ -804,6 +812,7 @@ class ServicesController extends MyController
             ->select([
                 'srvc.*',
                 'usr.name as provider_name',
+                'usr.id as user_id',
                 DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                 'scat.category as service_category',
                 'ssec.sector as service_sector',
@@ -828,6 +837,7 @@ class ServicesController extends MyController
             ->whereRaw($where)
             ->orderBy('srvc.id', 'DESC')
             ->get();
+           // dd($services);
         $data['content'] = 'admin.services.adventure_request';
         return view('layouts.content', compact('data'))->with(['services' => $services]);
     }

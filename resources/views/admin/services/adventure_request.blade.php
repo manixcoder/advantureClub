@@ -32,7 +32,8 @@ $base_url = URL::to('/');
                         Partner Requests
                     </div>
                     <div class="col-md-6">
-                        <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" <?php
+                        <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" 
+                        <?php
                         if ($segment == 'adventures') {
                             echo 'checked';
                         }
@@ -47,11 +48,13 @@ $base_url = URL::to('/');
                 <thead>
                     <tr>
                         <th>Request Id</th>
+                        <th>User Name</th>
+                        <th>Country</th>
                         <th>Adventure Name</th>
-                        <th>Country/Region</th>
                         <th>Category</th>
-                        <th>Level</th>
-                        <!--<th>Aimed For</th>-->
+                        <th>Aimed For</th>
+                        <th>Created On</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -59,14 +62,36 @@ $base_url = URL::to('/');
                     <?php
                     if (count($services)) {
                         foreach ($services as $key => $service) {
+                           // dd($service);
+                            $serviceFor = DB::table('service_service_for as ssf')
+                            ->leftJoin('service_for as sf','ssf.sfor_id','=','sf.id')
+                            ->where('ssf.service_id', '=', $service->id)->get();
+                           //dd($serviceFor);
                             ?>
                             <tr class = "gradeX">
                                 <td>#{{$service->id}}</td>
-                                <td>{{$service->adventure_name}}</td>
-                                <td>{{$service->country.' / '.$service->region}}</td>
-                                <td>{{$service->service_level}}</td>
-                                <td>{{$service->service_category}}</td>
-                                <!--<td>{{@$service->aimed_for}}</td>-->
+                                <td><a href="{{URL::to('/view-adventure-user/'.$service->user_id)}}" >{{$service->provider_name}}</a></td>
+                                <td>{{ $service->country }}</td>
+                                <td>{{ $service->adventure_name }}</td>
+                                <td>{{ $service->service_category }}</td>
+                                <td>
+                                    @forelse ($serviceFor as $for)
+                                    <li>{{ $for->sfor}}</li>
+                                    @empty
+                                    <p>No Aimed For</p>
+                                    @endforelse
+                                </td>
+                                <td>{{date('d M, Y',strtotime($service->created_at))}}</td>
+                                <td>
+                                    <?php if($service->status =='0'){
+                                    echo "Panding";
+                                }else if($service->status =='1'){
+                                    echo "Accepted";
+                                }else{
+                                  echo "Decline";  
+                                }
+                                ?>
+                                </td>
                                 <td>
                                     <ul class="edit_icon action_icons dashboard_icons">
                                         <li><a href="{{URL::to('/requests/adventures/view/'.$service->id)}}" class="bg-black"><i class="fa fa-eye"></i></a></li>

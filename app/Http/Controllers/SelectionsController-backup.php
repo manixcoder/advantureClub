@@ -150,9 +150,6 @@ class SelectionsController extends MyController
                 break;
             default:
         }
-
-
-        //        $this->prx($result);
         $data['content'] = 'admin.selections.selections';
         return view('layouts.content', compact('data'))
             ->with([

@@ -84,7 +84,11 @@ $userrole = Session::get('userRole');
                     </li>
                 </ul>
                 <ul>
-                    <li><a href="{{URL::to('/countries')}}" class="waves-effect"><img src="{{ asset('/public/images/locations.png')}}">&nbsp;&nbsp;&nbsp;<span>Locations</span></a>
+                    <li>
+                        <a href="{{URL::to('/countries')}}" class="waves-effect">
+                            <img src="{{ asset('/public/images/locations.png')}}">&nbsp;&nbsp;&nbsp;
+                            <span>Country</span>
+                        </a>
                     </li>
                 </ul>
 				
@@ -172,7 +176,7 @@ $userrole = Session::get('userRole');
                     </li>
                 </ul>
                 <ul>
-                    <li><a href="{{URL::to('/countries')}}" class="waves-effect"><img src="{{ asset('/public/images/locations.png')}}">&nbsp;&nbsp;&nbsp;<span>Locations</span></a>
+                    <li><a href="{{URL::to('/countries')}}" class="waves-effect"><img src="{{ asset('/public/images/locations.png')}}">&nbsp;&nbsp;&nbsp;<span>Country</span></a>
                     </li>
                 </ul>
 				
@@ -186,7 +190,11 @@ $userrole = Session::get('userRole');
                 </ul>
 				
 				<ul>
-                    <li><a href="#" class="waves-effect"><img src="{{ asset('/public/images/visit_location.png')}}">&nbsp;&nbsp;&nbsp;<span>Visit Locations</span></a>
+                    <li>
+                        <a href="#" class="waves-effect">
+                            <img src="{{ asset('/public/images/visit_location.png')}}">&nbsp;&nbsp;&nbsp;
+                            <span>Visit Locations</span>
+                        </a>
                     </li>
                 </ul>
 				

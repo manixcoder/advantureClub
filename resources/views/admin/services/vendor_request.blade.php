@@ -53,25 +53,34 @@ $base_url = URL::to('/');
                     <?php
                     if (count($services)) {
                         foreach ($services as $key => $service) {
-                            $service_for = DB::table('service_service_for')->where('service_id', $service->id)->first();
-                            //dd($service_for);
-                            //$role_exist = DB::table('service_for')->where('id', $service->sforid)->get();
-                            //dd($role_exist);
+                           // dd($service);
+                           // $service_for = DB::table('service_service_for')->where('service_id', $service->id)->first();
+                           // dd($service_for);
+                           // $role_exist = DB::table('service_for')->where('id', $service->sforid)->get();
+                           // dd($role_exist);
                     ?>
                             <tr class="gradeX">
-                                <td>#{{$service->id}}</td>
-                                <td>{{$service->adventure_name}}</td>
-                                <td>{{$service->country.' / '.$service->region}}</td>
-                                <td>{{$service->service_level}}</td>
-                                <td>{{$service->service_category}}</td>
-                                <td>Static</td>
-                                <td>Static</td>
-                                <td>Static</td>
+                                <td>#{{ $service->id }}</td>
+                                <td>{{ $service->company_name }}</td>
+                                <td><a href="{{URL::to('/view-adventure-user/'.$service->user_id)}}" >{{ $service->name }}</a></td>
+                                <td>{{ date("d M Y", strtotime($service->request_date))  }}</td>
+                                <td>{{$service->country }}</td>                               
+                                <td>{{$service->license }}</td>
+                                <td>{{$service->title }}</td>
+                                <td>{{$service->is_online }}</td>
                                 <td>
                                     <ul class="edit_icon action_icons dashboard_icons">
-                                        <li><a href="{{URL::to('/service/view/'.$service->id)}}" class="bg-black"><i class="fa fa-eye"></i></a></li>
-                                        <li><a href="{{URL::to('/')}}" onclick="return confirm('Are you sure you want to edit this item ?')" class="bg-green"><i class="fa fa-pencil"></i></a></li>
-                                        <li><a href="{{URL::to('/service/detele/'.$service->id)}}" onclick="return confirm('Are you sure you want to delete this request ?')" class="bg-red"><i class="fa fa-trash"></i></a></li>
+                                        <li>
+                                            <a href="{{URL::to('/partner-requests/view/'.$service->id)}}" class="bg-black"><i class="fa fa-eye"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="{{URL::to('/')}}" onclick="return confirm('Are you sure you want to edit this item ?')" class="bg-green"><i class="fa fa-pencil"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="{{URL::to('/service/detele/'.$service->id)}}" onclick="return confirm('Are you sure you want to delete this request ?')" class="bg-red">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </td>
                             </tr>

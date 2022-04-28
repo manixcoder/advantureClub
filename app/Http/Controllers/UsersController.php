@@ -35,18 +35,20 @@ class UsersController extends MyController
     }
 
     $services= DB::table('become_partner as bp')
-    ->select('*')
+    ->select('bp.*', 'cntri.country', 'pk.title','bp.created_at as request_date','u.name','u.id as user_id')
     ->leftJoin('users as u','bp.user_id','=','u.id')
+    ->leftJoin('countries as cntri','cntri.id','=', 'u.country_id')
+    ->leftJoin('packages as pk','pk.id','=','bp.packages_id')
     ->where([
       'u.deleted_at' => NULL,
       'u.status' => '1'
     ])
     //->whereRaw($where)
-    ->get();
-   // dd($services);
+    ->get(); 
+   //dd($services);
 
 
-    
+    /*
     $services = DB::table('services as srvc')
       ->select([
         'srvc.*',
@@ -74,7 +76,7 @@ class UsersController extends MyController
       ])
       ->whereRaw($where)
       ->orderBy('srvc.id', 'DESC')
-      ->get();
+      ->get(); */
       
       $data['content'] = 'admin.services.vendor_request';
       return view('layouts.content', compact('data'))
