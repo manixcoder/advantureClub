@@ -46,35 +46,71 @@ class LocationController extends Controller
     public function addCountry(Request $request, $id = null)
     {
         if ($request->post()) {
-            $validator = Validator::make($request->all(), [
-                'country' => 'required|unique:countries|min:3|max:50',
-                'code' => 'required|regex:/^\+\d{1,3}$/|unique:countries',
-                'short_name' => 'required|min:2|max:4|unique:countries',
-                'currency' => 'required',
-            ]);
-            if ($validator->fails()) {
-                $validation = array();
-                foreach ($validator->messages()->getMessages() as $field_name => $messages) {
-                    $validation[$field_name] = $messages[0];
-                }
-            } else {
-                $countries = new Countrie();
-                $countries->country = strtoupper($request->country);
-                $countries->code = $request->code;
-                $countries->short_name = strtoupper($request->short_name);
-                $countries->currency = $request->currency;
-                if ($countries->save()) {
-                    $request->session()->flash(
-                        'success',
-                        "Record has been added successfully."
-                    );
+            $country = DB::table('countries')
+                ->where('code', $request->code)
+                ->get();
+            if (count($country) > 0) {
+                if ($files = $request->flag) {
+                    $destinationPath    = public_path('/uploads/flag/');
+                    $flagImage          = date('YmdHis') . "-" . $files->getClientOriginalName();
+                    $path               = $files->move($destinationPath, $flagImage);
+                    $flag               = $insert['photo'] = "uploads/flag/" . "$flagImage";
                 } else {
-                    $request->session()->flash(
-                        'error',
-                        'Something went wrong. Please try again.'
-                    );
+                    $flag               = $insert['photo'] = "";
                 }
-                return redirect()->back();
+                DB::table('countries')
+                    ->where('id', $country[0]->id)
+                    ->update([
+                        'country' => $request->country,
+                        'short_name' => $request->short_name,
+                        'code' => $request->code,
+                        'currency' => $request->currency,
+                        'flag' => $flag,
+                        'created_by'=>Auth::user()->id,
+                        'deleted_at' => NULL
+                    ]);
+                $request->session()->flash('success', "Record has been added successfully.");
+            } else {
+                $validator = Validator::make($request->all(), [
+                    'country'       => 'required|unique:countries|min:3|max:50',
+                    'code'          => 'required|regex:/^\+\d{1,3}$/|unique:countries',
+                    'short_name'    => 'required|min:2|max:4|unique:countries',
+                    'currency'      => 'required',
+                    'flag'          => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $validation = array();
+                    foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                        $validation[$field_name] = $messages[0];
+                    }
+                } else {
+                    if ($files = $request->flag) {
+                        $destinationPath    = public_path('/uploads/flag/');
+                        $flagImage          = date('YmdHis') . "-" . $files->getClientOriginalName();
+                        $path               = $files->move($destinationPath, $flagImage);
+                        $flag               = $insert['photo'] = "$flagImage";
+                    } else {
+                        $flag               = $insert['photo'] = "";
+                    }
+
+
+                    $countries                  = new Countrie();
+                    $countries->country         = strtoupper($request->country);
+                    $countries->code            = $request->code;
+                    $countries->short_name      = strtoupper($request->short_name);
+                    $countries->currency        = $request->currency;
+                    $countries->description     = $request->description;
+                    $countries->created_by      = Auth::user()->id;
+                    $countries->flag            = 'uploads/flag/' . $flag;
+                    if ($countries->save()) {
+                        $request->session()->flash('success', "Record has been added successfully.");
+                    } else {
+                        $request->session()->flash('error', 'Something went wrong. Please try again.');
+                    }
+                    return redirect()->back();
+                }
+                // dd($request->all());
+
             }
         }
         $data['content'] = 'admin.locations.add_country';
@@ -98,9 +134,10 @@ class LocationController extends Controller
     public function getCities(Request $request, $id = null)
     {
         $result = DB::table('cities as ct')
-            ->select(['ct.*', 'cntry.country'])
-            ->leftJoin('countries as cntry', 'cntry.id', '=', 'ct.country_id')
-            ->where(['ct.deleted_at' => NULL])->get();
+            ->select(['ct.*', 're.region'])
+            ->leftJoin('regions as re', 're.id', '=', 'ct.region_id')
+            ->where(['ct.deleted_at' => NULL])
+            ->get();
         $data['content'] = 'admin.locations.city_list';
         return view('layouts.content', compact('data'))
             ->with([
@@ -111,7 +148,9 @@ class LocationController extends Controller
 
     public function addCities(Request $request, $id = null)
     {
+
         if ($request->post()) {
+            //dd($request->all());
             $validator = Validator::make($request->all(), [
                 'country' => 'required|numeric',
                 'city' => 'required|min:2|max:20'
@@ -125,16 +164,18 @@ class LocationController extends Controller
                 $city_exist = DB::table('cities')
                     ->where('city', $request->city)
                     ->where('country_id', $request->country)
+                    ->where('region_id', $request->region)
                     ->get();
                 if (!$city_exist->isEmpty()) {
                     $validation = array('city' => 'This city already created.');
                 } else {
-                    if (DB::table('cities')
-                        ->insert([
-                            'country_id' => $request->country,
-                            'city' => $request->city
-                        ])
-                    ) {
+                    if (DB::table('cities')->insert([
+                        'country_id' => $request->country,
+                        'region_id' => $request->region,
+                        'city' => $request->city,
+                        'created_at' => date("Y-m-d H:i:s"),
+                        'updated_at' => date("Y-m-d H:i:s")
+                    ])) {
                         $request->session()->flash('success', "Record has been added successfully.");
                     } else {
                         $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -143,12 +184,14 @@ class LocationController extends Controller
                 }
             }
         }
-        $countries = DB::table('countries')->where([
-            'deleted_at' => NULL
-        ])
-            ->get();
+        $countries = DB::table('countries')->where(['deleted_at' => NULL])->get();
+        $regions = DB::table('regions')->where(['deleted_at' => NULL])->get();
         $data['content'] = 'admin.locations.add_city';
-        return view('layouts.content', compact('data'))->with(['validation' => $validation ?? [], 'countries' => $countries]);
+        return view('layouts.content', compact('data'))->with([
+            'validation' => $validation ?? [],
+            'countries' => $countries,
+            'regions' => $regions
+        ]);
     }
 
     public function deleteCities($id)
@@ -169,7 +212,10 @@ class LocationController extends Controller
             ->leftJoin('countries as cntry', 'cntry.id', '=', 'rg.country_id')
             ->where(['rg.deleted_at' => NULL])->get();
         $data['content'] = 'admin.locations.region_list';
-        return view('layouts.content', compact('data'))->with(['validation' => $validation ?? [], 'regions' => $result]);
+        return view('layouts.content', compact('data'))->with([
+            'validation' => $validation ?? [],
+            'regions' => $result
+        ]);
     }
 
     public function addRegions(Request $request, $id = null)
@@ -196,8 +242,10 @@ class LocationController extends Controller
                 } else {
                     if (DB::table('regions')
                         ->insert([
-                            'country_id' => $request->country,
-                            'region' => $request->region
+                            'country_id'    => $request->country,
+                            'region'        => $request->region,
+                            'created_at'    => date('Y-m-d H:i:s'),
+                            'updated_at'    => date('Y-m-d H:i:s')
                         ])
                     ) {
                         $request->session()->flash('success', "Record has been added successfully.");

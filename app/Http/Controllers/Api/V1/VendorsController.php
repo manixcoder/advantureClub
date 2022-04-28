@@ -37,7 +37,11 @@ class VendorsController extends MyController
         return $this->sendError('Data not found.', [], 404);
     }
 
-    public function addPackage(Request $request)
+    public function getCurrencies(Request $request)
     {
+        $result = DB::table('currencies')
+            ->select(['*'])
+            ->get();
+            return $this->sendResponse(config('constants.DATA_FOUND'), $result, 200);
     }
 }

@@ -130,7 +130,8 @@ $users = DB::table('users')->where('id', $sessionId)->first();
                 </table>
             </div>
 
-            <!--<div class="col-md-3 col-xl-3">
+            <!--
+            <div class="col-md-3 col-xl-3">
               <a href="{{url::to('countries')}}">
                  <div class="mini-stat clearfix bg-info bx-shadow">
                     <span class="mini-stat-icon"><i class="fas fa-sitemap"></i></span>
@@ -172,7 +173,7 @@ $users = DB::table('users')->where('id', $sessionId)->first();
                     </div>
                     <div class="tiles-progress">
                        <div class="m-t-20">
-                          <h5 class="text-uppercase text-white m-0">Adventure  <span class="pull-right">View</span></h5>
+                          <h5 class="text-uppercase text-white m-0">Adventure<span class="pull-right">View</span></h5>
                        </div>
                     </div>
                  </div>
@@ -188,7 +189,7 @@ $users = DB::table('users')->where('id', $sessionId)->first();
                     </div>
                     <div class="tiles-progress">
                        <div class="m-t-20">
-                          <h5 class="text-uppercase text-white m-0">Products <span class="pull-right">View</span></h5>
+                          <h5 class="text-uppercase text-white m-0">Products<span class="pull-right">View</span></h5>
                        </div>
                     </div>
                  </div>
@@ -211,7 +212,8 @@ $users = DB::table('users')->where('id', $sessionId)->first();
                        </div>
                     </div>
                  </a>
-              </div> -->
+              </div> 
+          -->
 
 
 

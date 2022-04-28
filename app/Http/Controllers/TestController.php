@@ -282,7 +282,7 @@ class ServicesController extends MyController {
                                             'service_id' => $service_id,
                                             'is_default' => $key == 0 ? 1 : 0,
                                             'image_url' => $filepath,
-                                            'thumbnail' => '/services/thumbs/' . $filename
+                                            'thumbnail' => 'services/thumbs/' . $filename
                                         );
                                     }
                                 }
@@ -442,10 +442,21 @@ class ServicesController extends MyController {
         $url = asset('public/profile_image/');
         $where = 'srvc.id = ' . $id . ' ';
         $services = DB::table('services as srvc')
-                ->select(['srvc.*', 'srvc.id as service_id', 'usr.name as provider_name', DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
-                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector',
-                    'styp.type as service_type', 'slvl.level as service_level', 'cntri.country',
-                    'rgn.region', 'curr.code as currency', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 'slike.is_like'])
+                ->select([
+                    'srvc.*', 
+                    'srvc.id as service_id', 
+                    'usr.name as provider_name', 
+                    DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
+                    'scat.category as service_category', 
+                    'ssec.sector as service_sector',
+                    'styp.type as service_type', 
+                    'slvl.level as service_level',
+                     'cntri.country',
+                    'rgn.region', 'curr.code as currency', 
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 
+                    'slike.is_like'
+                    ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
@@ -1013,7 +1024,7 @@ class ServicesController extends MyController {
                                             'service_id' => $service_id,
                                             'is_default' => $key == 0 ? 1 : 0,
                                             'image_url' => $filepath,
-                                            'thumbnail' => '/services/thumbs/' . $filename
+                                            'thumbnail' => 'services/thumbs/' . $filename
                                         );
                                     }
                                 }
@@ -1193,10 +1204,10 @@ class ServicesController extends MyController {
                     'slvl.level as service_level',
                      'cntri.country',
                     'rgn.region',
-                     'curr.code as currency',
-                      DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
-                       'slike.is_like'
-                       ])
+                    'curr.code as currency',
+                    DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
+                    'slike.is_like'
+                    ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')

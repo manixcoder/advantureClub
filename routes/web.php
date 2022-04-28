@@ -40,7 +40,7 @@ Route::get('home', function () {
 });
 Route::get('dashboard', 'DashboardController@dashboard');
 Route::post('update-profile-image/{id}', 'HomeController@update_profile_image');
-Route::post('update-user-profile-image','HomeController@update_user_profile_image');
+Route::post('update-user-profile-image', 'HomeController@update_user_profile_image');
 
 Route::get('/forgot-password', 'ForgotPasswordController@getEmail');
 Route::post('/forgot-password', 'ForgotPasswordController@postEmail');
@@ -149,6 +149,9 @@ Route::get('requests/adventures/{id?}', 'ServicesController@adventures')->where(
 Route::get('requests/adventures/view/{id?}', 'ServicesController@viewRequests')->where(['id' => '[0-9]+']);
 
 
+Route::get('partner-requests/view/{id?}', 'ServicesController@viewPartnerRequests')->where(['id' => '[0-9]+']);
+
+
 /*Service Offer starts*/
 Route::get('list-service-offers/{id?}', 'ServiceOffersController@listServiceOffers');
 Route::any('add-service-offer/{id?}', 'ServiceOffersController@addServiceOffers');
@@ -198,3 +201,4 @@ Route::any('update-pkg-status/{id}', 'PackagesController@update_pkg_status');
 Route::get('sub-packages/delete/{id}', 'PackagesController@delete_sub_pkg')->where(['id' => '[0-9]+']);
 
 Route::post('/get_regions/{id}', 'ServicesController@getRegions')->where(['id' => '[0-9]+']);
+Route::post('/get_city/{id}', 'ServicesController@getCity')->where(['id' => '[0-9]+']);

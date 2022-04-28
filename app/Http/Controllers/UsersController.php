@@ -29,11 +29,26 @@ class UsersController extends MyController
 
   public function vendors(Request $request, $id = null)
   {
-    $where = ' 1 ';
+    $where = ' 19 ';
     if ($id) {
       $where .= ' && srvc.id = ' . $id;
     }
-    //DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")
+
+    $services= DB::table('become_partner as bp')
+    ->select('bp.*', 'cntri.country', 'pk.title','bp.created_at as request_date','u.name','u.id as user_id')
+    ->leftJoin('users as u','bp.user_id','=','u.id')
+    ->leftJoin('countries as cntri','cntri.id','=', 'u.country_id')
+    ->leftJoin('packages as pk','pk.id','=','bp.packages_id')
+    ->where([
+      'u.deleted_at' => NULL,
+      'u.status' => '1'
+    ])
+    //->whereRaw($where)
+    ->get(); 
+   //dd($services);
+
+
+    /*
     $services = DB::table('services as srvc')
       ->select([
         'srvc.*',
@@ -61,12 +76,10 @@ class UsersController extends MyController
       ])
       ->whereRaw($where)
       ->orderBy('srvc.id', 'DESC')
-      ->get();
-    // if (!$services[0]->id) {
-    //   $services = [];
-    // }
-    $data['content'] = 'admin.services.vendor_request';
-    return view('layouts.content', compact('data'))
+      ->get(); */
+      
+      $data['content'] = 'admin.services.vendor_request';
+      return view('layouts.content', compact('data'))
       ->with([
         'services' => $services
       ]);

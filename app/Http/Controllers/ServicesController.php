@@ -289,7 +289,7 @@ class ServicesController extends MyController
                                             'service_id' => $service_id,
                                             'is_default' => $key == 0 ? 1 : 0,
                                             'image_url' => $filepath,
-                                            'thumbnail' => '/services/thumbs/' . $filename
+                                            'thumbnail' => 'services/thumbs/' . $filename
                                         );
                                     }
                                 }
@@ -388,87 +388,83 @@ class ServicesController extends MyController
         $vendors = User::where(['deleted_at' => NULL])
             ->whereIn('users_role', [1, 2])
             ->get();
-        //dd($vendors);
-        if (!empty($vendors)) {
-            foreach ($vendors as $vendor) {
-                $result[] = $vendor->attributesToArray();
+            if (!empty($vendors)) {
+                foreach ($vendors as $vendor) {
+                    $result[] = $vendor->attributesToArray();
+                }
             }
-        }
-        $countries = Countrie::where(['deleted_at' => NULL])
-            ->get();
-        if (!empty($countries)) {
-            foreach ($countries as $countrie) {
-                $countries_res[] = $countrie->attributesToArray();
+            $countries = Countrie::where(['deleted_at' => NULL])->get();
+            if (!empty($countries)) {
+                foreach ($countries as $countrie) {
+                    $countries_res[] = $countrie->attributesToArray();
+                }
             }
-        }
-        $sectors = Service_sector::get();
-        if (!empty($sectors)) {
-            foreach ($sectors as $sector) {
-                $sectors_res[] = $sector->attributesToArray();
+            $sectors = Service_sector::get();
+            if (!empty($sectors)) {
+                foreach ($sectors as $sector) {
+                    $sectors_res[] = $sector->attributesToArray();
+                }
             }
-        }
-        $categories = Service_categorie::get();
-        if (!empty($categories)) {
-            foreach ($categories as $categorie) {
-                $categories_res[] = $categorie->attributesToArray();
+            $categories = Service_categorie::get();
+            if (!empty($categories)) {
+                foreach ($categories as $categorie) {
+                    $categories_res[] = $categorie->attributesToArray();
+                }
             }
-        }
-        $types = Service_type::get();
-        if (!empty($types)) {
-            foreach ($types as $type) {
-                $types_res[] = $type->attributesToArray();
+            $types = Service_type::get();
+            if (!empty($types)) {
+                foreach ($types as $type) {
+                    $types_res[] = $type->attributesToArray();
+                }
             }
-        }
-        $levels = Service_level::get();
-        if (!empty($levels)) {
-            foreach ($levels as $level) {
-                $levels_res[] = $level->attributesToArray();
+            $levels = Service_level::get();
+            if (!empty($levels)) {
+                foreach ($levels as $level) {
+                    $levels_res[] = $level->attributesToArray();
+                }
             }
-        }
-
-
-        $dependencies = DB::table('dependency')
+            $dependencies = DB::table('dependency')
             ->select('id', 'dependency_name')
             ->get();
-        $service_for = DB::table('service_for')
+            $service_for = DB::table('service_for')
             ->select('id', 'sfor')
             ->get();
-        $service_plans = DB::table('service_plan')
+            $service_plans = DB::table('service_plan')
             ->select('id', 'plan', 'title')
             ->get();
-        $currencies = DB::table('currencies')
+            $currencies = DB::table('currencies')
             ->select('id', 'code', 'sign', 'name')
             ->get();
-        $weekdays = DB::table('weekdays')
+            $weekdays = DB::table('weekdays')
             ->select('id', 'day')
             ->get();
-        $activities_list = DB::table('activities')
+            $activities_list = DB::table('activities')
             ->select('id', 'activity')
             ->get();
-        $durations_list = DB::table('durations')
+            $durations_list = DB::table('durations')
             ->select('id', 'duration')
             ->get();
-        $region_list = DB::table('regions')
+            $region_list = DB::table('regions')
             ->select('id', 'region')
             ->get();
-        $data['content'] = 'admin.services.update_services';
-        return view('layouts.content', compact('data'))->with([
-            'validation'        => $validation ?? [],
-            'vendors'           => $result ?? [],
-            'countries'         => $countries_res,
-            'sectors'           => $sectors_res,
-            'categories'        => $categories_res,
-            'types'             => $types_res,
-            'levels'            => $levels_res,
-            'dependencies'      => $dependencies,
-            'service_for'       => $service_for,
-            'currencies'        => $currencies,
-            'service_plans'     => $service_plans,
-            'weekdays'          => $weekdays,
-            'activities_list'   => $activities_list,
-            'durations'         => $durations_list,
-            'regions_list'      => $region_list
-        ]);
+            $data['content'] = 'admin.services.update_services';
+            return view('layouts.content', compact('data'))->with([
+                'validation'        => $validation ?? [],
+                'vendors'           => $result ?? [],
+                'countries'         => $countries_res,
+                'sectors'           => $sectors_res,
+                'categories'        => $categories_res,
+                'types'             => $types_res,
+                'levels'            => $levels_res,
+                'dependencies'      => $dependencies,
+                'service_for'       => $service_for,
+                'currencies'        => $currencies,
+                'service_plans'     => $service_plans,
+                'weekdays'          => $weekdays,
+                'activities_list'   => $activities_list,
+                'durations'         => $durations_list,
+                'regions_list'      => $region_list
+            ]);
     }
 
     public function viewService(Request $request, $id)
@@ -594,99 +590,111 @@ class ServicesController extends MyController
             'bookings' => $bookings
         ]);
     }
+    public function viewPartnerRequests(Request $request, $id){
+        $services= DB::table('become_partner as bp')
+        ->select('bp.*', 'cntri.country', 'pk.title','bp.created_at as request_date','u.name')
+        ->leftJoin('users as u','bp.user_id','=','u.id')
+        ->leftJoin('countries as cntri','cntri.id','=', 'u.country_id')
+        ->leftJoin('packages as pk','pk.id','=','bp.packages_id')
+        ->where([
+            'u.deleted_at' => NULL,
+            'u.status' => '1'
+        ])
+        ->where('bp.id',$id)
+        ->first();
+        $data['content'] = 'admin.adventureRequests.adventureRequestsDetails';
+        return view('layouts.content', compact('data'))->with([
+            'service' => $services,
+        ]);
+
+    }
     public function viewRequests(Request $request, $id)
     {
-       // dd($id);
-       $url = asset('public/profile_image/');
-       $where = 'srvc.id = ' . $id . ' ';
-       $services = DB::table('services as srvc')
-           ->select([
-               'srvc.*',
-               'srvc.id as service_id',
-               'usr.name as provider_name',
-               DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
-               DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
-               'scat.category as service_category',
-               'ssec.sector as service_sector',
-               'styp.type as service_type',
-               'slvl.level as service_level',
-               'cntri.country',
-               'rgn.region',
-               'curr.code as currency',
-               DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
-               'slike.is_like'
-           ])
-           ->join('users as usr', 'usr.id', '=', 'srvc.owner')
-           ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-           ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
-           ->leftJoin('service_categories as scat', 'scat.id', '=', 'srvc.service_category')
-           ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
-           ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
-           ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-           ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
-           ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
-           ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
-           ->leftJoin('service_likes as slike', 'slike.service_id', '=', 'srvc.id')
-           ->groupBy('ssfor.service_id')
-           ->whereRaw($where)
-           ->get();
-       if (!$services->isEmpty()) {
-           $activities = DB::table('service_activities as s_act')
-               ->select(['act.id', 'act.activity'])
-               ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
-               ->where('s_act.service_id', $id)
-               ->get()
-               ->toArray();
-           $services[0]->included_activities = $activities ?? [];
-           $dependencies = DB::table('service_dependencies as s_dep')
-               ->select(['dep.id', 'dep.dependency_name'])
-               ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
-               ->where('s_dep.service_id', $id)
-               ->get()
-               ->toArray();
-           $services[0]->dependencies = $dependencies ?? [];
-           $programs = DB::table('service_programs')
-               ->select([
-                   'id',
-                   'service_id',
-                   'title',
-                   'start_datetime',
-                   'end_datetime',
-                   'description'
-               ])
-               ->where('service_id', $id)
-               ->get();
-           $services[0]->programs = $programs;
-           if ($services[0]->service_plan == 1) {
-               $availability = DB::table('service_plan_day_date as spdd')
-                   ->select(['spdd.id', 'wkd.day'])
-                   ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
-                   ->where('spdd.service_id', $id)
-                   ->get()
-                   ->toArray();
-               $services[0]->availability = $availability ?? [];
-           } else if ($services[0]->service_plan == 2) {
-               $availability = DB::table('service_plan_day_date as spdd')
-                   ->select(['spdd.id', 'spdd.date'])
-                   ->where('spdd.service_id', $id)
-                   ->get()
-                   ->toArray();
-               $services[0]->availability = $availability ?? [];
-           }
-           $star_ratings_res = DB::table('service_reviews')
-               ->select(['service_id', DB::raw("AVG(star) AS stars"), DB::raw("COUNT(user_id) AS reviewd_by")])
-               ->where('service_id', $id)
-               ->groupBy('service_id')
-               ->first();
-           $services[0]->stars = $star_ratings_res ? number_format($star_ratings_res->stars, 2, '.', '') : 0;
-           $services[0]->reviewd_by = $star_ratings_res ? $star_ratings_res->reviewd_by : 0;
-       }
+        $url = asset('public/profile_image/');
+        $where = 'srvc.id = ' . $id . ' ';
+        $services = DB::table('services as srvc')
+            ->select([
+                'srvc.*',
+                'srvc.id as service_id',
+                'usr.name as provider_name',
+                DB::raw("CONCAT('" . $url . "/',usr.profile_image) AS provider_profile"),
+                DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                'scat.category as service_category',
+                'ssec.sector as service_sector',
+                'styp.type as service_type',
+                'slvl.level as service_level',
+                'cntri.country',
+                'rgn.region',
+                'curr.code as currency',
+                DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
+                'slike.is_like'
+            ])
+            ->join('users as usr', 'usr.id', '=', 'srvc.owner')
+            ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
+            ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
+            ->leftJoin('service_categories as scat', 'scat.id', '=', 'srvc.service_category')
+            ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
+            ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
+            ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
+            ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+            ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
+            ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
+            ->leftJoin('service_likes as slike', 'slike.service_id', '=', 'srvc.id')
+            ->groupBy('ssfor.service_id')
+            ->whereRaw($where)
+            ->get();
+        if (!$services->isEmpty()) {
+            $activities = DB::table('service_activities as s_act')
+                ->select(['act.id', 'act.activity'])
+                ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
+                ->where('s_act.service_id', $id)
+                ->get()
+                ->toArray();
+            $services[0]->included_activities = $activities ?? [];
+            $dependencies = DB::table('service_dependencies as s_dep')
+                ->select(['dep.id', 'dep.dependency_name'])
+                ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
+                ->where('s_dep.service_id', $id)
+                ->get()
+                ->toArray();
+            $services[0]->dependencies = $dependencies ?? [];
+            $programs = DB::table('service_programs')
+                ->select(['id','service_id','title','start_datetime','end_datetime','description'])
+                ->where('service_id', $id)
+                ->get();
+            $services[0]->programs = $programs;
+            if ($services[0]->service_plan == 1) {
+                $availability = DB::table('service_plan_day_date as spdd')
+                    ->select(['spdd.id', 'wkd.day'])
+                    ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
+                    ->where('spdd.service_id', $id)
+                    ->get()
+                    ->toArray();
+                $services[0]->availability = $availability ?? [];
+            } else if ($services[0]->service_plan == 2) {
+                $availability = DB::table('service_plan_day_date as spdd')
+                    ->select(['spdd.id', 'spdd.date'])
+                    ->where('spdd.service_id', $id)
+                    ->get()
+                    ->toArray();
+                $services[0]->availability = $availability ?? [];
+            }
+            $star_ratings_res = DB::table('service_reviews')
+                ->select(['service_id', DB::raw("AVG(star) AS stars"), DB::raw("COUNT(user_id) AS reviewd_by")])
+                ->where('service_id', $id)
+                ->groupBy('service_id')
+                ->first();
+            $services[0]->stars = $star_ratings_res ? number_format($star_ratings_res->stars, 2, '.', '') : 0;
+            $services[0]->reviewd_by = $star_ratings_res ? $star_ratings_res->reviewd_by : 0;
+        }
 
-       
+
+        //$data['content'] = 'admin.services.service_detail';
+
        $data['content'] = 'admin.adventureRequests.requests_detail';
-       return view('layouts.content', compact('data'))->with([
-           'service' => $services[0],
-       ]);
+        return view('layouts.content', compact('data'))->with([
+            'service' => $services[0],
+        ]);
     }
 
     public function deleteService(Request $request, $id)
@@ -804,6 +812,7 @@ class ServicesController extends MyController
             ->select([
                 'srvc.*',
                 'usr.name as provider_name',
+                'usr.id as user_id',
                 DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
                 'scat.category as service_category',
                 'ssec.sector as service_sector',
@@ -828,6 +837,7 @@ class ServicesController extends MyController
             ->whereRaw($where)
             ->orderBy('srvc.id', 'DESC')
             ->get();
+           // dd($services);
         $data['content'] = 'admin.services.adventure_request';
         return view('layouts.content', compact('data'))->with(['services' => $services]);
     }
@@ -846,6 +856,7 @@ class ServicesController extends MyController
             ->where('rg.country_id', $id)
             ->orderBy('rg.region', 'ASC')
             ->get();
+        // dd($regions);
         $options = '';
         if (!$regions->isEmpty()) {
             $options .= '<option value="">Select</option>';
@@ -855,6 +866,33 @@ class ServicesController extends MyController
                     $sel = 'selected';
                 }
                 $options .= '<option value="' . $reg->region_id . '" ' . $sel . '>' . $reg->region . '</option>';
+            }
+        } else {
+            $options = '<option value="">No record found.</option>';
+        }
+        echo $options;
+    }
+
+    public function getCity(Request $request, $id)
+    {
+       // dd($request->all());
+        $result = array();
+        $regions = DB::table('cities as rg')
+            ->select('rg.*')
+            ->where('rg.region_id', $id)
+            ->orderBy('rg.city', 'ASC')
+            ->get();
+        // dd($regions);
+        $options = '';
+        if (!$regions->isEmpty()) {
+            $options .= '<option value="">Select</option>';
+            foreach ($regions as $reg) {
+               // dd($reg);
+                $sel = '';
+                if ($request->count && $request->count == $reg->id) {
+                    $sel = 'selected';
+                }
+                $options .= '<option value="' . $reg->id . '" ' . $sel . '>' . $reg->city . '</option>';
             }
         } else {
             $options = '<option value="">No record found.</option>';

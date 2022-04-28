@@ -201,7 +201,7 @@ class UsersController extends MyController
                 }
                 $otp_model->otp = $this->getRandomNumber();
                 if ($field == 'mobile') {
-                    $otp_model->mobile_code = $request->mobile_code;
+                    $otp_model->mobile_code ="+". $request->mobile_code;
                     $otp_model->mobile = $user_mobile;
                 } else {
                     $otp_model->otp_on = 2;
@@ -911,7 +911,7 @@ class UsersController extends MyController
             }
             $data = User::find($id);
             if ($request->file('profile_picture')) {
-                $data->profile_image = '/profile_image/' . $fileName;
+                $data->profile_image = 'profile_image/' . $fileName;
             }
             $data->save();
             return $this->sendResponse('Image uploaded', 200);
@@ -1080,43 +1080,36 @@ class UsersController extends MyController
                 $cost = $packageData->cost;
                 $day = $packageData->days - 1;
                 $end_date = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
-                if ($request->payment_amount == '0') {
-                    if ($partnerData->is_free_used == '0') {
-                        $is_free_used = '1';
-                        $updatetData = array(
-                            'packages_id' => $request->packages_id,
-                            'start_date' => date("Y-m-d H:i:s"),
-                            'end_date' => $end_date,
-                            'is_free_used' => $is_free_used
-                        );
-                        $like = DB::table('become_partner')
-                            ->where('user_id', $request->user_id)
-                            ->update($updatetData);
+                if ($request->payment_amount > 0) {
+                    $updatetData = array(
+                        'packages_id' => $request->packages_id,
+                        'start_date' => date("Y-m-d H:i:s"),
+                        'end_date' => $end_date
+                    );
+                    $like = DB::table('become_partner')
+                        ->where('user_id', $request->user_id)
+                        ->update($updatetData);
 
-                        $history = DB::table('subscription_plan_history')
-                            ->insert([
-                                'user_id' => $request->user_id,
-                                'package_id' => $request->packages_id,
-                                'order_id' => $request->order_id,
-                                'payment_type' => $request->payment_type,
-                                'payment_status' => $request->payment_status,
-                                'payment_amount' => $request->payment_amount,
-                                'created_at' => date("Y-m-d H:i:s"),
-                                'updated_at' => date("Y-m-d H:i:s")
-                            ]);
+                    $history = DB::table('subscription_plan_history')
+                        ->insert([
+                            'user_id' => $request->user_id,
+                            'package_id' => $request->packages_id,
+                            'order_id' => $request->order_id,
+                            'payment_type' => $request->payment_type,
+                            'payment_status' => $request->payment_status,
+                            'payment_amount' => $request->payment_amount,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'updated_at' => date("Y-m-d H:i:s")
+                        ]);
 
-                        $like = DB::table('become_partner')
-                            ->where('user_id', $request->user_id)
-                            ->get();
+                    $like = DB::table('become_partner')
+                        ->where('user_id', $request->user_id)
+                        ->get();
 
-                        if ($like) {
-                            return $this->sendResponse('Data updated Successfully', $like, 200);
-                        } else {
-                            return $this->sendResponse('Somethingwent wrong', [], 404);
-                        }
+                    if ($like) {
+                        return $this->sendResponse('Data updated Successfully', $like, 200);
                     } else {
-
-                        return $this->sendResponse('You allready used free subscription', [], 200);
+                        return $this->sendResponse('Somethingwent wrong', [], 404);
                     }
                 } else {
                     DB::table('subscription_plan_history')
@@ -1140,11 +1133,46 @@ class UsersController extends MyController
                     }
                 }
             } else {
-                return $this->sendResponse(
-                    'Payment status 0',
-                    [],
-                    200
+                $partnerData = DB::table('become_partner')
+                    ->where('user_id', $request->user_id)
+                    ->first();
+                $packageData = DB::table('packages')
+                    ->where('id', $request->packages_id)
+                    ->orderBy('id', 'DESC')
+                    ->first();
+                $cost = $packageData->cost;
+                $day = $packageData->days - 1;
+                $end_date = date('Y-m-d H:i:s', strtotime("+" . $day . " day", strtotime(date("Y-m-d H:i:s"))));
+
+
+                $history = DB::table('subscription_plan_history')
+                    ->insert([
+                        'user_id' => $request->user_id,
+                        'package_id' => $request->packages_id,
+                        'order_id' => $request->order_id,
+                        'payment_type' => $request->payment_type,
+                        'payment_status' => $request->payment_status,
+                        'payment_amount' => $request->payment_amount,
+                        'created_at' => date("Y-m-d H:i:s"),
+                        'updated_at' => date("Y-m-d H:i:s")
+                    ]);
+                if ($partnerData->is_free_used == '1') {
+                    return $this->sendResponse('Record inserted - You allready used free subscription', [], 200);
+                }
+
+
+                $updatetData = array(
+                    'packages_id' => $request->packages_id,
+                    'start_date' => date("Y-m-d H:i:s"),
+                    'end_date' => $end_date,
+                    'is_free_used' => '1'
                 );
+                $like = DB::table('become_partner')
+                    ->where('user_id', $request->user_id)
+                    ->update($updatetData);
+
+
+                return $this->sendResponse('Payment status 0', [], 200);
             }
         } catch (\Exception $e) {
             return $this->sendResponse($e->getMessage(), [], 404);

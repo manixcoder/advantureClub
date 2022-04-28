@@ -1,8 +1,9 @@
 <style type="text/css">
-   .colerclass{
+   .colerclass {
       color: #317eeb;
    }
-   .menustyle{
+
+   .menustyle {
       margin: 10px;
    }
 </style>
@@ -12,12 +13,12 @@
       <!-- Page-Title -->
       <div class="row">
          <div class="col-sm-12">
-         <!-- echo"<pre>";{{print_r($editdata)}};exit; -->
-            @if($editdata->users_role == 3) 
-             
+            <!-- echo"<pre>";{{print_r($editdata)}};exit; -->
+            @if($editdata->users_role == 3)
+
             <!--<h4 class="pull-left page-title"><a href="#" onclick="window.history.go(-1); return false;">Users </a>  > #{{$editdata->id}}</h4>-->
-            <h4 class="pull-left page-title"><a href="{{URL::to('list-adventure-users')}}" >Users </a>  > #{{$editdata->id}}</h4>
-            
+            <h4 class="pull-left page-title"><a href="{{URL::to('list-adventure-users')}}">Users </a> > #{{$editdata->id}}</h4>
+
             <ol class="breadcrumb pull-right">
                <li><a href="{{ URL::to('home') }}">Home</a></li>
                <li class="active">View User</li>
@@ -34,7 +35,7 @@
 
       <div class="content partner_details">
          <div class="container-fluid">
-               
+
             <div class="partners">
                <div class="row">
                   <div class="col-md-6">
@@ -71,9 +72,9 @@
                            <p>Profile Pic :</p>
                            <h3>
                               @if($editdata->profile_image!='')
-                                 <img src="{{ asset('public/profile_image/').'/'.$editdata->profile_image }}" alt="image" width="100" height="100">
+                              <img src="{{ asset('public/profile_image/').'/'.$editdata->profile_image }}" alt="image" width="100" height="100">
                               @else
-                                 <img src="{{ asset('public/images/profile.png') }}" alt="image" width="100" height="100">
+                              <img src="{{ asset('public/images/profile.png') }}" alt="image" width="100" height="100">
                               @endif
                            </h3>
                         </li>
@@ -88,11 +89,11 @@
                         </li>
                         <li>
                            <p>Weight in Kg :</p>
-                           <h3>{{$editdata->Weight}}</h3>                     
+                           <h3>{{$editdata->Weight}}</h3>
                         </li>
                         <li>
                            <p>Height in CM :</p>
-                           <h3>{{$editdata->Height}}</h3>                     
+                           <h3>{{$editdata->Height}}</h3>
                         </li>
                         <li>
                            <p>Status :</p>
@@ -100,11 +101,11 @@
                               <label class="switch" for="checkbox">
                                  <input type="checkbox" id="checkbox" />
                                  @if($editdata->status==1)
-                                    <span>Active &nbsp;&nbsp;<img src="{{ asset('/public/images/ac_active.png')}}"></span>
+                                 <span>Active &nbsp;&nbsp;<img src="{{ asset('/public/images/ac_active.png')}}"></span>
                                  @else
-                                    <span>Inactive &nbsp;&nbsp;<img src="{{ asset('/public/images/ac_inactive.png')}}"></span>
-                                    @endif
-                                 
+                                 <span>Inactive &nbsp;&nbsp;<img src="{{ asset('/public/images/ac_inactive.png')}}"></span>
+                                 @endif
+
                               </label>
                            </h3>
                         </li>
@@ -114,5 +115,5 @@
             </div>
          </div>
       </div>
-      </div><!-- container -->
-   </div>
+   </div><!-- container -->
+</div>

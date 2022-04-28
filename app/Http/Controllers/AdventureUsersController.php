@@ -52,20 +52,22 @@ class AdventureUsersController extends MyController
 
     public function add_adventure_user(Request $request)
     {
-        //echo"<pre>";print_r($request->all());exit;
+       // echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
                 'name'              => 'required|min:3|max:50|unique:users',
                 'mobile_code'       => 'required|numeric',
-                'mobile'            => 'required|numeric|digits:10|unique:users',
+                'mobile'            => 'required|min:3|max:15|unique:users',
                 'email'             => 'required|email:filter|unique:users',
                 'country'           => 'required|numeric',
                 'region'            => 'required|numeric',
+                'cities'            => 'required|numeric',
                 'gender'            => 'required',
                 'dob'               => 'required|date_format:Y-m-d',
                 'health_condition'  => 'required',
                 'height'            => 'required',
                 'weight'            => 'required',
+                'password'            => 'required',
                 'status'            => 'required|numeric|min:1|max:2',
                 'image'             => 'required'
             ]);
@@ -83,11 +85,13 @@ class AdventureUsersController extends MyController
                     'mobile_code'       => $request->mobile_code,
                     'status'            => ($request->status == 2) ? '0' : '1',
                     'country_id'        => $request->country,
-                    'city_id'           => $request->region,
+                    'region_id'         => $request->region,
+                    'city_id'           => $request->cities,
                     'gender'            => $request->gender,
                     'dob'               => date('Y-m-d', strtotime($request->dob)),
                     'weight'            => $request->weight,
                     'height'            => $request->height,
+                    'password'          => $request->height,
                     'health_conditions' => implode(',', (array) $request->health_condition),
                     'users_role'        => 3,
                 );
@@ -112,7 +116,12 @@ class AdventureUsersController extends MyController
                         }
                     }
                     Session::flash('success', 'User has been successfully.');
-                    return back();
+                    return redirect('/list-adventure-users')->with(array(
+                        'status' => 'success',
+                        'message' => 'User has been successfully.!'
+                    ));
+
+                    // return back();
                 }
             }
         }
