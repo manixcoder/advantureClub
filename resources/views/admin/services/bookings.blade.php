@@ -17,12 +17,16 @@ $base_url = URL::to('/');
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-6">
-                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="2" <?php if ($segment == 2) { echo 'checked'; } ?> onchange="return window.location.href = '<?php echo $base_url . '/services/2' ?>'">
+                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="2" <?php if ($segment == 2) {
+                                                                                                                                            echo 'checked';
+                                                                                                                                        } ?> onchange="return window.location.href = '<?php echo $base_url . '/services/2' ?>'">
                             Client Requests
                         </div>
                         <div class="col-md-6">
-                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" <?php  if ($segment == 1) { echo 'checked'; } ?> onchange="return window.location.href = '<?php echo $base_url . '/services/1' ?>'">
-                            My Services 
+                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" <?php if ($segment == 1) {
+                                                                                                                                            echo 'checked';
+                                                                                                                                        } ?> onchange="return window.location.href = '<?php echo $base_url . '/services/1' ?>'">
+                            Services
                         </div>
                     </div>
                 </div>
@@ -34,7 +38,7 @@ $base_url = URL::to('/');
                             <th>Booking ID</th>
                             <th>Adventure</th>
                             <th>User Name</th>
-                            <th>Nationality</th>
+                            <th>Country</th>
                             <th>Registrations</th>
                             <th>Total Cost</th>
                             <th>Status</th>
@@ -71,6 +75,7 @@ $base_url = URL::to('/');
                                                 <li><a href="{{URL::to('booking/accept/'.$bkng->booking_id)}}" onclick="return confirm('Are you sure you want to accept this request ?')" style="background: #249E00;"><i class="fa fa-check"></i></a></li>
                                                 <li><a href="{{URL::to('booking/decline/'.$bkng->booking_id)}}" onclick="return confirm('Are you sure you want to decline this request ?')" style="background: #FF4444;"><i class="fa fa-times"></i></a></li>
                                             <?php } ?>
+                                            <li><a href="#" style="background: #FF4444;"><i class="fa fa-trash" aria-hidden="true"></i></a></li>
                                         </ul>
                                     </td>
                                 </tr>

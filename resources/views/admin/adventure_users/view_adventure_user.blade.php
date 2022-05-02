@@ -111,6 +111,9 @@
                                     <img src="{{ asset('public/images/avatar-5.png') }}" alt="image" width="100" height="100">
                                     @endif
 
+                                    <div class="col-md-6 chatwithhime">
+                                        <a href="">Chat with him</a>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -157,6 +160,11 @@
                                         <img src="{{ asset('/public/images/button_notify.png')}}">
                                         Notify
                                     </div>
+
+                                    <a href="{{URL::to('list-adventure-users')}}" id="delete" class="delete">
+                                        <img src="{{ asset('/public/images/button_notify.png')}}">
+                                        Delete
+                                    </a>
                                 </li>
 
 

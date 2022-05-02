@@ -30,7 +30,7 @@ $base_url = URL::to('/');
                         </div>
                         <div class="col-md-6">
                             <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" <?php if ($segment == 1) {  echo 'checked';  }   ?> onchange="return window.location.href = '<?php echo $base_url . '/services/1' ?>'">
-                            My Services 1
+                            Services
                         </div>
                     </div>
                 </div>

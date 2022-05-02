@@ -93,6 +93,7 @@ Route::get('delete-adventure-user/delete/{id}', 'AdventureUsersController@delete
 Route::any('delete-customer/{id}', 'HomeController@customer_delete');
 Route::any('delete-user/{id}', 'HomeController@user_delete');
 Route::any('update-user-status/{id}', 'AdventureUsersController@update_user_status');
+Route::any('notify-user/{id}', 'AdventureUsersController@notify-user');
 
 Route::any('update-partner-status/{id}', 'AdventurePartnersController@update_partner_status');
 /* AdventureUsersController all routes End */

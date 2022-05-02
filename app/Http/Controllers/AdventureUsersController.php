@@ -17,7 +17,7 @@ use App\Category;
 use App\Brand;
 use App\User;
 use DB;
-use Hash;
+use Hash; 
 use Auth;
 
 class AdventureUsersController extends MyController
