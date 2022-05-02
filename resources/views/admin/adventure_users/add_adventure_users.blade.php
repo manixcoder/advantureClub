@@ -283,7 +283,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="natinality" class="control-label">Natinality:</label>
-                                        <select class="form-control" id="natinality_id" name="natinality_id">
+                                        <select class="form-control" id="natinality" name="natinality">
                                             <option value="">Select Country</option>
                                             <?php
                                             foreach ($countries as $value) {
@@ -295,8 +295,8 @@
                                                 <option value="{{ $value->id }}" <?php echo $sel; ?>>{{ $value->short_name }}</option>
                                             <?php } ?>
                                         </select>
-                                        <?php if (isset($validation['country'])) { ?>
-                                            <label class="error">{{ $validation['country'] }}</label>
+                                        <?php if (isset($validation['natinality'])) { ?>
+                                            <label class="error">{{ $validation['natinality'] }}</label>
                                         <?php } ?>
                                     </div>
                                 </div>

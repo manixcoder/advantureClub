@@ -65,12 +65,16 @@ class AdventurePartnersController extends Controller
       )
       ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
       ->join('countries as c', 'c.id', '=', 'u.country_id')
-      //->where('users.users_role', 2)
+      ->where('u.users_role', 2)
       //->where(['u.deleted_at' => NULL])
       ->get();
-    // dd($usersdata);
+
+      $complete_ser = DB::table('services')->select('services.*')
+       ->whereRaw('DATE_FORMAT(services.end_date, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
+       ->count();
+      //dd($complete_ser);
     $data['content'] = 'admin.adventure_partners.list_adventure_partners'; 
-    return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
+    return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata,'complete_ser'=>$complete_ser]);
   }
   /* Adventure Users listing ends */
   /* Add new Adventure user starts */

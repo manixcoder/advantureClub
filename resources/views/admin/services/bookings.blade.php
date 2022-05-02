@@ -17,20 +17,12 @@ $base_url = URL::to('/');
                 <div class="form-group">
                     <div class="row">
                         <div class="col-md-6">
-                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="2" <?php
-                                                                                                                                        if ($segment == 2) {
-                                                                                                                                            echo 'checked';
-                                                                                                                                        }
-                                                                                                                                        ?> onchange="return window.location.href = '<?php echo $base_url . '/services/2' ?>'">
+                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="2" <?php if ($segment == 2) { echo 'checked'; } ?> onchange="return window.location.href = '<?php echo $base_url . '/services/2' ?>'">
                             Client Requests
                         </div>
                         <div class="col-md-6">
-                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" <?php
-                                                                                                                                        if ($segment == 1) {
-                                                                                                                                            echo 'checked';
-                                                                                                                                        }
-                                                                                                                                        ?> onchange="return window.location.href = '<?php echo $base_url . '/services/1' ?>'">
-                            My Services
+                            <input type="radio" class="cursor-pointer myservice_types" name="recommended" id="recommended" value="1" <?php  if ($segment == 1) { echo 'checked'; } ?> onchange="return window.location.href = '<?php echo $base_url . '/services/1' ?>'">
+                            My Services 
                         </div>
                     </div>
                 </div>

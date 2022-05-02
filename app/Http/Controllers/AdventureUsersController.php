@@ -52,7 +52,7 @@ class AdventureUsersController extends MyController
 
     public function add_adventure_user(Request $request)
     {
-       // echo"<pre>";print_r($request->all());exit;
+        // echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
                 'name'              => 'required|min:3|max:50|unique:users',
@@ -67,7 +67,8 @@ class AdventureUsersController extends MyController
                 'health_condition'  => 'required',
                 'height'            => 'required',
                 'weight'            => 'required',
-                'password'            => 'required',
+                'password'          => 'required',
+                'natinality'        =>'required',
                 'status'            => 'required|numeric|min:1|max:2',
                 'image'             => 'required'
             ]);
@@ -91,7 +92,8 @@ class AdventureUsersController extends MyController
                     'dob'               => date('Y-m-d', strtotime($request->dob)),
                     'weight'            => $request->weight,
                     'height'            => $request->height,
-                    'password'          => $request->height,
+                    'password'          => bcrypt($request->password),
+                    'nationality_id'     => $request->natinality,
                     'health_conditions' => implode(',', (array) $request->health_condition),
                     'users_role'        => 3,
                 );

@@ -36,6 +36,7 @@ class UpdateToUsersTable extends Migration
             $table->string('username')->after('added_from')->nullable();
             $table->dateTime('first_name')->after('username')->nullable();
             $table->longText('last_name')->after('first_name')->nullable();
+            $table->dateTime('mobile_verified_at')->after('last_name')->nullable();
         });
     }
 
@@ -70,6 +71,7 @@ class UpdateToUsersTable extends Migration
             $table->dropColumn('username')->nullable();
             $table->dropColumn('first_name')->nullable();
             $table->dropColumn('last_name')->nullable();
+            $table->dropColumn('mobile_verified_at')->nullable();
         });
     }
 }
