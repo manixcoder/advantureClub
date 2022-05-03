@@ -32,8 +32,10 @@ class LocationController extends Controller
 
     public function getCountries(Request $request, $id = null)
     {
-        $countries = DB::table('countries')
-            ->where(['deleted_at' => NULL])
+        $countries = DB::table('countries as c')
+        ->join('users as u','c.created_by','=','u.id')
+        ->select(['c.*', 'u.name'])
+            ->where(['c.deleted_at' => NULL])
             ->get();
         $data['content'] = 'admin.locations.country_list';
         return view('layouts.content', compact('data'))

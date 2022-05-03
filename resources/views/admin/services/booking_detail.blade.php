@@ -1,6 +1,29 @@
 <?php
 $segment = Request::segment(3);
 $base_url = URL::to('/');
+ if($service->nationality_id !='' ){
+   $countriesData = DB::table('countries')->where(['id' => $service->nationality_id])->first();
+   $nationality = $countriesData->short_name;
+
+ }else{
+    $nationality="";
+ }
+
+ $bookingUserData = DB::table('users')
+            ->select(['users.*', 'countries.country', 'regions.region'])
+            ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
+            ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
+            ->where('users.id', $service->booking_user)
+            ->first();
+        //dd($editdata);
+
+        $health_conditions = $bookingUserData->health_conditions ? explode(',', $bookingUserData->health_conditions) : [];
+        if (count($health_conditions)) {
+            $cond = DB::table('health_conditions')
+                ->select(['name'])
+                ->whereIn('id', $health_conditions)->get();
+            $bookingUserData->health_conditions = $cond;
+        }
 ?>
 <div class="content">
     <div class="container-fluid">
@@ -59,7 +82,11 @@ $base_url = URL::to('/');
                                 </tr>
                                 <tr>
                                     <td class="th">Nationality :</td>
-                                    <td>{{$service->country}}</td>
+                                    <td>{{ $nationality }}</td>
+                                </tr>
+                                 <tr>
+                                    <td class="th">country :</td>
+                                    <td>{{ $service->country }}</td>
                                 </tr>
                                 <tr>
                                     <td class="th">How Old :</td>
@@ -71,7 +98,7 @@ $base_url = URL::to('/');
                                 </tr>
                                 <tr>
                                     <td class="th">Registrations :</td>
-                                    <td>{{$service->adult}} Adults, {{$service->adult}} Youngsters</td>
+                                    <td>{{$service->adult}} Adults, {{$service->kids}} Youngsters</td>
                                 </tr>
                                 <tr>
                                     <td class="th">Unit Cost :</td>
@@ -87,7 +114,9 @@ $base_url = URL::to('/');
                                 </tr>
                                 <tr>
                                     <td class="th">Health Condition :</td>
-                                    <td>Task</td>
+                                    <td><?php foreach ($bookingUserData->health_conditions as $hc) { ?>
+                                            <li>{{$hc->name}}</li>
+                                        <?php } ?></td>
                                 </tr>
                                 <tr>
                                     <td class="th">Height & Weight :</td>
@@ -106,8 +135,19 @@ $base_url = URL::to('/');
                 <div class="box">
                     <div class="box-body">
                         <div class="row">
+
+                            <div class="col-md-4">
+                                <span class="badge bg-blue"><i class="fa fa-comments"></i> &nbsp;&nbsp;<span class="text-blue">Status : <?php if ($service->status == 0){ echo "Requested";}else if($service->status == 1){ echo "Payment Done";}else if($service->status == 2){ echo "Cancelled";}else if($service->status == 3){ echo "Accepted";} ?></span></span>
+                            </div>
+
                             <div class="col-md-4">
                                 <span class="badge bg-blue"><i class="fa fa-comments"></i> &nbsp;&nbsp;<span class="text-blue">Chat Client</span></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <button  class="badge bg-blue" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                    <i class="fa fa-bell"></i> &nbsp;&nbsp;<span class="text-blue">Notify</span>
+                                </button >
                             </div>
                             <?php
                             if ($service->status == 0) {
@@ -137,6 +177,46 @@ $base_url = URL::to('/');
                     </div>
                 </div>
             </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Notify to</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="profile section">
+                            <div class="profile_image">
+                                <img src="{{ URL::to('/public/uploads/') }}/{{ $service->profile_image }}" >
+                                <ul>
+                                    <li>User Name : {{ $service->customer }}</li>
+                                    <li>User Email : {{ $service->email }}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <form method="post" action="{{ URL::to('/notify-user') }}">
+                            @csrf
+                            <input type="hidden" name="user_id" value="{{$service->booking_user}}">
+                            <input type="hidden" name="sender_id" value="{{ Auth::user()->id }}">
+                        <div class="modal-body">
+                            <input type="text" name="title" placeholder="notify title"></br>
+
+                            <textarea name="message" placeholder="Write message to notify...……..."></textarea>
+                            ...
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

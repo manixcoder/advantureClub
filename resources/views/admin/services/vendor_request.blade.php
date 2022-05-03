@@ -38,7 +38,7 @@ $base_url = URL::to('/');
             <table id="datatable-responsive" class="table table-striped table-bordered" style="border: none;">
                 <thead>
                     <tr>
-                        <th>Request Id</th>
+                        <th>Requests ID</th>
                         <th>Company Name</th>
                         <th>User Name</th>
                         <th>Request Date</th>
@@ -53,21 +53,16 @@ $base_url = URL::to('/');
                     <?php
                     if (count($services)) {
                         foreach ($services as $key => $service) {
-                           // dd($service);
-                           // $service_for = DB::table('service_service_for')->where('service_id', $service->id)->first();
-                           // dd($service_for);
-                           // $role_exist = DB::table('service_for')->where('id', $service->sforid)->get();
-                           // dd($role_exist);
-                    ?>
+                            ?>
                             <tr class="gradeX">
                                 <td>#{{ $service->id }}</td>
                                 <td>{{ $service->company_name }}</td>
                                 <td><a href="{{URL::to('/view-adventure-user/'.$service->user_id)}}" >{{ $service->name }}</a></td>
                                 <td>{{ date("d M Y", strtotime($service->request_date))  }}</td>
-                                <td>{{$service->country }}</td>                               
-                                <td>{{$service->license }}</td>
-                                <td>{{$service->title }}</td>
-                                <td>{{$service->is_online }}</td>
+                                <td>{{ $service->country }}</td>                               
+                                <td>{{ $service->license }}</td>
+                                <td>{{ $service->title }}</td>
+                                <td>{{ $service->is_online }}</td>
                                 <td>
                                     <ul class="edit_icon action_icons dashboard_icons">
                                         <li>

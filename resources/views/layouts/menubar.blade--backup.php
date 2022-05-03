@@ -31,7 +31,7 @@ $userrole = Session::get('userRole');
                     </li>
                 </ul>
                 <ul>
-                    <li><a href="{{URL::to('services')}}" class="waves-effect"><img src="{{ asset('/public/images/services.png')}}">&nbsp;&nbsp;&nbsp;<span>My Services</span></a>
+                    <li><a href="{{URL::to('services')}}" class="waves-effect"><img src="{{ asset('/public/images/services.png')}}">&nbsp;&nbsp;&nbsp;<span>Clients and services</span></a>
                     </li>
                 </ul>
                 <ul>

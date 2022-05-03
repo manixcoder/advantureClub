@@ -76,9 +76,16 @@ class ServicesController extends MyController
         } else { // Service list
             $services = DB::table('services as srvc')
                 ->select([
-                    'srvc.*', 'usr.name as provider_name', DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
-                    'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type',
-                    'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region'
+                    'srvc.*', 
+                    'usr.name as provider_name', 
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+                    'scat.category as service_category', 
+                    'ssec.sector as service_sector', 
+                    'styp.type as service_type',
+                    'slvl.level as service_level', 
+                    'cntri.country', 
+                    'crnci.sign as currency_sign', 
+                    'rgns.region'
                 ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
@@ -262,10 +269,10 @@ class ServicesController extends MyController
                     }
 
                     if ($service->save()) {
-                        //                        prx($request->file('banners'));
+                        //                        prx($request->file('banners')); 
                         $service_id = $service->id;
                         $banner_data = [];
-                        DB::table('service_images')->where('service_id', '=', $service_id)->delete();
+                        DB::table('service_images')->where('service_id', '=', $service_id)->delete(); 
                         if (count($request->file('banners'))) {
                             foreach ($request->file('banners') as $key => $banner) {
 
@@ -592,7 +599,16 @@ class ServicesController extends MyController
     }
     public function viewPartnerRequests(Request $request, $id){
         $services= DB::table('become_partner as bp')
-        ->select('bp.*', 'cntri.country', 'pk.title','bp.created_at as request_date','u.name')
+        ->select(
+            'bp.*', 
+            'cntri.country', 
+            'pk.title',
+            'bp.created_at as request_date',
+            'u.name',
+            'u.id as user_id',
+            'u.profile_image as profile_image',
+            'u.email'
+        )
         ->leftJoin('users as u','bp.user_id','=','u.id')
         ->leftJoin('countries as cntri','cntri.id','=', 'u.country_id')
         ->leftJoin('packages as pk','pk.id','=','bp.packages_id')
