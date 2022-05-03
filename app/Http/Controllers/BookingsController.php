@@ -103,12 +103,17 @@ class BookingsController extends MyController
         $service = DB::table('bookings as bkng')
             ->select([
                 'bkng.id as booking_id',
+                'bkng.user_id as booking_user',
+                'usr.profile_image as profile_image',
+                'usr.email',
+                'usr.nationality_id',
                 'srvc.id as service_id',
                 'cntri.country',
                 'rgn.region',
                 'srvc.adventure_name',
                 'usr.name as provider_name',
                 'client.name as customer',
+                'client.email',
                 'bkng.booking_date as service_date',
                 'bkng.created_at as booked_on',
                 'bkng.adult',
@@ -138,6 +143,7 @@ class BookingsController extends MyController
             ->where('bkng.id', $id)
             ->orderBy('bkng.id', 'DESC')
             ->first();
+        // dd($service);
         $data['content'] = 'admin.services.booking_detail';
         return view('layouts.content', compact('data'))->with([
             'service' => $service
@@ -166,5 +172,32 @@ class BookingsController extends MyController
             $request->session()->flash('error', 'Something went wrong. Please try again.');
         }
         return redirect()->back();
+    }
+
+    public function notifyUser(Request $request){
+       
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'message' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+        try {
+            DB::table('notifications')->insert([
+            'sender_id' => Auth::user()->id, 
+            'user_id' => $request->user_id,
+            'title'=>$request->title,
+            'message'=>$request->message,
+            'created_at'=>date("Y-m-d H:i:s"),
+            'send_at'=>date("Y-m-d H:i:s"),
+            'updated_at'=>date("Y-m-d H:i:s"),
+        ]);
+            $request->session()->flash('success', 'User notify  successfully.');
+            return redirect()->back();
+            } catch (\Exception $e) {
+            return back()->with(['status' => 'danger', 'message' => $e->getMessage()]);
+            return back()->with(['status' => 'danger', 'message' => 'Some thing went wrong! Please try again later.']);
+        }
     }
 }

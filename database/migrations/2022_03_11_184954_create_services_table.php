@@ -18,8 +18,6 @@ class CreateServicesTable extends Migration
             $table->integer('owner')->nullable();
             $table->string('adventure_name')->nullable();
             $table->integer('country')->nullable();
-            $table->integer('city_id')->nullable();
-            $table->integer('sfor_id')->nullable();
             $table->integer('region')->nullable();
             $table->integer('service_sector')->nullable();
             $table->integer('service_category')->nullable();

@@ -6,7 +6,10 @@
         margin: 10px;
     }
 </style>
-<?php $segment = Request::segment(2);?>
+<?php 
+$segment = Request::segment(2);
+$countries = DB::table('countries')->get();
+?>
 <div class="content add_adventure_users">
     <div class="container-fluid">
         <div class="row">
@@ -93,8 +96,8 @@
                                             $start_date = $offer_detail->start_date;
                                         }
                                     ?>
-                                    <input type="text" id="start_date" name="start_date" class="form-control"  aria-required="true" placeholder="Start Date" value="{{$start_date}}" > 
-                                    <span><img src="{{URL::to('/public/images/calender.png')}}" id="datepicker"></span> 
+                                    <input type="date" id="start_date" name="start_date" class="form-control"  aria-required="true" placeholder="Start Date" value="{{$start_date}}" > 
+                                    <!-- <span><img src="{{URL::to('/public/images/calender.png')}}" id="datepicker"></span>  -->
                                     <?php if (isset($validation['start_date'])) { ?>
                                             <label class="error">{{ $validation['start_date'] }}</label>
                                     <?php } ?>
@@ -110,9 +113,9 @@
                                             $end_date = $offer_detail->end_date;
                                         }
                                     ?>
-                                    <input type="text"  id="end_date" name="end_date" class="form-control"  aria-required="true" placeholder="End Date" value="{{$end_date}}" > 
-                                    <span><img src="{{URL::to('/public/images/calender.png')}}" id="datepicker" ></span> 
-                                    <?php if (isset($validation['end_date'])) { ?>
+                                    <input type="date"  id="end_date" name="end_date" class="form-control"  aria-required="true" placeholder="End Date" value="{{$end_date}}" > 
+                                   <!--  <span><img src="{{URL::to('/public/images/calender.png')}}" id="datepicker" ></span>  -->
+                                    <?php if (isset($validation['end_date'])) { ?> 
                                             <label class="error">{{ $validation['end_date'] }}</label>
                                     <?php } ?>
                                     </div>
@@ -153,10 +156,41 @@
                                             $discount_amount = $offer_detail->discount_amount;
                                         }
                                     ?>
+                                    
                                     <input type="number"class="form-control" id="discount_amount"  name="discount_amount" step="1" value="{{$discount_amount}}" placeholder="Discount Amount">
                                     <?php if (isset($validation['discount_amount'])) { ?>
                                             <label class="error">{{ $validation['discount_amount'] }}</label>
                                     <?php } ?>
+
+                                    <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="currency"> currency Code</label>
+                                                <?php
+                                                $currency = '';
+                                                if (request('currency')) {
+                                                    $currency = request('currency');
+                                                } elseif (!empty($user_detail) && (request('currency') == '')) {
+                                                    $currency = $user_detail['currency'];
+                                                }
+                                                ?>
+
+                                                <select class="form-control" id="currency" name="currency">
+                                                    <option value="">Select Currency</option>
+                                                    <?php
+                                                    foreach ($countries as $value) {
+                                                        $sel = '';
+                                                        if ($currency == $value->currency) {
+                                                            $sel = 'selected';
+                                                        }
+                                                    ?>
+                                                        <option value="{{ $value->currency }}" <?php echo $sel; ?>>{{ $value->currency.' - '.$value->country }}</option>
+                                                    <?php } ?>
+                                                </select>
+                                                <?php if (isset($validation['mobile_code'])) { ?>
+                                                    <label class="error">{{ $validation['mobile_code'] }}</label>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div>

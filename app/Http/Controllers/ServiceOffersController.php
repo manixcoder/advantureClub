@@ -111,6 +111,7 @@ class ServiceOffersController extends MyController
                         }
                     }
                     Session::flash('success', 'Offer has been inserted successfully.');
+                     return redirect('/list-service-offers')->with(['status' => 'success', 'message' => 'Offer has been inserted successfully.!']);
                     return back();
                 }
             }

@@ -599,7 +599,16 @@ class ServicesController extends MyController
     }
     public function viewPartnerRequests(Request $request, $id){
         $services= DB::table('become_partner as bp')
-        ->select('bp.*', 'cntri.country', 'pk.title','bp.created_at as request_date','u.name')
+        ->select(
+            'bp.*', 
+            'cntri.country', 
+            'pk.title',
+            'bp.created_at as request_date',
+            'u.name',
+            'u.id as user_id',
+            'u.profile_image as profile_image',
+            'u.email'
+        )
         ->leftJoin('users as u','bp.user_id','=','u.id')
         ->leftJoin('countries as cntri','cntri.id','=', 'u.country_id')
         ->leftJoin('packages as pk','pk.id','=','bp.packages_id')

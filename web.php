@@ -79,9 +79,6 @@ Route::get('regions/{id?}', 'LocationController@getRegions')->where(['id' => '[0
 Route::get('regions/add/{id?}', 'LocationController@addRegions')->where(['id' => '[0-9]+']);
 Route::post('regions/add/{id?}', 'LocationController@addRegions')->where(['id' => '[0-9]+']);
 Route::get('regions/delete/{id}', 'LocationController@deleteRegions');
-
-Route::any('partnership/decline/{id}', 'UsersController@partnershipDecline');
-Route::any('partnership/accept/{id}', 'UsersController@partnershipAccept');
 /* Locations ends */
 
 /* AdventureUsersController all routes start */
@@ -182,11 +179,9 @@ Route::get('selections/add', 'SelectionsController@add');
 Route::post('selections/add', 'SelectionsController@add');
 Route::get('selections/delete/{tab_id?}/{item_id}', 'SelectionsController@delete')->where(['id' => '[0-9]+'])->where(['id' => '[0-9]+']);
 
-Route::get('booking/detail/{id}', 'BookingsController@detail')->where(['id' => '[0-9]+']); 
+Route::get('booking/detail/{id}', 'BookingsController@detail')->where(['id' => '[0-9]+']);
 Route::get('booking/accept/{id}', 'BookingsController@accept')->where(['id' => '[0-9]+']);
 Route::get('booking/decline/{id}', 'BookingsController@decline')->where(['id' => '[0-9]+']);
-
-Route::any('notify-user', 'BookingsController@notifyUser')->where(['id' => '[0-9]+']);
 
 Route::get('terms-conditions', 'PagesController@termsConditions');
 Route::get('terms-conditions/add', 'PagesController@addTermsConditions');
