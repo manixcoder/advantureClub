@@ -38,8 +38,8 @@
         /* 15% from the top and centered */
         padding: 20px;
         border: 1px solid #888;
-        width: 50%;
-        height: 50%;
+        width: 70%;
+        height: 70%;
         /* Could be more or less, depending on screen size */
     }
 
@@ -105,13 +105,15 @@
                                 </li>
                                 <li>
                                     <p>Profile Pic :</p>
-                                    <h3>
-                                        @if($editdata->profile_image!='')
-                                        <img src="{{ asset('public/').'/'.$editdata->profile_image }}" alt="image" width="100" height="100">
-                                        @else
-                                        <img src="{{ asset('public/images/avatar-5.png') }}" alt="image" width="100" height="100">
-                                        @endif
-                                    </h3>
+                                    @if($editdata->profile_image!='')
+                                    <img src="{{ asset('public/').'/'.$editdata->profile_image }}" alt="image" width="100" height="100">
+                                    @else
+                                    <img src="{{ asset('public/images/avatar-5.png') }}" alt="image" width="100" height="100">
+                                    @endif
+
+                                    <div class="col-md-6 chatwithhime">
+                                        <a href="">Chat with him</a>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -158,6 +160,11 @@
                                         <img src="{{ asset('/public/images/button_notify.png')}}">
                                         Notify
                                     </div>
+
+                                    <a href="{{URL::to('list-adventure-users')}}" id="delete" class="delete">
+                                        <img src="{{ asset('/public/images/button_notify.png')}}">
+                                        Delete
+                                    </a>
                                 </li>
 
 
@@ -170,8 +177,20 @@
                                         </div>
                                         <span class="close">&times;</span>
                                         <div class="hedding">Notify to</div>
+                                        <div class="users_data">
+                                            <div>Name : {{$editdata->name}}</div>
+                                            <div>Name : @if($editdata->profile_image!='')
+                                                <img src="{{ asset('public/').'/'.$editdata->profile_image }}" alt="image" width="100" height="100">
+                                                @else
+                                                <img src="{{ asset('public/images/avatar-5.png') }}" alt="image" width="100" height="100">
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div>{{$editdata->mobile_code}} - {{$editdata->mobile}}</div>
+                                        <div>{{$editdata->email}}</div>
                                         <form action="#" method="POST" id="FormValidation" enctype="multipart/form-data">
                                             @csrf
+                                            <input type="hidden" name="user_id" value="{{$editdata->id}}">
                                             <div class="row" id="example-basic">
                                                 <div class="col-md-12">
                                                     <div class="card">
@@ -187,7 +206,7 @@
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
-                                                                        <textarea name="notifydescription" id="notifydescription" class="form-control" cols="30" rows="10" placeholder="Write message to notify...……..."></textarea>
+                                                                        <textarea name="notifydescription" id="notifydescription" class="form-control" placeholder="Write message to notify...……..."></textarea>
 
                                                                     </div>
                                                                 </div>
@@ -196,10 +215,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <p>Some text in the Modal..</p>
+                                            <div class="modal-footer text-center">
+                                                <button type="cancel" id="canceltbtn" class="btn btn-default cancel">
+                                                    <a href="{{url()->previous()}}">Cancel</a></button>
+                                                <button type="submit" id="submitbtn" class="btn btn-primary save">Save</button>
                                             </div>
-
                                     </div>
 
                                     </form><!-- Form End -->

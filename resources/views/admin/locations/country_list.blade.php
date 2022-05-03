@@ -34,6 +34,7 @@
                         <?php
                         $i = 1;
                         foreach ($countries as $data) { 
+                            //dd($data);
                             ?>
                             <tr>
                                 <td>#{{ $i }}</td>
@@ -44,7 +45,7 @@
                                     <?php } ?>
                                 </td>
                                 <td>{{ $data->currency }}</td>
-                                <td>{{ $data->currency }}</td>
+                                <td>{{ $data->name }}</td>
                                 <td>{{ date('d M Y', strtotime($data->created_at)) }}</td>
                                 <td class="actions">
                                     <a href="{{ URL::to('countries/delete', $data->id)}}" class="on-default remove-row" onclick="return confirm('Are you sure you want to delete this item?');" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"><i class="fas fa-trash"></i></a>

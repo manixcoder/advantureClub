@@ -33,9 +33,15 @@ class UsersController extends MyController
     if ($id) {
       $where .= ' && srvc.id = ' . $id;
     }
-
     $services= DB::table('become_partner as bp')
-    ->select('bp.*', 'cntri.country', 'pk.title','bp.created_at as request_date','u.name','u.id as user_id')
+    ->select(
+      'bp.*',
+      'cntri.country', 
+      'pk.title',
+      'bp.created_at as request_date',
+      'u.name',
+      'u.id as user_id'
+    )
     ->leftJoin('users as u','bp.user_id','=','u.id')
     ->leftJoin('countries as cntri','cntri.id','=', 'u.country_id')
     ->leftJoin('packages as pk','pk.id','=','bp.packages_id')
@@ -43,46 +49,13 @@ class UsersController extends MyController
       'u.deleted_at' => NULL,
       'u.status' => '1'
     ])
-    //->whereRaw($where)
-    ->get(); 
-   //dd($services);
-
-
-    /*
-    $services = DB::table('services as srvc')
-      ->select([
-        'srvc.*',
-        'usr.name as provided_by',
-        DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
-        'scat.category as service_category',
-        'ssec.sector as service_sector',
-        'styp.type as service_type',
-        'slvl.level as service_level',
-        'cntri.country',
-        'crnci.sign as currency_sign',
-        'rgns.region'
-      ])
-      ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
-      ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-      ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
-      ->leftJoin('service_categories as scat', 'scat.id', '=', 'srvc.service_category')
-      ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
-      ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
-      ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-      ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
-      ->where([
-        'srvc.deleted_at' => NULL,
-        'srvc.status' => 0
-      ])
-      ->whereRaw($where)
-      ->orderBy('srvc.id', 'DESC')
-      ->get(); */
-      
-      $data['content'] = 'admin.services.vendor_request';
-      return view('layouts.content', compact('data'))
-      ->with([
-        'services' => $services
-      ]);
+    ->get();
+    //dd($services);
+    $data['content'] = 'admin.services.vendor_request';
+    return view('layouts.content', compact('data'))
+    ->with([
+      'services' => $services
+    ]);
   }
 
   public function role_access()
@@ -97,32 +70,21 @@ class UsersController extends MyController
 
   public function save_country_session(Request $request)
   {
-
     $country_id = $_POST['country'];
     Session::put('country_id', $country_id);
     $arrayVal = $request->checkbox;
     // echo $country_id.'--->'. print_r($arrayVal);die;
     $sort = 0;
-
-    //$validator = Validator::make($request->all(), [
-
-    // 		'role_id' => ['unique:role_assignments'],
-
-    //         ]);
-
-
     if (!empty($arrayVal)) {
       foreach ($arrayVal as $Val) {
-
         $role_exist = DB::table('role_assignments')
-          ->where('country_id', $country_id)
-          ->where('role_id', $Val)
-          ->count();
+        ->where('country_id', $country_id)
+        ->where('role_id', $Val)
+        ->count();
         if ($role_exist == 0) {
-
           $datass = array(
-            'country_id'        => $country_id,
-            'role_id'       => $Val,
+            'country_id' => $country_id,
+            'role_id' => $Val,
             'sort' => $sort,
           );
           $addData = DB::table('role_assignments')->insertGetId($datass);
@@ -139,12 +101,25 @@ class UsersController extends MyController
   public function get_roles(Request $request)
   {
     //  echo '123';die;
-
     $country_id = $_POST['country'];
     Session::put('country_id', $country_id);
-
-
-
     return redirect()->back();
   }
+  public function partnershipDecline(Request $request,$id){
+   // dd($id);
+    $services= DB::table('become_partner')->where('user_id',$id)->update([
+      'is_approved'=>'0'
+    ]);
+     Session::flash('success', 'Partnership Decline successfully.');
+    return redirect()->back();
+  }
+  public function partnershipAccept(Request $request,$id){
+   // dd($id);
+     $services= DB::table('become_partner')->where('user_id',$id)->update([
+      'is_approved'=>'1'
+    ]);
+     Session::flash('success', 'Partnership Accept successfully.');
+     return redirect()->back();
+  }
+
 }

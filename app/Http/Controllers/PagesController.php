@@ -159,8 +159,10 @@ class PagesController extends MyController
 
     public function addAboutUs(Request $request)
     {
+       // dd($request->all());
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
+                'image' => 'required',
                 'description' => 'required|string|min:15|max:1000',
             ]);
             if ($validator->fails()) {
@@ -170,8 +172,30 @@ class PagesController extends MyController
                 }
             } else {
                 DB::table('about_us')->truncate();
+                if ($request->file('image')) {
+                    $file_info = $this->getExtensionSize($_FILES['image']);
+                    if (!in_array($file_info['ext'], $this->allowed_mime())) {
+                        $data['validation'] = ['banner' => 'File must be jpeg,jpg,png.'];
+                    } else if ($file_info['size'] > 2024) {
+                        $data['validation'] = ['banner' => 'File size must be 2 MB maximum'];
+                    } else {
+                        $filename = time() . '.' . $file_info['ext'];
+                        $basepath = "public/profile_image/";
+                        $destinationPath = public_path('/profile_image/');
+                        if (!is_dir($basepath)) {
+                            mkdir($basepath, 0777, true);
+                        }
+                        $files = $request->image;
+                        $filepath = $files->move($destinationPath, $filename);
+                        $images = 'profile_image/' . $filename;
+                    }
+                } else {
+                    $images = '';
+                }
+
                 if (DB::table('about_us')
                     ->insert([
+                        'image' => $images,
                         'content' => $request->description
                     ])
                 ) {

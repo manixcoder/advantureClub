@@ -1198,10 +1198,10 @@ class ServicesController extends MyController
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
             $type = $request->type;
-            
+
             if ($type == '1') {
                 $where = ' bkng.booking_date < CURDATE() and bkng.status !=2 ';
-            }else{
+            } else {
                 $where = ' bkng.booking_date > CURDATE() and bkng.status !=2 ';
             }
             $booking = DB::table('bookings as bkng')
@@ -1549,8 +1549,8 @@ class ServicesController extends MyController
                 ->where('deleted_at', NULL)
                 ->orderBy('id', 'desc')
                 ->get();
-           
-            
+
+
             $serviceactivities = array();
             $servicesname = array();
             $countryname = array();
@@ -1562,32 +1562,32 @@ class ServicesController extends MyController
                 $serviceactivities['image_url'] = $images;
                 // $serviceac = DB::table('service_activities')->where('service_id', $val->id)->get();
                 // $serviceactivities['activities'] = $serviceac;
-                
+
                 // $serviceservicefor = DB::table('service_service_for')->where('service_id', $val->id)->get();
                 // $serviceactivities['service_for'] = $serviceservicefor;
                 // $dependencies = DB::table('service_dependencies')->where('service_id', $val->id)->get();
                 // $serviceactivities['dependency'] = $dependencies;
-                if($val->service_plan=='1'){
-                  $availability = DB::table('service_plan_day_date as spdd')
+                if ($val->service_plan == '1') {
+                    $availability = DB::table('service_plan_day_date as spdd')
                         ->select(['spdd.id', 'wkd.day'])
                         ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
                         ->where('spdd.service_id', $val->id)
                         ->get()
                         ->toArray();
-                    $serviceactivities['availability'] = $availability ?? [];  
-                }else{
+                    $serviceactivities['availability'] = $availability ?? [];
+                } else {
                     //dd("Hello Here");
-                    $serviceactivities['availability']=array(
+                    $serviceactivities['availability'] = array(
                         // 'start_date'=>$val->start_date,
                         // 'end_date'=>$val->end_date
                     );
                 }
                 // $reviews = DB::table('service_reviews')->where('service_id', $val->id)->get();
                 // $serviceactivities['service_reviews'] = $reviews;
-                
+
                 // $countries = DB::table('countries')->where('id', $val->country)->first();
                 // $serviceactivities['countries'] = $countries;
-                
+
                 // $regions = DB::table('regions')->where('id', $val->region)->first();
                 // $serviceactivities['regions'] = $regions;
                 // $categories = DB::table('service_categories')->where('id', $val->service_category)->first();
@@ -1632,7 +1632,7 @@ class ServicesController extends MyController
                 $servicesname['status'] = $status;
 
                 $servicesname1[] = array_merge(
-                    $servicesname, 
+                    $servicesname,
                     $serviceactivities,
                 );
             }
@@ -1721,14 +1721,44 @@ class ServicesController extends MyController
                             $service_id = $service->id;
                             $banner_data = [];
                             if (count($request->file('banners'))) {
+
                                 foreach ($request->file('banners') as $key => $banner) {
+
+                                    $banner->type = $banner->getClientMimeType();
+                                    $file_info = $this->getExtensionSize((array) $banner);
+                                    if (!in_array($file_info['ext'], $this->allowed_mime())) {
+                                        $data['validation'] = ['banners' => 'All file must be jpeg,jpg,png.'];
+                                    } else if ($file_info['size'] > 2024) {
+                                        $data['validation'] = ['banners' => 'All file size must be 2 MB maximum'];
+                                    } else {
+                                        $msg = config('constants.BANNER_ADDED');
+                                        if ($banner) {
+                                            $filename = time() . '-' . $key . '.jpg';
+                                            $basepath = "public/uploads/services/thumbs/";
+                                            if (!is_dir($basepath)) {
+                                                mkdir($basepath, 0777, true);
+                                            }
+                                            $filepath = Storage::disk('public')->putFileAs('services', $banner, $filename);
+                                            $this->resize_crop_image($this->image_path() . '/' . $filepath, $this->image_path() . '/services/thumbs/' . $filename);
+                                            $banner_data[] = array(
+                                                'service_id' => $service_id,
+                                                'is_default' => $key == 0 ? 1 : 0,
+                                                'image_url' => $filepath,
+                                                'thumbnail' => 'services/thumbs/' . $filename
+                                            );
+                                        }
+                                    }
+                                }
+
+                                DB::table('service_images')->insert($banner_data);
+                                /* foreach ($request->file('banners') as $key => $banner) {
 
                                     $banner->type = $banner->getClientMimeType();
                                     $file_info = $this->getExtensionSize((array) $banner);
 
                                     $msg = config('constants.BANNER_ADDED');
                                     if ($banner) {
-                                        if (isset($result['banner']) && $result['banner'] != '') {
+                                        if (isset($result['banner']) && $result['banner'] != '') { 
                                             Storage::disk('public')->delete($result['banner']);
                                         }
                                         $filename = time() . '-' . $key . '.jpg';
@@ -1746,7 +1776,7 @@ class ServicesController extends MyController
                                         );
                                     }
                                 }
-                                DB::table('service_images')->insert($banner_data);
+                                DB::table('service_images')->insert($banner_data);*/
                             }
                             $ssfor = array();
                             if (isset($request->service_for)) {
