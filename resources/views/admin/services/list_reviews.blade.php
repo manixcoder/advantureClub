@@ -2,23 +2,15 @@
    /* The Modal (background) */
    .modal {
       display: none;
-      /* Hidden by default */
       position: fixed;
-      /* Stay in place */
       z-index: 1;
-      /* Sit on top */
-      left: 0;
+      left: 95px;
       top: 0;
       width: 100%;
-      /* Full width */
       height: 100%;
-      /* Full height */
       overflow: auto;
-      /* Enable scroll if needed */
       background-color: rgb(0, 0, 0);
-      /* Fallback color */
       background-color: rgba(0, 0, 0, 0.4);
-      /* Black w/ opacity */
    }
 
    /* Modal Content/Box */
@@ -145,22 +137,72 @@
                         <span class="close">&times;</span>
                         <div class="row">
                            <div class="col-sm-12">
-                              <h4 class="pull-left page-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. </h4>
+                              <div class="user">
+                                 User Name
+                              </div>
+                              <div class="user">
+                                 User Name
+                              </div>
+                              <div class="user">
+                                 User Name
+                              </div>
+                              <div class="comment">
+                                 <form action="#" method="POST" id="FormValidation" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="user_id" value="">
+                                    <div class="row" id="example-basic">
+                                       <div class="col-md-12">
+                                          <div class="card">
+                                             <div class="card-body">
+                                                <div class="row">
+                                                   <div class="col-md-12">
+                                                      <h5></h5>
+                                                   </div>
+                                                   <div class="col-md-6">
+                                                      <div class="form-group">
+                                                         <input type="text" id="titlenotify" name="titlenotify" class="form-control" aria-required="true" placeholder="Title to notify">
+                                                      </div>
+                                                   </div>
+                                                   <div class="col-md-6">
+                                                      <div class="form-group">
+                                                         <textarea name="notifydescription" id="notifydescription" class="form-control" placeholder="Write message to notify...……..."></textarea>
+
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="modal-footer text-center">
+                                       <button type="cancel" id="canceltbtn" class="btn btn-default cancel">
+                                          <a href="{{url()->previous()}}">Cancel</a></button>
+                                       <button type="submit" id="submitbtn" class="btn btn-primary save">Save</button>
+                                    </div>
+                              </div>
+
+                              </form>
+
                            </div>
+                           <h4 class="pull-left page-title">
+
+                              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                           </h4>
                         </div>
                      </div>
                   </div>
                </div>
-               <!-- end card-body -->
-
-
-
             </div>
-         </div>
-         <!-- container -->
+            <!-- end card-body -->
 
+
+
+         </div>
       </div>
+      <!-- container -->
+
    </div>
+</div>
 </div>
 
 

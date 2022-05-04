@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        <form action="#" method="POST" id="FormValidation" enctype="multipart/form-data">
+        <form action="{{ URL::to('add-announcements') }}" method="POST" id="FormValidation" enctype="multipart/form-data">
             @csrf
             <!--<form  action="{{ URL::to('add-adventure-user') }}" method="POST"  enctype="multipart/form-data">-->
             <!--    @csrf-->
@@ -30,19 +30,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="text" id="Announcement Title" name="name" class="form-control" aria-required="true" placeholder="User Name">
-                                        <?php if (isset($validation['name'])) { ?>
-                                            <label class="error">{{ $validation['name'] }}</label>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-
-                                        <input type="text" id="email" name="email" class="form-control" aria-required="true" placeholder="Email Address">
-                                        <?php if (isset($validation['email'])) { ?>
-                                            <label class="error">{{ $validation['email'] }}</label>
+                                        <input type="text" id="title" name="title" class="form-control" aria-required="true" placeholder="Announcement Title">
+                                        <?php if (isset($validation['title'])) { ?>
+                                            <label class="error">{{ $validation['title'] }}</label>
                                         <?php } ?>
                                     </div>
                                 </div>
@@ -50,8 +40,11 @@
                                     <div class="form-group">
                                         <select class="form-control" id="country" name="country">
                                             <option value="">Select Country</option>
-                                            <option value="">India</option>
-
+                                            <?php
+                                            $countries = DB::table('countries')->get();
+                                            foreach ($countries as $value) { ?>
+                                                <option value="{{ $value->id }}">{{ $value->country }}</option>
+                                            <?php } ?>
                                         </select>
                                         <?php if (isset($validation['country'])) { ?>
                                             <label class="error">{{ $validation['country'] }}</label>
@@ -60,118 +53,67 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <?php $region = DB::table('regions')->get(); ?>
-                                        <select class="form-control" id="region" name="region">
-
-                                        </select>
-                                        <?php if (isset($validation['region'])) { ?>
-                                            <label class="error">{{ $validation['region'] }}</label>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <?php
-                                                $mobile_code = '';
-                                                if (request('mobile_code')) {
-                                                    $mobile_code = request('mobile_code');
-                                                } elseif (!empty($user_detail) && (request('mobile_code') == '')) {
-                                                    $mobile_code = $user_detail['mobile_code'];
-                                                }
-                                                ?>
-
-                                                <select class="form-control" id="mobile_code" name="mobile_code">
-                                                    <option value="">Select Code</option>
-
-                                                    <option value="">dfgfdg</option>
-
-                                                </select>
-                                                <?php if (isset($validation['mobile_code'])) { ?>
-                                                    <label class="error">{{ $validation['mobile_code'] }}</label>
-                                                <?php } ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <div class="form-group">
-
-                                                <input type="text" id="mobile" name="mobile" class="form-control" aria-required="true" placeholder="Mobile Number">
-                                                <?php if (isset($validation['mobile'])) { ?>
-                                                    <label class="error">{{ $validation['mobile'] }}</label>
-                                                <?php } ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group date_of_birth">
-
-                                        <input type="text" id="dob" name="dob" class="form-control datepicker" placeholder="Date of birth" readonly>
-                                        <?php if (isset($validation['dob'])) { ?>
-                                            <label class="error">{{ $validation['dob'] }}</label>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-
-                                        <input type="text" id="weight" name="weight" class="form-control" aria-required="true" placeholder="Weight in KG">
-                                        <?php if (isset($validation['weight'])) { ?>
-                                            <label class="error">{{ $validation['weight'] }}</label>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-
-                                        <input type="text" id="height" name="height" class="form-control" aria-required="true" placeholder="Height in CM">
-                                        <?php if (isset($validation['height'])) { ?>
-                                            <label class="error">{{ $validation['height'] }}</label>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="field-1" class="control-label">Profile image: <span style="color: red;">*</span></label>
-                                        <input type="file" id="image" name="image" class="form-control" aria-required="true" accept="image/*">
-                                        <?php if (isset($validation['image'])) { ?>
-                                            <label class="error">{{ $validation['image'] }}</label>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <p class="control-label"><b>Status</b>
+                                        <p class="control-label"><b>Partners</b>
                                             <font color="red">*</font>
                                         </p>
                                         <div class="radio radio-info form-check-inline">
-                                            <input type="radio" id="active" value="1" name="status">
-                                            <label for="inlineRadio1"> Active </label>
+                                            <input type="radio" id="licensed" value="1" name="licensed">
+                                            <label for="inlineRadio1"> Licensed </label>
                                         </div>
                                         <div class="radio radio-info form-check-inline">
-                                            <input type="radio" id="inactive" value="0" name="status">
-                                            <label for="inlineRadio1"> Inactive </label>
+                                            <input type="radio" id="None licensed" value="0" name="licensed">
+                                            <label for="inlineRadio1"> None licensed </label>
                                         </div>
+
+                                        <div class="radio radio-info form-check-inline">
+                                            <input type="radio" id="licensedBoth" value="2" name="licensed">
+                                            <label for="inlineRadio1"> Both </label>
+                                        </div>
+
+                                        <?php if (isset($validation['licensed'])) { ?>
+                                            <label class="error">{{ $validation['licensed'] }}</label>
+                                        <?php } ?>
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="checkbox" id="chk_1" name="health_condition[]">
-                                        <span for="chk_1">tret</span>
+                                        <p class="control-label"><b>Users</b>
+                                            <font color="red">*</font>
+                                        </p>
+                                        <div class="radio radio-info form-check-inline">
+                                            <input type="radio" id="male" value="1" name="gender">
+                                            <label for="inlineRadio1"> Male </label>
+                                        </div>
+                                        <div class="radio radio-info form-check-inline">
+                                            <input type="radio" id="female" value="0" name="gender">
+                                            <label for="inlineRadio1"> Female </label>
+                                        </div>
+
+                                        <div class="radio radio-info form-check-inline">
+                                            <input type="radio" id="genderboth" value="2" name="gender">
+                                            <label for="inlineRadio1"> Both </label>
+                                        </div>
+
+                                        <?php if (isset($validation['gender'])) { ?>
+                                            <label class="error">{{ $validation['gender'] }}</label>
+                                        <?php } ?>
                                     </div>
                                 </div>
 
-                                <?php if (isset($validation['health_condition'])) { ?>
-                                    <label class="error">{{ $validation['health_condition'] }}</label>
-                                <?php } ?>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <textarea name="messages" id="messages" cols="130" rows="10"></textarea>
+                                    </div>
+                                </div>
+
+
 
                             </div>
 
                             <div class="modal-footer text-center">
                                 <button type="cancel" id="canceltbtn" class="btn btn-default cancel"><a href="{{url()->previous()}}">Cancel</a></button>
-                                <button type="submit" id="submitbtn" class="btn btn-primary save">Save</button>
+                                <button type="submit" id="submitbtn" class="btn btn-primary save">Send</button>
                             </div>
                         </div><!-- End card-body -->
                     </div> <!-- End card -->

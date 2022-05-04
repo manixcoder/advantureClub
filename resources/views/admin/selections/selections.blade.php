@@ -107,10 +107,10 @@
                        ?>"  href="{{URL::to('/selections/12')}}" role="tab" aria-controls="v-pills-settings" aria-selected="false">Weight</a>
 					  
 					   <a class="nav-link <?php
-                       if ($curr_tab == 14) {
+                       if ($curr_tab == 13) {
                            echo 'active';
                        }
-                       ?>"  href="{{URL::to('/selections/14')}}" role="tab" aria-controls="v-pills-settings" aria-selected="false">Contact Us Purpose</a>
+                       ?>"  href="{{URL::to('/selections/13')}}" role="tab" aria-controls="v-pills-settings" aria-selected="false">Contact Us Purpose</a>
 					   
                 </div>
             </div>
