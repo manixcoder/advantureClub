@@ -86,7 +86,6 @@
                                             $country = $user_detail['country'];
                                         }
                                         ?>
-
                                         <select class="form-control" id="country" name="country">
                                             <option value="">Select Country</option>
                                             <?php

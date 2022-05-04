@@ -106,10 +106,20 @@ class UsersController extends MyController
     return redirect()->back();
   }
   public function partnershipDecline(Request $request,$id){
-dd($id);
+   // dd($id);
+    $services= DB::table('become_partner')->where('user_id',$id)->update([
+      'is_approved'=>'0'
+    ]);
+     Session::flash('success', 'Partnership Decline successfully.');
+    return redirect()->back();
   }
   public function partnershipAccept(Request $request,$id){
-    dd($id);
+   // dd($id);
+     $services= DB::table('become_partner')->where('user_id',$id)->update([
+      'is_approved'=>'1'
+    ]);
+     Session::flash('success', 'Partnership Accept successfully.');
+     return redirect()->back();
   }
 
 }

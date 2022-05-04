@@ -44,58 +44,23 @@ class SelectionsController extends MyController
         $active_tab = '';
         switch ($id) {
             case 1:
-                $result = Service_sector::select([
-                    'id',
-                    'sector as name',
-                    DB::raw("'Service Sector' as under"),
-                    'created_at'
-                ])
-                    ->get()
-                    ->toArray();
+                $result = Service_sector::select(['id','sector as name',DB::raw("'Service Sector' as under"),'created_at'])->get()->toArray();
                 $active_tab = 'service_sector';
                 break;
             case 2:
-                $result = Service_categorie::select([
-                    'id',
-                    'category as name',
-                    DB::raw("'Service Category' as under"),
-                    'created_at'
-                ])
-                    ->get()
-                    ->toArray();
+                $result =Service_categorie::select(['id','category as name',DB::raw("'Service Category' as under"),'created_at'])->get()->toArray();
                 $active_tab = 'service_category';
                 break;
             case 3:
-                $result = Service_type::select([
-                    'id',
-                    'type as name',
-                    DB::raw("'Service Type' as under"),
-                    'created_at'
-                ])
-                    ->get()
-                    ->toArray();
+                $result = Service_type::select(['id','type as name',DB::raw("'Service Type' as under"),'created_at'])->get()->toArray();
                 $active_tab = 'service_type';
                 break;
             case 4:
-                $result = Service_level::select([
-                    'id',
-                    'level as name',
-                    DB::raw("'Service Level' as under"), 'created_at'
-                ])
-                    ->get()
-                    ->toArray();
+                $result = Service_level::select(['id','level as name',DB::raw("'Service Level' as under"), 'created_at'])->get()->toArray();
                 $active_tab = 'service_level';
                 break;
             case 5:
-                $response = DB::table('durations')
-                    ->select(
-                        'id',
-                        'duration as name',
-                        DB::raw("'Duration' as under"),
-                        'created_at'
-                    )
-                    ->get()
-                    ->toArray();
+                $response = DB::table('durations')->select('id','duration as name',DB::raw("'Duration' as under"),'created_at')->get()->toArray();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -104,15 +69,7 @@ class SelectionsController extends MyController
                 $active_tab = 'duration';
                 break;
             case 6:
-                $response = DB::table('activities')
-                    ->select(
-                        'id',
-                        'activity as name',
-                        DB::raw("'Activities' as under"),
-                        'created_at'
-                    )
-                    ->get()
-                    ->toArray();
+                $response = DB::table('activities')->select('id','activity as name',DB::raw("'Activities' as under"),'created_at')->get()->toArray();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -121,14 +78,7 @@ class SelectionsController extends MyController
                 $active_tab = 'activities';
                 break;
             case 7:
-                $response = DB::table('aimed')
-                    ->select(
-                        'id',
-                        'AimedName as name',
-                        DB::raw("'Aimed' as under"),
-                        'created_at'
-                    )
-                    ->get();
+                $response = DB::table('aimed')->select('id','AimedName as name',DB::raw("'Aimed' as under"),'created_at')->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -137,14 +87,7 @@ class SelectionsController extends MyController
                 $active_tab = 'aimed';
                 break;
             case 8:
-                $response = DB::table('dependency')
-                    ->select(
-                        'id',
-                        'dependency_name as name',
-                        DB::raw("'Dependency' as under"),
-                        'created_at'
-                    )
-                    ->get();
+                $response = DB::table('dependency')->select('id','dependency_name as name',DB::raw("'Dependency' as under"),'created_at')->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -153,14 +96,7 @@ class SelectionsController extends MyController
                 $active_tab = 'dependency';
                 break;
             case 9:
-                $response = DB::table('currencies')
-                    ->select(
-                        'id',
-                        'name',
-                        DB::raw("'Currency' as under"),
-                        'created_at'
-                    )
-                    ->get();
+                $response = DB::table('currencies')->select('id','name',DB::raw("'Currency' as under"),'created_at')->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -170,14 +106,7 @@ class SelectionsController extends MyController
                 break;
 
             case 10:
-                $response = DB::table('health_conditions')
-                    ->select(
-                        'id',
-                        'name',
-                        DB::raw("'name' as under"),
-                        'created_at'
-                    )
-                    ->get();
+                $response = DB::table('health_conditions')->select('id','name',DB::raw("'name' as under"),'created_at')->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -187,14 +116,7 @@ class SelectionsController extends MyController
                 break;
 
             case 11:
-                $response = DB::table('heights')
-                    ->select(
-                        'id',
-                        'heightName as name',
-                        DB::raw("'heightName' as under"),
-                        'created_at'
-                    )
-                    ->get();
+                $response = DB::table('heights')->select('id','heightName as name',DB::raw("'heightName' as under"),'created_at')->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -204,14 +126,7 @@ class SelectionsController extends MyController
                 break;
 
             case 12:
-                $response = DB::table('weights')
-                    ->select(
-                        'id',
-                        'weightName as name',
-                        DB::raw("'weightName' as under"),
-                        'created_at'
-                    )
-                    ->get();
+                $response = DB::table('weights')->select('id','weightName as name',DB::raw("'weightName' as under"),'created_at')->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;
@@ -221,14 +136,7 @@ class SelectionsController extends MyController
                 break;
 
             case 13:
-                $response = DB::table('contactuspurposes')
-                    ->select(
-                        'id',
-                        'contactuspurposeName as name',
-                        DB::raw("'contactuspurposeName' as under"),
-                        'created_at'
-                    )
-                    ->get();
+                $response = DB::table('contactuspurposes')->select('id','contactuspurposeName as name',DB::raw("'contactuspurposeName' as under"),'created_at')->get();
                 $resss = [];
                 foreach ($response as $res) {
                     $resss[] = (array) $res;

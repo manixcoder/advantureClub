@@ -117,6 +117,11 @@ Route::any('save-country-session', 'UsersController@save_country_session');
 
 /*Announcement*/
 Route::any('announcement', 'TransactionsController@list_announcement');
+Route::get('add-announcement', function () {
+    $data['content'] = 'admin.transactions.add_announcement';
+    return view('layouts.content', compact('data'));
+});
+Route::any('add-announcements', 'TransactionsController@addAnnouncement');
 Route::any('delete-announcement/{id}', 'TransactionsController@announcement_delete');
 
 /*Question Reports*/
@@ -182,7 +187,7 @@ Route::get('selections/add', 'SelectionsController@add');
 Route::post('selections/add', 'SelectionsController@add');
 Route::get('selections/delete/{tab_id?}/{item_id}', 'SelectionsController@delete')->where(['id' => '[0-9]+'])->where(['id' => '[0-9]+']);
 
-Route::get('booking/detail/{id}', 'BookingsController@detail')->where(['id' => '[0-9]+']); 
+Route::get('booking/detail/{id}', 'BookingsController@detail')->where(['id' => '[0-9]+']);
 Route::get('booking/accept/{id}', 'BookingsController@accept')->where(['id' => '[0-9]+']);
 Route::get('booking/decline/{id}', 'BookingsController@decline')->where(['id' => '[0-9]+']);
 

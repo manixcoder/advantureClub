@@ -22,28 +22,31 @@ use DB;
 use Hash;
 use Auth;
 
-class TransactionsController extends MyController {
-
-    public function __construct() {
+class TransactionsController extends MyController
+{
+    public function __construct()
+    {
         $this->middleware('auth');
         $this->middleware('role');
     }
-
     /* transactions Listing Starts */
 
-    function list_transactions() {
-        $usersdata          = DB::table('transactions')->get();
+    function list_transactions()
+    {
+        $usersdata          =  DB::table('transactions')->get();
         $data['content']    = 'admin.transactions.list_transaction_users';
         return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
     }
 
- function list_questionreport() {
+    function list_questionreport()
+    {
         $usersdata = DB::table('question_reports')->get();
         $data['content'] = 'admin.transactions.question_report';
         return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
     }
 
-	function list_announcement() {
+    function list_announcement()
+    {
         $usersdata = DB::table('announcements')->get();
         $data['content'] = 'admin.transactions.announcement';
         return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
@@ -53,21 +56,22 @@ class TransactionsController extends MyController {
 
     /* Add new Adventure user starts */
 
-    public function add_admin_user(Request $request) {  //echo"<pre>";print_r($request->all());exit;
+    public function add_admin_user(Request $request)
+    {  //echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
-                        'name'              => 'required|min:3|max:50|unique:users',
-                        'mobile_code'       => 'required|numeric',
-                        'mobile'            => 'required|numeric|digits:10|unique:users',
-                        'email'             => 'required|email:filter|unique:users',
-                        'country'           => 'required|numeric',
-                        'region'            => 'required|numeric',
-                        'dob'               => 'required|date_format:Y-m-d',
-                        'health_condition'  => 'required',
-                        'height'            => 'required',
-                        'weight'            => 'required',
-                        'status'            => 'required|numeric|min:1|max:2',
-                        'image'             => 'required'
+                'name'              => 'required|min:3|max:50|unique:users',
+                'mobile_code'       => 'required|numeric',
+                'mobile'            => 'required|numeric|digits:10|unique:users',
+                'email'             => 'required|email:filter|unique:users',
+                'country'           => 'required|numeric',
+                'region'            => 'required|numeric',
+                'dob'               => 'required|date_format:Y-m-d',
+                'health_condition'  => 'required',
+                'height'            => 'required',
+                'weight'            => 'required',
+                'status'            => 'required|numeric|min:1|max:2',
+                'image'             => 'required'
             ]);
             if ($validator->fails()) {
                 $errors = array();
@@ -120,9 +124,9 @@ class TransactionsController extends MyController {
 
         $data['content'] = 'admin.admin_users.add_admin_users';
         return view('layouts.content', compact('data'))->with([
-                    'validation' => $data['validation'] ?? [],
-                    'health_conditions' => $health_conditions,
-                    'countries' => $countries
+            'validation' => $data['validation'] ?? [],
+            'health_conditions' => $health_conditions,
+            'countries' => $countries
         ]);
     }
 
@@ -130,47 +134,125 @@ class TransactionsController extends MyController {
 
     /* View Adventure users starts */
 
-    public function view_admin_user($id) {
-       // echo $id.'---------'; die;
+    public function view_admin_user($id)
+    {
+        // echo $id.'---------'; die;
         $editdata = DB::table('users')
-                        ->select(['users.*', 'countries.country', 'regions.region'])
-                        ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
-                        ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
-                        ->where('users.id', $id)->first();
-        
-        
+            ->select(['users.*', 'countries.country', 'regions.region'])
+            ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
+            ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
+            ->where('users.id', $id)->first();
+
+
         $data['content'] = 'admin.admin_users.view_admin_user';
         return view('layouts.content', compact('data'))->with(['editdata' => $editdata]);
     }
 
     /* View Adventure users ends */
     /* Update status in db from ajax request starts */
-      public function update_user_status($id){
-      $Data = array
-    			(
-    				'id' => $_GET['id'],
-    				'status' => $_GET['status'],
-            );
-          $edituserData = DB::table('users')->where('id', $id)->update($Data);
-          return response()->json(array('msg'=> $edituserData), 200);
-      }
-  /* Update status ends */
+    public function update_user_status($id)
+    {
+        $Data = array(
+            'id' => $_GET['id'],
+            'status' => $_GET['status'],
+        );
+        $edituserData = DB::table('users')->where('id', $id)->update($Data);
+        return response()->json(array('msg' => $edituserData), 200);
+    }
+    /* Update status ends */
 
- function transaction_delete($id) {
+    function transaction_delete($id)
+    {
         $delete = DB::table('transactions')->where('id', $id)->delete();
         session()->flash('error', 'Deleted Successfully..!');
         return back();
     }
-	
-	function questionreport_delete($id){
-		$delete = DB::table('question_reports')->where('id', $id)->delete();
+
+    function questionreport_delete($id)
+    {
+        $delete = DB::table('question_reports')->where('id', $id)->delete();
         session()->flash('error', 'Deleted Successfully..!');
         return back();
-	}
-	
- function announcement_delete($id) {
+    }
+
+    function announcement_delete($id)
+    {
         $delete = DB::table('announcements')->where('id', $id)->delete();
         session()->flash('error', 'Deleted Successfully..!');
         return back();
+    }
+
+    public function addAnnouncement(Request $request)
+    {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'title'              => 'required',
+            'country'       => 'required',
+            'licensed'            => 'required',
+            'gender'             => 'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = array();
+            foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                $errors[$field_name] = $messages[0];
+            }
+            $data['validation'] = $errors;
+            //return back();
+        } else {
+            if ($request->country) {
+                $where = 'usr.country_id = ' . $request->country . ' ';
+            } else {
+                $where = '1';
+            }
+            if ($request->gender) {
+                if ($request->gender == '0') {
+                    $gender = '"female"';
+                    $where .= ' && usr.gender = ' . $gender;
+                } elseif ($request->gender == '1') {
+                    $gender = '"male"';
+                    $where .= ' && usr.gender = ' . $gender;
+                }
+            }
+            if ($request->licensed) {
+                if ($request->licensed == '0') {
+                    $license = '"No"';
+                    $where .= ' && bp.license = ' .  $license;
+                } elseif ($request->licensed == '1') {
+                    $license = '"Yes"';
+                    $where .= ' && bp.license = ' .  $license;
+                }
+            }
+            if ($request->licensed) {
+                $usersData = DB::table('users as usr')
+                    ->select([
+                        'usr.*'
+                    ])
+                    ->join('become_partner as bp', 'bp.user_id', '=', 'usr.id')
+                    ->where(['usr.deleted_at' => NULL])
+                    ->groupBy('usr.id')
+                    ->whereRaw($where)
+                    ->get();
+            } else {
+                $usersData = DB::table('users as usr')
+                    ->select([
+                        'usr.*'
+                    ])
+                    ->where(['usr.deleted_at' => NULL])
+                    ->groupBy('usr.id')
+                    ->whereRaw($where)
+                    ->get();
+            }
+
+            foreach ($usersData as $user) {
+               // dd($user);
+            }
+
+
+            Session::flash('success', 'User has been successfully.');
+            return redirect('/announcement')->with(array(
+                'status' => 'success',
+                'message' => 'announcement sent successfully.!'
+            ));
+        }
     }
 }
