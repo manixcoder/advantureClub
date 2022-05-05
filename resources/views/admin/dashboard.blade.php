@@ -34,7 +34,7 @@ $users = DB::table('users')->where('id', $sessionId)->first();
                 </a>
             </div>
             <div class="col-md-4 col-xl-4">
-                <a href="{{url::to('sub-packages')}}">
+                
                     <div class="mini-stat clearfix bg-dark">
                         <div class="registration_part">
                             <img src="{{ asset('/public/images/subscription.png')}}">
@@ -43,15 +43,17 @@ $users = DB::table('users')->where('id', $sessionId)->first();
                         <div class="total_users">
                             <div class="tiles-progress">
                                 <p>New Partner</p>
-                                <span>{{ $new_subscription }}</span>
+                                <a href="{{url::to('list-adventure-partners')}}"><span>{{ $new_partner }}</span></a>
                             </div>
                             <div class="mini-stat-info">
                                 <p>Total Partner</p>
-                                <span class="counter">{{ $total_subscription}}</span>
+                                <a href="{{url::to('list-adventure-partners')}}">
+                                    <span class="counter">{{ $total_partner}}</span>
+                                </a>
                             </div>
                         </div>
                     </div>
-                </a>
+                
             </div>  
             <div class="col-md-4 col-xl-4">
                 <a href="{{url::to('services/2')}}">

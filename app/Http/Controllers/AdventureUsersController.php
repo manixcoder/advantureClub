@@ -27,10 +27,14 @@ class AdventureUsersController extends MyController
     {
         $this->middleware('auth');
         $this->middleware('role');
+
+        $usersdata = DB::table('users')
+            ->where('email', '=', NULL)
+            ->where('name', '=', NULL)
+            ->whereRaw('DATE_FORMAT(created_at, "%Y-%m-%d") < "' . date('Y-m-d') . '"')
+            ->delete();
     }
-
     /* Users Listing Starts */
-
     function list_adventure_users()
     {
         $usersdata = DB::table('users')
@@ -42,10 +46,19 @@ class AdventureUsersController extends MyController
             ->where(['users.deleted_at' => NULL])
             ->orderBy('users.id', 'desc')
             ->get();
+        $newData=array();
+        foreach($usersdata as $userData){
+            $bookingsData = DB::table('bookings')
+            ->where('user_id', $userData->id)
+            ->whereRaw('DATE_FORMAT(booking_date, "%Y-%m-%d") < "' . date('Y-m-d') . '"')
+            ->get()
+            ->count();
+            $userData->bookingscount=$bookingsData;
+            array_push($newData, $userData);
+        }
         $data['content'] = 'admin.adventure_users.list_adventure_users';
-        return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
+        return view('layouts.content', compact('data'))->with(['usersdata' => $newData]);
     }
-
     /* Adventure Users listing ends */
 
     /* Add new Adventure user starts */
@@ -114,7 +127,9 @@ class AdventureUsersController extends MyController
                             }
                             $files = $request->image;
                             $filepath = $files->move($destinationPath, $filename);
-                            DB::table('users')->where(['id' => $user_id])->update(['profile_image' => 'profile_image/' . $filename]);
+                            DB::table('users')->where(['id' => $user_id])->update([
+                                'profile_image' => 'profile_image/' . $filename
+                            ]);
                         }
                     }
                     Session::flash('success', 'User has been successfully.');
@@ -122,16 +137,14 @@ class AdventureUsersController extends MyController
                         'status' => 'success',
                         'message' => 'User has been successfully.!'
                     ));
-
-                    // return back();
                 }
             }
         }
         $health_conditions = DB::table('health_conditions')->get();
         $countries = DB::table('countries')->where(['deleted_at' => NULL])->get();
-
         $data['content'] = 'admin.adventure_users.add_adventure_users';
-        return view('layouts.content', compact('data'))->with([
+        return view('layouts.content', compact('data'))
+        ->with([
             'validation' => $data['validation'] ?? [],
             'health_conditions' => $health_conditions,
             'countries' => $countries
@@ -142,14 +155,23 @@ class AdventureUsersController extends MyController
 
     /* View Adventure users starts */
 
-    public function view_adventure_user($id)
+    public function view_adventure_user($id) 
     {
-        $editdata = DB::table('users')
-            ->select(['users.*', 'countries.country', 'regions.region'])
-            ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
-            ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
-            ->where('users.id', $id)
-            ->first();
+        $editdata = DB::table('users as u')
+        ->select(['u.*', 'ctr.country', 're.region','ctri.short_name'])
+        ->leftJoin('countries as ctr', 'u.country_id', '=', 'ctr.id')
+        ->leftJoin('countries as ctri', 'u.country_id', '=', 'ctri.id')
+        ->leftJoin('regions as re', 'u.country_id', '=', 're.country_id')
+        ->where('u.id', $id)
+        ->first();
+
+
+        $bookingsData = DB::table('bookings')
+         ->where('user_id', $editdata->id)
+         ->whereRaw('DATE_FORMAT(booking_date, "%Y-%m-%d") < "' . date('Y-m-d') . '"')
+         ->get()
+         ->count();
+         $editdata->bookingscount=$bookingsData;
         //dd($editdata);
 
         $health_conditions = $editdata->health_conditions ? explode(',', $editdata->health_conditions) : [];

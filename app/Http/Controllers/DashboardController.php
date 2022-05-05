@@ -34,28 +34,28 @@ class DashboardController extends MyController
         $OrgData = DB::table('users')->where('id', $id)->first();
 
         if ($userRole == '1') {
-            $one="1";
-            $where = 'client.status="'.$one.'"';
+            $one = "1";
+            $where = 'client.status="' . $one . '"';
             $total_partner = DB::table('users')
-                ->where(['users_role' => 2])
+                ->where(['users_role' => '2', 'deleted_at' => NULL])
                 ->count();
             $new_partner = DB::table('users as u')
-            ->leftJoin('become_partner as bp','bp.user_id','=','u.id')
-                ->where(['u.users_role' => 2])
+                ->leftJoin('become_partner as bp', 'bp.user_id', '=', 'u.id')
+                ->where(['u.users_role' => '2', 'u.deleted_at' => NULL])
                 ->whereRaw('DATE_FORMAT(u.created_at, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
                 ->count();
             $total_customer = DB::table('users')
-                ->where('users_role', 3)
+                ->where(['users_role' => '3', 'deleted_at' => NULL])
                 ->where('users.email', '<>', NULL)
                 ->where('users.name', '<>', NULL)
                 ->count();
-                // DB::enableQueryLog();
+            // DB::enableQueryLog();
             $new_customer = DB::table('users')
-                ->where(['users_role' => 3])
+                ->where(['users_role' => '3', 'deleted_at' => NULL])
                 ->whereRaw('DATE_FORMAT(created_at, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
                 ->count();
-                // dd($new_customer);
-                // dd(DB::getQueryLog());
+            // dd($new_customer);
+            // dd(DB::getQueryLog());
             $total_booking = DB::table('bookings')
                 ->count();
             $new_booking = DB::table('bookings')
@@ -77,10 +77,14 @@ class DashboardController extends MyController
                 'new_booking'           => $new_booking
             ];
         } elseif ($userRole == '2') {
-            echo "Access not allowed";
+            $request->session()->flash('error', 'Access not allowed.');
+            Auth::logout();
+            return redirect()->back();
             die;
         } else {
-            echo "customer login not allowed";
+            $request->session()->flash('error', 'customer login not allowed.');
+            Auth::logout();
+            return redirect()->back();
             die;
         }
 
@@ -116,10 +120,10 @@ class DashboardController extends MyController
             ->orderBy('bkng.id', 'DESC')
             ->take(5)
             ->get();
-            // dd($service);
-            $with_data['bookings'] = $service;
-            $data['content'] = 'admin.dashboard';
-            return view('layouts.content', compact('data'))
+        // dd($service);
+        $with_data['bookings'] = $service;
+        $data['content'] = 'admin.dashboard';
+        return view('layouts.content', compact('data'))
             ->with($with_data);
     }
 }

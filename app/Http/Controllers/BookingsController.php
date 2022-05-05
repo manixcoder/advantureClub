@@ -175,7 +175,7 @@ class BookingsController extends MyController
     }
 
     public function notifyUser(Request $request){
-       
+        //dd($request->all());
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'message' => 'required',

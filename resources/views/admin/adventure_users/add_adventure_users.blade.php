@@ -26,8 +26,7 @@
         ?>
         <form action="{{ $s}}" method="POST" id="FormValidation" enctype="multipart/form-data">
             @csrf
-            <!--<form  action="{{ URL::to('add-adventure-user') }}" method="POST"  enctype="multipart/form-data">-->
-            <!--    @csrf-->
+            
             <div class="row" id="example-basic">
                 <div class="col-md-12">
                     <div class="card">
@@ -69,7 +68,7 @@
                                             $email = $user_detail['email'];
                                         }
                                         ?>
-                                        <input type="text" id="email" name="email" class="form-control" value="{{$email}}" aria-required="true" placeholder="Email Address">
+                                        <input type="text" id="email" name="email" class="form-control" value="{{ $email }}" aria-required="true" placeholder="Email Address">
                                         <?php if (isset($validation['email'])) { ?>
                                             <label class="error">{{ $validation['email'] }}</label>
                                         <?php } ?>
@@ -281,7 +280,7 @@
 
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="natinality" class="control-label">Natinality:</label>
+                                        <label for="natinality" class="control-label">Nationality :</label>
                                         <select class="form-control" id="natinality" name="natinality">
                                             <option value="">Select Country</option>
                                             <?php

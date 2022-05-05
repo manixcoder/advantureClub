@@ -28,7 +28,7 @@
                      </thead>
                      <tbody>
                         @foreach($usersdata as $key => $data)
-                        <!-- echo"<pre>";{{print_r($data)}};exit;  -->
+                        <?php  // echo"<pre>";print_r($data);exit; ?>
                         @if($data->users_role > 1)
                         <tr class="gradeX">
                            <td>#{{ $key+1 }}</td>
@@ -36,7 +36,7 @@
                            <td>{{ $data->email }}</td>
                            <td>{{ $data->mobile }}</td>
                            <td>{{ $data->country}}</td>
-                           <td>Static</td>
+                           <td>{{ $data->bookingscount }} Activity</td>
                            <?php
                            if ($data->status == 1) {
                               $status = 'Active';
@@ -73,9 +73,11 @@
                                        <span class="slider round"></span>
                                     </label>
                                  </li>
+                                 @if($data->bookingscount =='0')
                                  <li>
                                     <a href="{{URL::to('/delete-adventure-user/delete/'.$data->id)}}" onclick="return confirm('Are you sure you want to delete this request ?')" class="bg-red"><i class="fa fa-trash"></i></a>
                                  </li>
+                                 @endif
                               </ul>
                            </td>
                         </tr>

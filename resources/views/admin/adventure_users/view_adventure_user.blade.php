@@ -66,7 +66,7 @@
             </div>
         </div>
         <?php
-        //dd($editdata);
+        // dd($editdata);
         ?>
         <div class="content partner_details">
             <div class="container-fluid">
@@ -93,6 +93,10 @@
                                 </li>
                                 <li>
                                     <p>Nationality :</p>
+                                    <h3>{{$editdata->short_name }}</h3>
+                                </li>
+                                <li>
+                                    <p>Country :</p>
                                     <h3>{{$editdata->country }}</h3>
                                 </li>
                                 <li>
@@ -135,6 +139,11 @@
                                     <p>Height in CM :</p>
                                     <h3>{{$editdata->height}}</h3>
                                 </li>
+
+                                <li>
+                                    <p>Activities Count :</p>
+                                    <h3>{{ $editdata->bookingscount}}  Activity</h3>
+                                </li>
                                 <li>
                                     <p>Status :</p>
                                     <h3>
@@ -155,16 +164,30 @@
                                         </label>
                                     </h3>
                                 </li>
+                                
                                 <li>
                                     <div id="cometchat" class="cometchat">
                                         <img src="{{ asset('/public/images/button_notify.png')}}">
                                         Notify
                                     </div>
-
-                                    <a href="{{URL::to('list-adventure-users')}}" id="delete" class="delete">
+                                    <?php
+                                    if($editdata->bookingscount == '0'){
+                                        $url = URL::to('delete-adventure-user/delete/').'/'.$editdata->id;
+                                    }else{
+                                        $url =""; 
+                                    }
+                                    if($editdata->bookingscount =='0'){
+                                       $url = URL::to('delete-adventure-user/delete/').'/'.$editdata->id; 
+                                   }else{
+                                    $url =""; 
+                                   }
+                                   ?>
+                                  
+                                    <a href="{{ $url}}" id="delete" class="delete">
                                         <img src="{{ asset('/public/images/button_notify.png')}}">
                                         Delete
                                     </a>
+                                    
                                 </li>
 
 
@@ -188,9 +211,10 @@
                                         </div>
                                         <div>{{$editdata->mobile_code}} - {{$editdata->mobile}}</div>
                                         <div>{{$editdata->email}}</div>
-                                        <form action="#" method="POST" id="FormValidation" enctype="multipart/form-data">
+                                        <form action="{{ URL::to('notify-user') }}" method="POST" id="FormValidation" enctype="multipart/form-data">
                                             @csrf
-                                            <input type="hidden" name="user_id" value="{{$editdata->id}}">
+                                            <input type="hidden" name="user_id" value="{{ $editdata->id }}">
+                                            
                                             <div class="row" id="example-basic">
                                                 <div class="col-md-12">
                                                     <div class="card">
@@ -201,13 +225,12 @@
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
-                                                                        <input type="text" id="titlenotify" name="titlenotify" class="form-control" aria-required="true" placeholder="Title to notify">
+                                                                        <input type="text" id="title" name="title" class="form-control" aria-required="true" placeholder="Title to notify">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
-                                                                        <textarea name="notifydescription" id="notifydescription" class="form-control" placeholder="Write message to notify...……..."></textarea>
-
+                                                                        <textarea name="message" id="message" class="form-control" placeholder="Write message to notify...……..."></textarea>
                                                                     </div>
                                                                 </div>
                                                             </div>

@@ -38,7 +38,6 @@ class ServicesController extends MyController
 
     public function get(Request $request, $type = 1)
     {
-        /* print_r($request->all()); die; */
         if ($type == 2) { //Booking list
             $service = DB::table('bookings as bkng')
                 ->select([
@@ -750,11 +749,9 @@ class ServicesController extends MyController
         if ($service) {
             $service->status = 2;
             $service->save();
-            $request->session()
-                ->flash('success', 'Service has been rejected successfully.');
+            $request->session()->flash('success', 'Service has been rejected successfully.');
         } else {
-            $request->session()
-                ->flash('error', 'Something went wrong. Please try again.');
+            $request->session()->flash('error', 'Something went wrong. Please try again.');
         }
         return redirect()
             ->back();
@@ -810,7 +807,6 @@ class ServicesController extends MyController
             ->get()
             ->toArray();
         $service->dependencies = $dependencies ?? [];
-        //dd($service);
         $data['content'] = 'admin.services.booked_client_view';
         return view('layouts.content', compact('data'))
             ->with([
@@ -824,19 +820,18 @@ class ServicesController extends MyController
         if ($id) {
             $where .= ' && srvc.id = ' . $id;
         }
-        $services = DB::table('services as srvc')
-            ->select([
-                'srvc.*',
-                'usr.name as provider_name',
-                'usr.id as user_id',
-                DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
-                'scat.category as service_category',
-                'ssec.sector as service_sector',
-                'styp.type as service_type',
-                'slvl.level as service_level',
-                'cntri.country',
-                'crnci.sign as currency_sign',
-                'rgns.region'
+        $services = DB::table('services as srvc')->select([
+            'srvc.*',
+            'usr.name as provider_name',
+            'usr.id as user_id',
+            DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
+            'scat.category as service_category',
+            'ssec.sector as service_sector',
+            'styp.type as service_type',
+            'slvl.level as service_level',
+            'cntri.country',
+            'crnci.sign as currency_sign',
+            'rgns.region'
             ])
             ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
             ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
@@ -853,9 +848,8 @@ class ServicesController extends MyController
             ->whereRaw($where)
             ->orderBy('srvc.id', 'DESC')
             ->get();
-        // dd($services);
-        $data['content'] = 'admin.services.adventure_request';
-        return view('layouts.content', compact('data'))->with(['services' => $services]);
+            $data['content'] = 'admin.services.adventure_request';
+            return view('layouts.content', compact('data'))->with(['services' => $services]);
     }
 
     public function getRegions(Request $request, $id)
@@ -872,9 +866,8 @@ class ServicesController extends MyController
             ->where('rg.country_id', $id)
             ->orderBy('rg.region', 'ASC')
             ->get();
-        // dd($regions);
-        $options = '';
-        if (!$regions->isEmpty()) {
+            $options = '';
+            if (!$regions->isEmpty()) {
             $options .= '<option value="">Select</option>';
             foreach ($regions as $reg) {
                 $sel = '';
