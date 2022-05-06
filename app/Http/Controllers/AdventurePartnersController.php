@@ -33,7 +33,7 @@ class AdventurePartnersController extends Controller
   {
     $usersdata = DB::table('users')->select('users.*', 'countries.country')
       ->join('countries', 'users.country_id', '=', 'countries.id')
-      ->where('users.users_role', 2)
+      ->where('users.users_role', '2')
       ->where(['users.deleted_at' => NULL])
       ->get();
 
@@ -65,10 +65,10 @@ class AdventurePartnersController extends Controller
       )
       ->join('become_partner as bp', 'u.id', '=', 'bp.user_id')
       ->join('countries as c', 'c.id', '=', 'u.country_id')
-      ->where('u.users_role', 2)
-      //->where(['u.deleted_at' => NULL])
+      ->where('u.users_role', '2')
+      ->where(['u.deleted_at' => NULL])
       ->get();
-
+      //dd($usersdata);
       $complete_ser = DB::table('services')->select('services.*')
        ->whereRaw('DATE_FORMAT(services.end_date, "%Y-%m-%d") = "' . date('Y-m-d') . '"')
        ->count();
@@ -269,7 +269,7 @@ class AdventurePartnersController extends Controller
       ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
       ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
       ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
-      ->where(['srvc.deleted_at' => NULL])
+      ->where(['srvc.deleted_at' => NULL,'srvc.owner'=>$id])
       ->orderBy('srvc.id', 'DESC')
       ->get();
     $service_ids = array_column($services->toArray(), 'id');

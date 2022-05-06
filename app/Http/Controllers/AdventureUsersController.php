@@ -19,20 +19,30 @@ use App\User;
 use DB;
 use Hash; 
 use Auth;
+use Carbon\Carbon;
 
 class AdventureUsersController extends MyController
 {
-
     public function __construct()
     {
         $this->middleware('auth');
         $this->middleware('role');
 
-        $usersdata = DB::table('users')
-            ->where('email', '=', NULL)
-            ->where('name', '=', NULL)
-            ->whereRaw('DATE_FORMAT(created_at, "%Y-%m-%d") < "' . date('Y-m-d') . '"')
-            ->delete();
+        $usersdata = DB::table('users')->where('email', '=', NULL)->where('name', '=', NULL)->get();
+        foreach ($usersdata as $key => $users) {
+               $last_date = $users->created_at;
+               $current_date = Carbon::now()->toDateTimeString();
+               //NUMBER DAYS BETWEEN TWO DATES CALCULATOR
+               $start_date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $last_date);
+               $end_date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $current_date);
+               $different_minutes = $start_date->diffInMinutes($end_date);
+              // dd($different_hours);
+               if($different_minutes > 30 ){
+                DB::table('users')->where('id',$users->id)->delete();
+               // dd("Hello");
+               }
+              // dd($users);
+        }
     }
     /* Users Listing Starts */
     function list_adventure_users()
