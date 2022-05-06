@@ -9,52 +9,53 @@
 
 
    /* Style the tab */
-.tab {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-}
+   .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+   }
 
-/* Style the buttons that are used to open the tab content */
-.tab button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-}
+   /* Style the buttons that are used to open the tab content */
+   .tab button {
+      background-color: inherit;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      transition: 0.3s;
+   }
 
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
+   /* Change background color of buttons on hover */
+   .tab button:hover {
+      background-color: #ddd;
+   }
 
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #ccc;
-}
+   /* Create an active/current tablink class */
+   .tab button.active {
+      background-color: #ccc;
+   }
 
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-}
+   /* Style the tab content */
+   .tabcontent {
+      display: none;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-top: none;
+   }
 </style>
 <div class="content partner_details">
    <div class="container-fluid">
       <div class="row">
          <div class="col-sm-12">
-            <?php // echo"<pre>";print_r($editdata);exit;  ?>
+            <?php // echo"<pre>";print_r($editdata);exit;  
+            ?>
             <h4 class="pull-left page-title">
-                <a href="{{URL::to('list-adventure-partners')}}">
-                    Partner
-                    </a> >
-                #{{$editdata->id}}
-                </h4>
+               <a href="{{URL::to('list-adventure-partners')}}">
+                  Partner
+               </a> >
+               #{{$editdata->id}}
+            </h4>
          </div>
       </div>
 
@@ -137,12 +138,12 @@
                      ?>
                      <!--span id="statusText_{{$editdata->id}}" class="$class">{{$stat}} &nbsp;&nbsp;</!--span>
                      <span-->
-                        <h3>
-                           <!--label class="switch">
+                     <h3>
+                        <!--label class="switch">
                               <input type="checkbox" class="togBtn" id="togBtn_{{$editdata->id}}" name="togBtn_{{$editdata->id}}" value="{{ $statVal}}" <?php echo $checked; ?> />
                               <span class="slider round"></span>
                            </label-->
-                        </h3>
+                     </h3>
                      </span->
                   </li>
                </ul>
@@ -164,32 +165,33 @@
                   <li>
                      <p>Licensed :</p>
                      {{!empty($editdata->license)? 'Yes':'No'}}
-                     
+
                   </li>
-                  
-                     <li>
-                        <p>CR Name :</p>
-                        <h3>{{!empty($editdata->cr_name)?$editdata->cr_name:''}}</h3>
-                     </li>
-                     <li>
-                        <p>CR Number :</p>
-                        <h3>{{!empty($editdata->cr_number)?$editdata->cr_number:''}}</h3>
-                     </li>
-                     <li>
-                        <p>Cr Copy :</p>
-                        <h3>
-                          @if($editdata->cr_copy != '')
-                          <img src="{{ URL::asset('/public/crCopy/') }}/{{ $editdata->cr_copy ?? ''}}" alt="image" width="250" height="150">
-                          @else
-                          <img src="{{ URL::asset('/public/crCopy/no.png') }}" alt="image" width="100" height="100">
-                          @endif
-                          </h3>
-                     </li>
+
+                  <li>
+                     <p>CR Name :</p>
+                     <h3>{{!empty($editdata->cr_name)?$editdata->cr_name:''}}</h3>
+                  </li>
+                  <li>
+                     <p>CR Number :</p>
+                     <h3>{{!empty($editdata->cr_number)?$editdata->cr_number:''}}</h3>
+                  </li>
+                  <li>
+                     <p>Cr Copy :</p>
+                     <h3>
+                        @if($editdata->cr_copy != '')
+                        <img src="{{ URL::asset('/public/crCopy/') }}/{{ $editdata->cr_copy ?? ''}}" alt="image" width="250" height="150">
+                        @else
+                        <img src="{{ URL::asset('/public/crCopy/no.png') }}" alt="image" width="100" height="100">
+                        @endif
+                     </h3>
+                  </li>
                   <!--li>
                      <p>Partnership :</p>
                      <h3><?php //foreach ($subscriptionData as $val) {
-                             // echo $val->duration;
-                          // } ?></h3>
+                           // echo $val->duration;
+                           // } 
+                           ?></h3>
                   </li-->
                   <!--li>
                      <p>Payment :</p>
@@ -197,17 +199,18 @@
                   </li>
                   <li>
                      <p>Payment Setup :</p>
-                     <h3 class="ellipsis"><?php 
-                    //  foreach ($pModeData as $val) {
-                    //                          if (count($pModeData) > 1) {
-                    //                             echo $val->payment_name . ' , ';
-                    //                          } else {
-                    //                             echo $val->payment_name;
-                    //                          }
-                    //                       } ?></h3>
+                     <h3 class="ellipsis"><?php
+                                          //  foreach ($pModeData as $val) {
+                                          //                          if (count($pModeData) > 1) {
+                                          //                             echo $val->payment_name . ' , ';
+                                          //                          } else {
+                                          //                             echo $val->payment_name;
+                                          //                          }
+                                          //                       } 
+                                          ?></h3>
                   </li-->
                   @if($editdata->packages_id !='0')
-                  @php 
+                  @php
                   $package = DB::table('packages')
                   ->select('*')
                   ->where('id',$editdata->packages_id)
@@ -231,32 +234,32 @@
                      <h3 class="ellipsis">No Subscription active</h3>
                   </li>
                   @endif
-                  
+
                   <li>
                      <p>Is Online :</p>
                      <h3>{{!empty($editdata->is_online)? 'Yes':'No'}}</h3>
                   </li>
-                  
+
                   <li>
                      <p>Payon Arrival :</p>
                      <h3>{{!empty($editdata->debit_card)? 'Yes':'No'}}</h3>
                   </li>
-                  
+
                   <li>
                      <p>Paypal :</p>
                      <h3>{{ $editdata->paypal }}</h3>
                   </li>
-                  
+
                   <li>
                      <p>Bankname :</p>
                      <h3>{{ $editdata->bankname }}</h3>
                   </li>
-                  
+
                   <li>
                      <p>account_holdername :</p>
                      <h3 class="ellipsis">{{ $editdata->account_holdername }}</h3>
                   </li>
-                  
+
                   <li>
                      <p>Account Number :</p>
                      <h3>{{ $editdata->account_number }}</h3>
@@ -265,7 +268,7 @@
                      <p>Description :</p>
                      <h3>{{ $editdata->description }}</h3>
                   </li>
-                  
+
                </ul>
             </div>
          </div>
@@ -321,109 +324,109 @@
 
 
          <!-- Tab links -->
-<div class="tab">
-  <button class="tablinks" onclick="openCity(event, 'Services')">Services</button>
-  <button class="tablinks" onclick="openCity(event, 'Requests')">Requests</button>
-</div>
+         <div class="tab">
+            <button class="tablinks" onclick="openCity(event, 'Services')">Services</button>
+            <button class="tablinks" onclick="openCity(event, 'Requests')">Requests</button>
+         </div>
 
-<!-- Tab content -->
-<div id="Services" class="tabcontent">
-  <table id="datatable-responsive" class="table table-striped table-bordered" style="border: none;">
-            <thead>
-               <tr>
-                  <th>Adventure ID</th>
-                  <th>Adventure Name</th>
-                  <th>Country/Region</th>
-                  <th>Participants</th>
-                  <th>Availability</th>
-                  <th>Total Cost</th>
-                  <th>Receivable</th>
-                  <th>Reviews</th>
-                  <th>Actions</th>
-               </tr>
-            </thead>
-            <tbody>
-               <?php foreach ($services as $key => $service) {
-               ?>
-                  <tr class="gradeX">
-                     <td>{{$service->id}}</td>
-                     <td>{{$service->adventure_name}}</td>
-                     <td>{{$service->country.' / '.$service->region}}</td>
-                     <td>{{$service->participants .' Participant'}}</td>
-                     <td></td>
-                     <td></td>
-                   
-                     <td>{{$service->currency_sign.' '.$service->cost_inc}}</td>
-                     <td>
-                        <?php if (date('Y-m-d') < date('Y-m-d', strtotime($service->start_date))) { ?>
-                           <span class="text-yellow">Upcoming</span>
-                        <?php } elseif ((date('Y-m-d') >= date('Y-m-d', strtotime($service->start_date))) && (date('Y-m-d') <= date('Y-m-d', strtotime($service->end_date)))) { ?>
-                           <span class="text-blue">OnGoing</span>
-                        <?php } elseif (date('Y-m-d') > date('Y-m-d', strtotime($service->end_date))) { ?>
-                           <span class="text-green">Completed</span>
-                        <?php } ?>
-                     </td>
-                     <td>
-                        <ul class="edit_icon action_icons dashboard_icons">
-                           <li><a href="{{URL::to('/service/view/'.$service->id)}}" class="bg-black"><i class="fa fa-eye"></i></a></li>
-                           <li><a href="{{URL::to('/')}}" onclick="return confirm('Are you sure you want to edit this item ?')" class="bg-green"><i class="fa fa-pencil"></i></a></li>
-                           <li><a href="{{URL::to('/service/detele/'.$service->id)}}" onclick="return confirm('Are you sure you want to delete this request ?')" class="bg-red"><i class="fa fa-trash"></i></a></li>
-                        </ul>
-                     </td>
+         <!-- Tab content -->
+         <div id="Services" class="tabcontent">
+            <table id="datatable-responsive" class="table table-striped table-bordered" style="border: none;">
+               <thead>
+                  <tr>
+                     <th>Adventure ID</th>
+                     <th>Adventure Name</th>
+                     <th>Country/Region</th>
+                     <th>Participants</th>
+                     <th>Availability</th>
+                     <th>Total Cost</th>
+                     <th>Receivable</th>
+                     <th>Reviews</th>
+                     <th>Actions</th>
                   </tr>
-               <?php } ?>
-            </tbody>
-         </table>
-</div>
+               </thead>
+               <tbody>
+                  <?php foreach ($services as $key => $service) {
+                  ?>
+                     <tr class="gradeX">
+                        <td>{{$service->id}}</td>
+                        <td>{{$service->adventure_name}}</td>
+                        <td>{{$service->country.' / '.$service->region}}</td>
+                        <td>{{$service->participants .' Participant'}}</td>
+                        <td></td>
+                        <td></td>
 
-<div id="Requests" class="tabcontent">
-  <table id="datatable-responsive" class="table table-striped table-bordered" style="border: none;">
-            <thead>
-               <tr>
-                  <th>Adventure ID</th>
-                  <th>Adventure Name</th>
-                  <th>Country/Region</th>
-                  <th>Participants</th>
-                  <th>Availability</th>
-                  <th>Total Cost</th>
-                  <th>Receivable</th>
-                  <th>Reviews</th>
-                  <th>Actions</th>
-               </tr>
-            </thead>
-            <tbody>
-               <?php foreach ($services as $key => $service) {
-               ?>
-                  <tr class="gradeX">
-                     <td>{{$service->id}}</td>
-                     <td>{{$service->adventure_name}}</td>
-                     <td>{{$service->country.' / '.$service->region}}</td>
-                     <td>{{$service->participants .' Participant'}}</td>
-                     <td></td>
-                     <td></td>
-                   
-                     <td>{{$service->currency_sign.' '.$service->cost_inc}}</td>
-                     <td>
-                        <?php if (date('Y-m-d') < date('Y-m-d', strtotime($service->start_date))) { ?>
-                           <span class="text-yellow">Upcoming</span>
-                        <?php } elseif ((date('Y-m-d') >= date('Y-m-d', strtotime($service->start_date))) && (date('Y-m-d') <= date('Y-m-d', strtotime($service->end_date)))) { ?>
-                           <span class="text-blue">OnGoing</span>
-                        <?php } elseif (date('Y-m-d') > date('Y-m-d', strtotime($service->end_date))) { ?>
-                           <span class="text-green">Completed</span>
-                        <?php } ?>
-                     </td>
-                     <td>
-                        <ul class="edit_icon action_icons dashboard_icons">
-                           <li><a href="{{URL::to('/service/view/'.$service->id)}}" class="bg-black"><i class="fa fa-eye"></i></a></li>
-                           <li><a href="{{URL::to('/')}}" onclick="return confirm('Are you sure you want to edit this item ?')" class="bg-green"><i class="fa fa-pencil"></i></a></li>
-                           <li><a href="{{URL::to('/service/detele/'.$service->id)}}" onclick="return confirm('Are you sure you want to delete this request ?')" class="bg-red"><i class="fa fa-trash"></i></a></li>
-                        </ul>
-                     </td>
+                        <td>{{$service->currency_sign.' '.$service->cost_inc}}</td>
+                        <td>
+                           <?php if (date('Y-m-d') < date('Y-m-d', strtotime($service->start_date))) { ?>
+                              <span class="text-yellow">Upcoming</span>
+                           <?php } elseif ((date('Y-m-d') >= date('Y-m-d', strtotime($service->start_date))) && (date('Y-m-d') <= date('Y-m-d', strtotime($service->end_date)))) { ?>
+                              <span class="text-blue">OnGoing</span>
+                           <?php } elseif (date('Y-m-d') > date('Y-m-d', strtotime($service->end_date))) { ?>
+                              <span class="text-green">Completed</span>
+                           <?php } ?>
+                        </td>
+                        <td>
+                           <ul class="edit_icon action_icons dashboard_icons">
+                              <li><a href="{{URL::to('/service/view/'.$service->id)}}" class="bg-black"><i class="fa fa-eye"></i></a></li>
+                              <li><a href="{{URL::to('/')}}" onclick="return confirm('Are you sure you want to edit this item ?')" class="bg-green"><i class="fa fa-pencil"></i></a></li>
+                              <li><a href="{{URL::to('/service/detele/'.$service->id)}}" onclick="return confirm('Are you sure you want to delete this request ?')" class="bg-red"><i class="fa fa-trash"></i></a></li>
+                           </ul>
+                        </td>
+                     </tr>
+                  <?php } ?>
+               </tbody>
+            </table>
+         </div>
+
+         <div id="Requests" class="tabcontent">
+            <table id="datatable-responsive" class="table table-striped table-bordered" style="border: none;">
+               <thead>
+                  <tr>
+                     <th>Adventure ID</th>
+                     <th>Adventure Name</th>
+                     <th>Country/Region</th>
+                     <th>Participants</th>
+                     <th>Availability</th>
+                     <th>Total Cost</th>
+                     <th>Receivable</th>
+                     <th>Reviews</th>
+                     <th>Actions</th>
                   </tr>
-               <?php } ?>
-            </tbody>
-         </table>
-</div>
+               </thead>
+               <tbody>
+                  <?php foreach ($services as $key => $service) {
+                  ?>
+                     <tr class="gradeX">
+                        <td>{{$service->id}}</td>
+                        <td>{{$service->adventure_name}}</td>
+                        <td>{{$service->country.' / '.$service->region}}</td>
+                        <td>{{$service->participants .' Participant'}}</td>
+                        <td></td>
+                        <td></td>
+
+                        <td>{{$service->currency_sign.' '.$service->cost_inc}}</td>
+                        <td>
+                           <?php if (date('Y-m-d') < date('Y-m-d', strtotime($service->start_date))) { ?>
+                              <span class="text-yellow">Upcoming</span>
+                           <?php } elseif ((date('Y-m-d') >= date('Y-m-d', strtotime($service->start_date))) && (date('Y-m-d') <= date('Y-m-d', strtotime($service->end_date)))) { ?>
+                              <span class="text-blue">OnGoing</span>
+                           <?php } elseif (date('Y-m-d') > date('Y-m-d', strtotime($service->end_date))) { ?>
+                              <span class="text-green">Completed</span>
+                           <?php } ?>
+                        </td>
+                        <td>
+                           <ul class="edit_icon action_icons dashboard_icons">
+                              <li><a href="{{URL::to('/service/view/'.$service->id)}}" class="bg-black"><i class="fa fa-eye"></i></a></li>
+                              <li><a href="{{URL::to('/')}}" onclick="return confirm('Are you sure you want to edit this item ?')" class="bg-green"><i class="fa fa-pencil"></i></a></li>
+                              <li><a href="{{URL::to('/service/detele/'.$service->id)}}" onclick="return confirm('Are you sure you want to delete this request ?')" class="bg-red"><i class="fa fa-trash"></i></a></li>
+                           </ul>
+                        </td>
+                     </tr>
+                  <?php } ?>
+               </tbody>
+            </table>
+         </div>
 
 
       </div>
@@ -435,25 +438,25 @@
 
 <script type="text/javascript">
    function openCity(evt, cityName) {
-  // Declare all variables
-  var i, tabcontent, tablinks;
+      // Declare all variables
+      var i, tabcontent, tablinks;
 
-  // Get all elements with class="tabcontent" and hide them
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
+      // Get all elements with class="tabcontent" and hide them
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+         tabcontent[i].style.display = "none";
+      }
 
-  // Get all elements with class="tablinks" and remove the class "active"
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
+      // Get all elements with class="tablinks" and remove the class "active"
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+         tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
 
-  // Show the current tab, and add an "active" class to the button that opened the tab
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
+      // Show the current tab, and add an "active" class to the button that opened the tab
+      document.getElementById(cityName).style.display = "block";
+      evt.currentTarget.className += " active";
+   }
 </script>
 <script type="text/javascript">
    $(".chosen-select").chosen({
@@ -516,7 +519,7 @@
             data: {
                "id": id,
                "status": statusNew,
-               "become":1,
+               "become": 1,
             },
             success: function(response) {
                console.log(response);
