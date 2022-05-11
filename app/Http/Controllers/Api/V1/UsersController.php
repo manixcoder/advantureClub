@@ -21,18 +21,21 @@ class UsersController extends MyController
     public function add(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|min:3|max:50|unique:users',
+           //  'name' => 'required|name|max:255|unique:users',
+            'name' => 'required|unique:users|max:255',
+            //'name' => 'required|min:3|max:50|unique:users',
             'mobile_code' => 'required|numeric',
             'mobile' => 'required|numeric',
             'email' => 'required|email:filter|unique:users',
-            'nationality' => 'required|numeric',
-            'now_in' => 'required|min:3|max:100',
+            'country_id' => 'required|numeric',
+            'nationality_id' => 'required|numeric',
             'dob' => 'required|date_format:Y-m-d',
             'health_conditions' => 'required',
             'height' => 'required',
             'weight' => 'required',
             'password' => 'required|min:5|max:40',
             'user_id' => 'required|numeric',
+            'device_id' => 'required',
         ]);
         if ($validator->fails()) {
             $errors = array();
@@ -45,6 +48,7 @@ class UsersController extends MyController
                 'password' => 'Password should contain minimum 8 characters with an uppercase letter, a lowercase letter, a number and a special character'
             ], 422);
         } else {
+
             $msg = 'You have been register successfully.';
             $mobile_number = $request->post('mobile');
             $email = $request->post('email');
@@ -73,19 +77,20 @@ class UsersController extends MyController
                     return $this->sendError($msg, 'Error', 404);
                 }
             }
-            $data->name                 = $request->post('username');
+            $data->name                 = $request->post('name');
             $data->mobile_code          = $request->post('mobile_code');
             $data->mobile               = $request->post('mobile');
             $data->email                = $request->post('email');
-            $data->country_id           = $request->post('nationality');
-            $data->now_in               = $request->post('now_in');
+            $data->country_id           = $request->post('country_id');
             $data->dob                  = $request->post('dob');
             $data->health_conditions    = $request->post('health_conditions');
             $data->health_conditions_id = $request->post('health_conditions_id');
             $data->Height               = $request->post('height');
             $data->Weight               = $request->post('weight');
+            $data->nationality_id       = $request->post('nationality_id');
             $data->password             = bcrypt($request->password);
-            $data->profile_image        = '';
+            $data->device_id            = $request->post('device_id');
+            $data->profile_image        = 'profile_image/no-image.png';
             $data->save();
             $data['become_partner'] = null;
             return $this->sendResponse($msg, $data, 201);
@@ -401,10 +406,11 @@ class UsersController extends MyController
     }
     public function login(Request $request)
     {
-        $url = asset('public');
+        $url = asset('public/');
         $validator = Validator::make($request->all(), [
             'email' => 'required|string',
-            'password' => 'required|min:5|max:40'
+            'password' => 'required|min:5|max:40',
+            'device_id'=>'required',
         ]);
         if ($validator->fails()) {
             $errors = array();
@@ -424,19 +430,25 @@ class UsersController extends MyController
         $result = User::select([
             '*',
             DB::raw("CONCAT('+',mobile_code) AS mobile_code"),
-            DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")
-        ])
-            ->where($where)
-            ->first();
+           // DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")
+        ])->where($where)->first();
+        $device_id="$request->device_id";
+        $result->device_id=$device_id;
+        $result->update();
+
+        //DB::table('users')->where('id',$result->id)->update(['device_id'=>$device_id]);
+        // $result = User::select([
+        //     '*',
+        //     DB::raw("CONCAT('+',mobile_code) AS mobile_code"),
+        //     DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")
+        // ])->where('id',$result->id)->first();
         // dd($result->id);
         $health = $result->health_conditions;
         //echo $health; die;
         $health_condtions = DB::table('health_conditions')->select([DB::raw("GROUP_CONCAT(name) AS healths")])
             ->whereIn('id', explode(',', $health))
             ->first();
-        $become_partner = DB::table('become_partner')->select('*')
-            ->where('user_id', $result->id)
-            ->first();
+        $become_partner = DB::table('become_partner')->select('*')->where('user_id', $result->id)->first();
         //dd($become_partner);
         $result['health_conditions_id'] = $health;
         $result['health_conditions'] = $health_condtions->healths;
@@ -550,13 +562,13 @@ class UsersController extends MyController
     }
     public function profile_update(Request $request, $id)
     {
-        $banner_rule = 'required|image|mimes:jpeg,jpg,png|max:2048';
+        $banner_rule = 'required|image|mimes:*|max:2048';
         $email_rule = 'required|email:filter|unique:users';
         $result = array();
         if ($id) {
             $result = User::find($id);
             if (!empty($result)) {
-                $banner_rule = 'nullable|mimes:jpeg,jpg,png|max:2048';
+                $banner_rule = 'nullable|mimes:*|max:2048';
             }
             if ($result['email'] == $request->post('email')) {
                 $email_rule = 'required|email:filter';
@@ -1186,8 +1198,7 @@ class UsersController extends MyController
             $country_code . $phone,
             array(
                 "messagingServiceSid" => env('TWILIO_FROM'),
-                //"from" =>"Duradrive",
-                "body" => 'Otp code from Adventure is:' . $otp
+                "body" => 'OTP code from AdventuresClub:' . $otp
             )
         );
     }

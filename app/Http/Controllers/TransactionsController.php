@@ -26,6 +26,7 @@ class TransactionsController extends MyController
 {
     public function __construct()
     {
+        //dd(Auth::id());
         $this->middleware('auth');
         $this->middleware('role');
     }
@@ -40,7 +41,7 @@ class TransactionsController extends MyController
 
     function list_questionreport()
     {
-        $usersdata = DB::table('question_reports')->get();
+        $usersdata = DB::table('contact_us')->orderBy('id', 'DESC')->get();
         $data['content'] = 'admin.transactions.question_report';
         return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
     }
@@ -170,7 +171,7 @@ class TransactionsController extends MyController
 
     function questionreport_delete($id)
     {
-        $delete = DB::table('question_reports')->where('id', $id)->delete();
+        $delete = DB::table('contact_us')->where('id', $id)->delete();
         session()->flash('error', 'Deleted Successfully..!');
         return back();
     }
@@ -184,11 +185,12 @@ class TransactionsController extends MyController
 
     public function addAnnouncement(Request $request)
     {
-        //dd($request->all());
+        // dd(Auth::user()->id);
         $validator = Validator::make($request->all(), [
             'title'              => 'required',
             'country'       => 'required',
             'licensed'            => 'required',
+            'messages'            => 'required',
             'gender'             => 'required'
         ]);
         if ($validator->fails()) {
@@ -244,7 +246,14 @@ class TransactionsController extends MyController
             }
 
             foreach ($usersData as $user) {
-               // dd($user);
+                DB::table('announcements')->insert([
+                    'user_id'=>$user->id,
+                    'sender_id'=>Auth::user()->id,
+                    'title'=>$request->title,
+                    'content'=>$request->messages,
+                    'created_at'=>date("Y-m-d H:i:s"),
+                    'updated_at'=>date("Y-m-d H:i:s")
+                ]);
             }
 
 

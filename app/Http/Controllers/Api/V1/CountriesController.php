@@ -24,13 +24,18 @@ class CountriesController extends MyController {
         return $this->sendError('No data found', [], 400);
     }
 
-    public function getCities(Request $request, $id) {
+    public function getCities(Request $request) {
+        //dd($request->all());
         $result = array();
 
         $cities = DB::table('cities as ct')
-                        ->select('cnt.id as country_id', 'cnt.country', 'ct.id as city_id', 'ct.city')
-                        ->leftJoin('countries as cnt', 'cnt.id', '=', 'ct.country_id')
-                        ->where(['ct.country_id' => $id, 'ct.deleted_at' => NULL])->orderBy('ct.city', 'ASC')->get();
+                        ->select('ct.*')
+                        ->where([
+                            'ct.region_id' => $request->region_id, 
+                            'ct.deleted_at' => NULL
+                        ])
+                        ->orderBy('ct.id', 'ASC')
+                        ->get();
 
         if (!$cities->isEmpty()) {
             return $this->sendResponse('Cities listing', $cities, 200);
@@ -38,22 +43,22 @@ class CountriesController extends MyController {
         return $this->sendError('No data found', [], 400);
     }
 
-    public function getRegions(Request $request, $id) {
-        $result = array();
-
-        $cities = DB::table('regions as rg')
+    public function getRegions(Request $request) {
+       //dd($request->all());
+        $regions = DB::table('regions as rg')
                         ->select('cnt.id as country_id', 'cnt.country', 'rg.id as region_id', 'rg.region')
                         ->leftJoin('countries as cnt', 'cnt.id', '=', 'rg.country_id')
                         ->where([
-                            'rg.country_id' => $id, 
+                            'rg.country_id' => $request->country_id, 
                             'rg.deleted_at' => NULL
                         ])
                         ->orderBy('rg.region', 'ASC')
                         ->get();
-        if (!$cities->isEmpty()) {
-            return $this->sendResponse('Regions listing', $cities, 200);
+        if (!$regions->isEmpty()) {
+            return $this->sendResponse('Regions listing', $regions, 200);
         }
         return $this->sendError('No data found', [], 400);
     }
+    
 
 }

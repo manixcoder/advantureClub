@@ -1139,7 +1139,7 @@ class ServicesController extends MyController
 
     public function getPurpose()
     {
-        $purpose = DB::table('contact_us_purpose')->where(['status' => 1])->orderBy('purpose', 'ASC')->get();
+        $purpose = DB::table('contactuspurposes')->orderBy('Id', 'ASC')->get();
         if ($purpose) {
             return $this->sendResponse("Purpose list", $purpose, 200);
         } else {
@@ -1658,6 +1658,7 @@ class ServicesController extends MyController
 
     public function create_service(Request $request)
     {
+       // dd($request->all());
         if ($request->post()) {
             if ($request->service_plan == 1) {
                 $validator = Validator::make($request->all(), [
@@ -1751,32 +1752,7 @@ class ServicesController extends MyController
                                 }
 
                                 DB::table('service_images')->insert($banner_data);
-                                /* foreach ($request->file('banners') as $key => $banner) {
-
-                                    $banner->type = $banner->getClientMimeType();
-                                    $file_info = $this->getExtensionSize((array) $banner);
-
-                                    $msg = config('constants.BANNER_ADDED');
-                                    if ($banner) {
-                                        if (isset($result['banner']) && $result['banner'] != '') { 
-                                            Storage::disk('public')->delete($result['banner']);
-                                        }
-                                        $filename = time() . '-' . $key . '.jpg';
-                                        $basepath = "public/uploads/services/thumbs/";
-                                        if (!is_dir($basepath)) {
-                                            mkdir($basepath, 0777, true);
-                                        }
-                                        $filepath = Storage::disk('public')->putFileAs('services', $banner, $filename);
-                                        $this->resize_crop_image($this->image_path() . '/' . $filepath, $this->image_path() . '/services/thumbs/' . $filename);
-                                        $banner_data[] = array(
-                                            'service_id' => $service_id,
-                                            'is_default' => $key == 0 ? 1 : 0,
-                                            'image_url' => $filepath,
-                                            'thumbnail' => 'services/thumbs/' . $filename
-                                        );
-                                    }
-                                }
-                                DB::table('service_images')->insert($banner_data);*/
+                               
                             }
                             $ssfor = array();
                             if (isset($request->service_for)) {
