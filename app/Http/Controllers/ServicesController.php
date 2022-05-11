@@ -43,7 +43,6 @@ class ServicesController extends MyController
                 ->select([
                     'bkng.id as booking_id',
                     'srvc.id as service_id',
-                    'cntri.country',
                     'rgn.region',
                     'srvc.adventure_name',
                     'usr.name as provider_name',
@@ -54,14 +53,14 @@ class ServicesController extends MyController
                     'bkng.unit_amount as unit_cost',
                     'bkng.total_amount as total_cost',
                     'pmnt.payment_method as payment_channel',
-                    'crnci.sign as currency',
+                    'cntri.currency as currency',
                     'bkng.status', 'bkng.payment_status',
                     DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Pending')) as booking_status_text"),
                     DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
                 ])
                 ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
+                //->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                 ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -83,7 +82,7 @@ class ServicesController extends MyController
                     'styp.type as service_type',
                     'slvl.level as service_level',
                     'cntri.country',
-                    'crnci.sign as currency_sign',
+                    'cntri.currency as currency_sign',
                     'rgns.region'
                 ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
@@ -93,7 +92,6 @@ class ServicesController extends MyController
                 ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
                 ->where(['srvc.deleted_at' => NULL])
                 ->orderBy('srvc.id', 'DESC')
                 ->get();
@@ -429,30 +427,14 @@ class ServicesController extends MyController
                 $levels_res[] = $level->attributesToArray();
             }
         }
-        $dependencies = DB::table('dependency')
-            ->select('id', 'dependency_name')
-            ->get();
-        $service_for = DB::table('service_for')
-            ->select('id', 'sfor')
-            ->get();
-        $service_plans = DB::table('service_plan')
-            ->select('id', 'plan', 'title')
-            ->get();
-        $currencies = DB::table('currencies')
-            ->select('id', 'code', 'sign', 'name')
-            ->get();
-        $weekdays = DB::table('weekdays')
-            ->select('id', 'day')
-            ->get();
-        $activities_list = DB::table('activities')
-            ->select('id', 'activity')
-            ->get();
-        $durations_list = DB::table('durations')
-            ->select('id', 'duration')
-            ->get();
-        $region_list = DB::table('regions')
-            ->select('id', 'region')
-            ->get();
+        $dependencies = DB::table('dependency')->select('id', 'dependency_name')->get();
+        $service_for = DB::table('service_for')->select('id', 'sfor')->get();
+        $service_plans = DB::table('service_plan')->select('id', 'plan', 'title')->get();
+        $currencies = DB::table('countries')->select('*')->get();
+        $weekdays = DB::table('weekdays')->select('id', 'day')->get();
+        $activities_list = DB::table('activities')->select('id', 'activity')->get();
+        $durations_list = DB::table('durations')->select('id', 'duration')->get();
+        $region_list = DB::table('regions')->select('id', 'region')->get();
         $data['content'] = 'admin.services.update_services';
         return view('layouts.content', compact('data'))->with([
             'validation'        => $validation ?? [],
@@ -490,7 +472,7 @@ class ServicesController extends MyController
                 'slvl.level as service_level',
                 'cntri.country',
                 'rgn.region',
-                'curr.code as currency',
+                'cntri.currency as currency',
                 DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
                 'slike.is_like'
             ])
@@ -501,7 +483,6 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
             ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
             ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
             ->leftJoin('service_likes as slike', 'slike.service_id', '=', 'srvc.id')
@@ -510,56 +491,58 @@ class ServicesController extends MyController
             ->get();
         if (!$services->isEmpty()) {
             $activities = DB::table('service_activities as s_act')
-                ->select(['act.id', 'act.activity'])
-                ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
-                ->where('s_act.service_id', $id)
-                ->get()
-                ->toArray();
+            ->select(['act.id', 'act.activity'])
+            ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
+            ->where('s_act.service_id', $id)
+            ->get()
+            ->toArray();
             $services[0]->included_activities = $activities ?? [];
             $dependencies = DB::table('service_dependencies as s_dep')
-                ->select(['dep.id', 'dep.dependency_name'])
-                ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
-                ->where('s_dep.service_id', $id)
-                ->get()
-                ->toArray();
+            ->select(['dep.id', 'dep.dependency_name'])
+            ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
+            ->where('s_dep.service_id', $id)
+            ->get()
+            ->toArray();
             $services[0]->dependencies = $dependencies ?? [];
-            $programs = DB::table('service_programs')
-                ->select([
-                    'id',
-                    'service_id',
-                    'title',
-                    'start_datetime',
-                    'end_datetime',
-                    'description'
-                ])
-                ->where('service_id', $id)
-                ->get();
+            $programs = DB::table('service_programs')->select([
+                'id',
+                'service_id',
+                'title',
+                'start_datetime',
+                'end_datetime',
+                'description'
+            ])
+            ->where('service_id', $id)
+            ->get();
             $services[0]->programs = $programs;
             if ($services[0]->service_plan == 1) {
                 $availability = DB::table('service_plan_day_date as spdd')
-                    ->select(['spdd.id', 'wkd.day'])
-                    ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
-                    ->where('spdd.service_id', $id)
-                    ->get()
-                    ->toArray();
+                ->select(['spdd.id', 'wkd.day'])
+                ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
+                ->where('spdd.service_id', $id)
+                ->get()
+                ->toArray();
                 $services[0]->availability = $availability ?? [];
             } else if ($services[0]->service_plan == 2) {
                 $availability = DB::table('service_plan_day_date as spdd')
-                    ->select(['spdd.id', 'spdd.date'])
-                    ->where('spdd.service_id', $id)
-                    ->get()
-                    ->toArray();
+                ->select(['spdd.id', 'spdd.date'])
+                ->where('spdd.service_id', $id)
+                ->get()
+                ->toArray();
                 $services[0]->availability = $availability ?? [];
             }
             $star_ratings_res = DB::table('service_reviews')
-                ->select(['service_id', DB::raw("AVG(star) AS stars"), DB::raw("COUNT(user_id) AS reviewd_by")])
+                ->select([
+                    'service_id', 
+                    DB::raw("AVG(star) AS stars"), 
+                    DB::raw("COUNT(user_id) AS reviewd_by")
+                ])
                 ->where('service_id', $id)
                 ->groupBy('service_id')
                 ->first();
             $services[0]->stars = $star_ratings_res ? number_format($star_ratings_res->stars, 2, '.', '') : 0;
             $services[0]->reviewd_by = $star_ratings_res ? $star_ratings_res->reviewd_by : 0;
         }
-
         $bookings = DB::table('bookings as bkng')
             ->select([
                 'bkng.id as booking_id',
@@ -575,14 +558,13 @@ class ServicesController extends MyController
                 'bkng.unit_amount as unit_cost',
                 'bkng.total_amount as total_cost',
                 'pmnt.payment_method as payment_channel',
-                'crnci.sign as currency',
+                'cntri.currency as currency',
                 'bkng.status', 'bkng.payment_status',
                 DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
                 DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text")
             ])
             ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
             ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-            ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
             ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
             ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
             ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -640,7 +622,7 @@ class ServicesController extends MyController
                 'slvl.level as service_level',
                 'cntri.country',
                 'rgn.region',
-                'curr.code as currency',
+                'cntri.currency as currency',
                 DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
                 'slike.is_like'
             ])
@@ -651,7 +633,7 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+           
             ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
             ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
             ->leftJoin('service_likes as slike', 'slike.service_id', '=', 'srvc.id')
@@ -702,16 +684,12 @@ class ServicesController extends MyController
             $services[0]->stars = $star_ratings_res ? number_format($star_ratings_res->stars, 2, '.', '') : 0;
             $services[0]->reviewd_by = $star_ratings_res ? $star_ratings_res->reviewd_by : 0;
         }
-
-
         //$data['content'] = 'admin.services.service_detail';
-
         $data['content'] = 'admin.adventureRequests.requests_detail';
         return view('layouts.content', compact('data'))->with([
             'service' => $services[0],
         ]);
     }
-
     public function deleteService(Request $request, $id)
     {
         $service = Service::find($id);
@@ -729,7 +707,6 @@ class ServicesController extends MyController
         }
         return redirect()->back();
     }
-
     public function acceptService(Request $request, $id)
     {
         $service = Service::find($id);
@@ -742,7 +719,6 @@ class ServicesController extends MyController
         }
         return redirect()->back();
     }
-
     public function declineService(Request $request, $id)
     {
         $service = Service::find($id);
@@ -756,7 +732,6 @@ class ServicesController extends MyController
         return redirect()
             ->back();
     }
-
     public function participant(Request $request, $id)
     {
         $service = DB::table('bookings as bkng')
@@ -777,7 +752,7 @@ class ServicesController extends MyController
                 'bkng.unit_amount as unit_cost',
                 'bkng.total_amount as total_cost',
                 'pmnt.payment_method as payment_channel',
-                'crnci.sign as currency',
+                'cntri.currency as currency',
                 'client.dob',
                 'client.Height',
                 'client.Weight',
@@ -791,7 +766,7 @@ class ServicesController extends MyController
             ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
             ->leftJoin('service_categories as catg', 'catg.id', '=', 'srvc.service_category')
             ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-            ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
+            
             ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
             ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
             ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -813,7 +788,6 @@ class ServicesController extends MyController
                 'service' => $service
             ]);
     }
-
     public function adventures(Request $request, $id = null)
     {
         $where = '1';
@@ -830,7 +804,7 @@ class ServicesController extends MyController
             'styp.type as service_type',
             'slvl.level as service_level',
             'cntri.country',
-            'crnci.sign as currency_sign',
+            'cntri.currency as currency_sign',
             'rgns.region'
             ])
             ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
@@ -840,7 +814,7 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
+            
             ->where([
                 'srvc.deleted_at' => NULL,
                 'srvc.status' => 0
@@ -851,7 +825,6 @@ class ServicesController extends MyController
             $data['content'] = 'admin.services.adventure_request';
             return view('layouts.content', compact('data'))->with(['services' => $services]);
     }
-
     public function getRegions(Request $request, $id)
     {
         $result = array();
@@ -881,7 +854,6 @@ class ServicesController extends MyController
         }
         echo $options;
     }
-
     public function getCity(Request $request, $id)
     {
         // dd($request->all());
@@ -908,7 +880,6 @@ class ServicesController extends MyController
         }
         echo $options;
     }
-
     public function listServiceReviews(Request $request)
     {
         $reviewData = DB::table('services as srvc')
@@ -953,7 +924,6 @@ class ServicesController extends MyController
                 'likesData' => $likesData
             ]);
     }
-
     public function deleteServiceReviews(Request $request, $id)
     {
         $service = Service::find($id);
@@ -965,8 +935,6 @@ class ServicesController extends MyController
         }
         return redirect()->back();
     }
-
-
     public function update_like_status($id)
     {
         $Data = array(

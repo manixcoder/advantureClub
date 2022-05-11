@@ -41,7 +41,7 @@ class TransactionsController extends MyController
 
     function list_questionreport()
     {
-        $usersdata = DB::table('question_reports')->get();
+        $usersdata = DB::table('contact_us')->orderBy('id', 'DESC')->get();
         $data['content'] = 'admin.transactions.question_report';
         return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
     }
@@ -171,7 +171,7 @@ class TransactionsController extends MyController
 
     function questionreport_delete($id)
     {
-        $delete = DB::table('question_reports')->where('id', $id)->delete();
+        $delete = DB::table('contact_us')->where('id', $id)->delete();
         session()->flash('error', 'Deleted Successfully..!');
         return back();
     }

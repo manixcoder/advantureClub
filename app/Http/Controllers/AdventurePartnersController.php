@@ -214,41 +214,42 @@ class AdventurePartnersController extends Controller
         'bp.packages_id',
         'bp.start_date',
         'bp.end_date'
-
       )
       ->where('u.id', $id)
       ->first();
-    // dd($editdata);
-    $healthConditionData = array();
-    if (!empty($editdata->health_conditions)) {
-      $hCondition = explode(",", $editdata->health_conditions);
-      $healthConditionData = DB::table('health_conditions')
-        ->select('health_conditions.*')
-        ->wherein('health_conditions.id', $hCondition)
-        ->get();
-    } else {
+     // dd($editdata);
+      if($editdata->nationality_id !='0'){
+        $countriesData= DB::table('countries')->where('id',$editdata->nationality_id)->first();
+      $editdata->country=$countriesData->short_name;
+    }else{
+      $editdata->country='';
+    }
+      
+      // dd($editdata);
       $healthConditionData = array();
-    }
-    $subscriptionData = array();
-    if (!empty($editdata->subscription_id)) {
-      $subscriptionData = DB::table('packages')
-        ->select('packages.*')
-        ->where('packages.id', $editdata->subscription_id)
-        ->get();
-    } else {
+      if (!empty($editdata->health_conditions)) {
+        $hCondition = explode(",", $editdata->health_conditions);
+        $healthConditionData = DB::table('health_conditions')->select('health_conditions.*')->wherein('health_conditions.id', $hCondition)->get();
+      } else {
+        $healthConditionData = array();
+      }
       $subscriptionData = array();
-    }
-    $pModeData = array();
-    if (!empty($editdata->payment_mode)) {
-      $pMode = explode(",", $editdata->payment_mode);
-      $pModeData = DB::table('get_all_paymentmode')
+      if (!empty($editdata->subscription_id)) {
+        $subscriptionData = DB::table('packages')->select('packages.*')->where('packages.id', $editdata->subscription_id)->get();
+      } else {
+        $subscriptionData = array();
+      }
+      $pModeData = array();
+      if (!empty($editdata->payment_mode)) {
+        $pMode = explode(",", $editdata->payment_mode);
+        $pModeData = DB::table('get_all_paymentmode')
         ->select('get_all_paymentmode.*')
         ->wherein('get_all_paymentmode.id', $pMode)
         ->get();
-    } else {
-      $pModeData = array();
-    }
-    $services = DB::table('services as srvc')
+      } else {
+        $pModeData = array();
+      }
+      $services = DB::table('services as srvc')
       ->select([
         'srvc.*',
         'usr.name as provider_name',
@@ -258,7 +259,7 @@ class AdventurePartnersController extends Controller
         'styp.type as service_type',
         'slvl.level as service_level',
         'cntri.country',
-        'crnci.sign as currency_sign',
+        'cntri.currency as currency_sign',
         'rgns.region'
       ])
       ->join('users as usr', 'usr.id', '=', 'srvc.owner')
@@ -268,8 +269,10 @@ class AdventurePartnersController extends Controller
       ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
       ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
       ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-      ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
-      ->where(['srvc.deleted_at' => NULL,'srvc.owner'=>$id])
+      ->where([
+        'srvc.deleted_at' => NULL,
+        'srvc.owner'=>$id
+      ])
       ->orderBy('srvc.id', 'DESC')
       ->get();
     $service_ids = array_column($services->toArray(), 'id');
@@ -285,16 +288,74 @@ class AdventurePartnersController extends Controller
       }
     }
     foreach ($services as $key => $ser) {
+      $purchases = DB::table('bookings')
+      ->where('bookings.service_id', '=', $ser->id)
+      ->sum('bookings.total_amount');
+      $services[$key]->totalAmount = $purchases;
+    }
+
+    foreach ($services as $key => $ser) {
+      $unitAmount = DB::table('bookings')
+      ->where('bookings.service_id', '=', $ser->id)
+      ->sum('bookings.unit_amount');;
+      $services[$key]->unit_amount = $unitAmount;
+    }
+    foreach ($services as $key => $ser) {
       $services[$key]->participants = $parti_array[$ser->id] ?? 0;
     }
-    $data['content'] = 'admin.adventure_partners.view_adventure_partner';
-    return view('layouts.content', compact('data'))->with([
-      'editdata' => $editdata,
-      'healthConditionData' => $healthConditionData,
-      'pModeData' => $pModeData,
-      'services' => $services,
-      'subscriptionData' => $subscriptionData
-    ]);
+    $bookings = DB::table('bookings as bkng')
+            ->select([
+                'bkng.id as booking_id',
+                'srvc.id',
+                'srvc.id as service_id',
+                'cntri.country',
+                'rgn.region',
+                'srvc.adventure_name',
+                'usr.name as provider_name',
+                'client.id as client_id',
+                'client.name as customer',
+                'client.nationality_id as nationality_id',
+                'client.profile_image',
+                'bkng.booking_date as service_date',
+                'bkng.created_at as booked_on',
+                'bkng.adult',
+                'bkng.kids',
+                'bkng.unit_amount as unit_cost',
+                'bkng.total_amount as total_cost',
+                'pmnt.payment_method as payment_channel',
+                'client.dob',
+                'client.Height',
+                'client.Weight',
+                'client.profile_image',
+                'bkng.message',
+                'bkng.created_at as required_at',
+                'srvc.start_date',
+                'srvc.end_date',
+                'bkng.status', 
+                'bkng.payment_status',
+                DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
+                DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
+                'catg.category'
+            ])
+            ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
+            ->leftJoin('service_categories as catg', 'catg.id', '=', 'srvc.service_category')
+            ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
+            ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
+            ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
+            ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
+            ->leftJoin('payments as pmnt', 'pmnt.booking_id', '=', 'bkng.id')
+            ->whereIn('bkng.service_id', $service_ids)
+            ->orderBy('bkng.id', 'DESC')
+            ->get();
+            $data['content'] = 'admin.adventure_partners.view_adventure_partner';
+            return view('layouts.content', compact('data'))->with([
+              'editdata' => $editdata,
+              'healthConditionData' => $healthConditionData,
+              'pModeData' => $pModeData,
+              'services' => $services,
+              'bookings' => $bookings,
+              'subscriptionData' => $subscriptionData
+            ]);
   }
 
   /* View Adventure users ends */
@@ -326,8 +387,8 @@ class AdventurePartnersController extends Controller
       'status' => $_GET['status'],
     );
     $edituserData = DB::table('users')
-      ->where('id', $id)
-      ->update($Data);
+    ->where('id', $id)
+    ->update($Data);
     DB::table('become_partner')
       ->where('user_id', $id)
       ->update([
@@ -354,14 +415,10 @@ class AdventurePartnersController extends Controller
         'is_approved' => '0'
       ]);
     }
-
     return response()->json(array('msg' => $edituserData), 200);
   }
-
   public function update_partner_status($id)
   {
-    //dd($id);
-
     if ($_GET['status'] === '1') {
       $statusMsg = 'approved';
       $is_approved = '1';
@@ -376,9 +433,8 @@ class AdventurePartnersController extends Controller
       'is_approved' => $_GET['status']
     );
     $approveData = DB::table('become_partner')
-      ->where('user_id', $id)
-      ->update($update);
-
+    ->where('user_id', $id)
+    ->update($update);
     $editpartnerData = DB::table('notifications')
       ->insert([
         'sender_id' => Auth::user()->id,

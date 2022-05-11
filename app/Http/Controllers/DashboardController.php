@@ -103,7 +103,7 @@ class DashboardController extends MyController
                 'bkng.unit_amount as unit_cost',
                 'bkng.total_amount as total_cost',
                 'pmnt.payment_method as payment_channel',
-                'crnci.sign as currency',
+                
                 'bkng.status',
                 'bkng.payment_status',
                 DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
@@ -111,7 +111,7 @@ class DashboardController extends MyController
             ])
             ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
             ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-            ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
+            
             ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
             ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
             ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')

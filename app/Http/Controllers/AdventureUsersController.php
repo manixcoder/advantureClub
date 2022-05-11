@@ -30,16 +30,16 @@ class AdventureUsersController extends MyController
 
         $usersdata = DB::table('users')->where('email', '=', NULL)->where('name', '=', NULL)->get();
         foreach ($usersdata as $key => $users) {
-               $last_date = $users->created_at;
-               $current_date = Carbon::now()->toDateTimeString();
+              $last_date = $users->created_at;
+              $current_date = Carbon::now()->toDateTimeString();
                //NUMBER DAYS BETWEEN TWO DATES CALCULATOR
-               $start_date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $last_date);
-               $end_date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $current_date);
-               $different_minutes = $start_date->diffInMinutes($end_date);
-              // dd($different_hours);
+              $start_date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $last_date);
+              $end_date = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $current_date);
+              $different_minutes = $start_date->diffInMinutes($end_date);
+               //dd($different_minutes);
                if($different_minutes > 30 ){
                 DB::table('users')->where('id',$users->id)->delete();
-               // dd("Hello");
+                //dd("Hello");
                }
               // dd($users);
         }

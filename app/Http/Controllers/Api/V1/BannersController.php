@@ -15,35 +15,24 @@ class BannersController extends MyController
     {
     }
 
-    public function get(Request $request, $id = null)
+    public function get(Request $request)
     {
-        $result = array();
-        $url = asset('public/uploads/');
-        if ($id) {
-            $data = Banner::select([
-                'id',
-                DB::raw("CONCAT('" . $url . "/',banner) AS banner"),
-                DB::raw("CONCAT('" . $url . "',thumbnail) AS thumbnail"),
-                'title',
-                'status'
-            ])
-                ->where([
-                    'id' => $request->id,
-                    'deleted_at' => null
-                ])
-                ->first();
-        } else {
-            $data = Banner::select([
-                "id",
-                DB::raw("CONCAT('" . $url . "/',banner) AS banner"),
-                DB::raw("CONCAT('" . $url . "',thumbnail) AS thumbnail"),
-                'title',
-                'status'
-            ])
-                ->get();
+        $servicesData = DB::table('services')->where(['country' => $request->country_id])->get();
+        $serviceid=array();
+        foreach ($servicesData as $key => $services) {
+            array_push($serviceid,$services->id);
+            //dd($services->id);
         }
-        if (!$data->isEmpty()) {
-            return $this->sendResponse(config('constants.DATA_FOUND'), $data, 200);
+        $serviceid = implode (", ", $serviceid);
+        $bannerData =DB::table('service_offers')->whereIn('service_id',[$serviceid])->get();
+        $url = asset('public/uploads/');
+        
+
+        
+        
+        
+        if (!$bannerData->isEmpty()) {
+            return $this->sendResponse(config('constants.DATA_FOUND'), $bannerData, 200);
         }
         return $this->sendError('No record found.', [], 404);
     }
