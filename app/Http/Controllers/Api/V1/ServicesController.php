@@ -91,7 +91,7 @@ class ServicesController extends MyController
                 ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+               // ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->where(['srvc.deleted_at' => NULL])
@@ -364,7 +364,7 @@ class ServicesController extends MyController
                     'slvl.level as service_level',
                     'cntri.country',
                     'rgn.region',
-                    'curr.code as currency',
+                    'cntri.currency as currency',
                     'srvc.cost_inc as including_gerea_and_other_taxes',
                     'srvc.cost_exc as excluding_gerea_and_other_taxes'
                 ])
@@ -375,7 +375,7 @@ class ServicesController extends MyController
                 ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+                
                 ->leftJoin('durations as dur', 'dur.id', '=', 'srvc.duration')
                 ->where(['srvc.service_category' => $category->id])
                 ->where(['srvc.deleted_at' => NULL])
@@ -891,7 +891,7 @@ class ServicesController extends MyController
                 ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+                //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->leftJoin('durations as dur', 'dur.id', '=', 'srvc.duration')
@@ -948,42 +948,58 @@ class ServicesController extends MyController
     {
         $url = asset('public');
         $s_img = asset('public/uploads') . '/';
+        if ($request->sector) {
+            $where = 'srvc.service_category = ' . $request->category . ' ';
+        } else {
+            $where = '1';
+        } 
+
         if ($request->category) {
             $where = 'srvc.service_category = ' . $request->category . ' ';
         } else {
             $where = '1';
         }
+
         if ($request->country) {
-            $where .= ' && srvc.country = ' . $request->country;
+            $where .= ' || srvc.country = ' . $request->country;
         }
         if ($request->owner > 0) {
-            $where .= " && srvc.owner =  " . $request->owner;
+            $where .= " || srvc.owner =  " . $request->owner;
         } else {
-            $where .= " && srvc.owner !=  1";
+            $where .= " || srvc.owner !=  1";
         }
         if ($request->provider_name) {
-            $where .= ' && usr.name LIKE "%' . $request->provider_name . '%"';
+            $where .= ' || usr.name LIKE "%' . $request->provider_name . '%"';
         }
         if ($request->region) {
-            $where .= ' && srvc.region = ' . $request->region;
+            $where .= ' || srvc.region = ' . $request->region;
         }
-        if ($request->region) {
-            $where .= ' && srvc.service_sector = ' . $request->sector;
+        if ($request->service_type) {
+            $where .= ' || srvc.service_type = ' . $request->service_type;
         }
-        if ($request->type) {
-            $where .= ' && styp.id = ' . $request->type;
-        }
+        
         if ($request->aimed) {
-            $where .= ' && ssfor.sfor_id = ' . $request->aimed;
+            $where .= ' || ssfor.sfor_id = ' . $request->aimed;
         }
         if ($request->level) {
-            $where .= ' && slvl.id = ' . $request->level;
+            $where .= ' || srvc.service_level = ' . $request->level;
         }
         if ($request->duration) {
-            $where .= ' && dur.id = ' . $request->duration;
+            $where .= ' || srvc.duration = ' . $request->duration;
         }
-        if ($request->duration) {
-            $where .= ' && dur.id = ' . $request->duration;
+       // echo $where;
+       // die;
+
+        if ($request->activity_id) {
+            $activity_ids = $request->activity_id;
+        }else{
+            $activity_ids ='1';
+        }
+
+
+
+        if ($request->budget) {
+            $where .= ' || srvc.cost_inc = ' . $request->budget;
         }
         $recently_added = 'ASC';
         if ($request->recently_added) {
@@ -1014,15 +1030,17 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+            //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
             ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
             ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
             ->where(['srvc.deleted_at' => NULL])
             ->groupBy('ssfor.service_id')
             ->whereRaw($where)
             ->get();
-
-
+           // dd($services);
+            if ($services->isEmpty()) {
+                return $this->sendError('No data found', [], 400);
+            }
         if (!$services->isEmpty()) {
             foreach ($services as $key => $ser) {
                 $service_id = $ser->id;
@@ -1040,6 +1058,7 @@ class ServicesController extends MyController
                 $activities = DB::table('service_activities as s_act')->select(['s_act.*', 'act.activity'])
                     ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
                     ->where('s_act.service_id', $service_id)
+                    ->whereIn('s_act.activity_id', [$activity_ids])
                     ->get()
                     ->toArray();
                 $services[$key]->included_activities = $activities ?? [];
@@ -1111,6 +1130,11 @@ class ServicesController extends MyController
                 $services[$key]->programs = $programsData;
                 $services[$key]->remaining_seats = $services[0]->available_seats - $booked_seats;
             }
+
+            if (!$services->isEmpty()) {
+            return $this->sendResponse('Data found successfully', $services, 200);
+        }
+        return $this->sendError('No data found', [], 400);
             return $this->sendResponse(config('constants.DATA_FOUND'), $services, 200);
         }
     }

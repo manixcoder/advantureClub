@@ -181,7 +181,7 @@ class AdventurePartnersController extends Controller
   /* Add New Adventure User ends */
 
   /* View Adventure users starts */
-  public function view_adventure_partner($id)
+  public function viewAdventurePartner($id)
   {
     // dd($id);
     //$editdata = User::where('id', $id)->first();
@@ -220,10 +220,10 @@ class AdventurePartnersController extends Controller
      // dd($editdata);
       if($editdata->nationality_id !='0'){
         $countriesData= DB::table('countries')->where('id',$editdata->nationality_id)->first();
-      $editdata->country=$countriesData->short_name;
-    }else{
-      $editdata->country='';
-    }
+        $editdata->country=$countriesData->short_name;
+      }else{
+        $editdata->country='';
+      }
       
       // dd($editdata);
       $healthConditionData = array();
@@ -276,6 +276,10 @@ class AdventurePartnersController extends Controller
       ->orderBy('srvc.id', 'DESC')
       ->get();
     $service_ids = array_column($services->toArray(), 'id');
+    //dd($service_ids);
+
+    
+    
     $participants = DB::table('bookings')
       ->select(['service_id', DB::raw("COUNT(id) AS service_count")])
       ->whereIn('service_id', $service_ids)
@@ -347,6 +351,19 @@ class AdventurePartnersController extends Controller
             ->whereIn('bkng.service_id', $service_ids)
             ->orderBy('bkng.id', 'DESC')
             ->get();
+
+
+            $reviews = DB::table('service_reviews')
+            ->select([
+              '*',
+             // DB::raw("AVG(star) AS stars"),
+            ])
+            ->whereIn('service_id', $service_ids)
+            ->get();
+            $ratingStart=0;
+            foreach($reviews as $review){
+              $ratingStart +=$review->star;
+            }
             $data['content'] = 'admin.adventure_partners.view_adventure_partner';
             return view('layouts.content', compact('data'))->with([
               'editdata' => $editdata,
@@ -354,7 +371,10 @@ class AdventurePartnersController extends Controller
               'pModeData' => $pModeData,
               'services' => $services,
               'bookings' => $bookings,
-              'subscriptionData' => $subscriptionData
+              'subscriptionData' => $subscriptionData,
+              'starRating'=>$ratingStart/count($reviews),
+              'numberofreview'=>count($reviews),
+              
             ]);
   }
 
