@@ -52,14 +52,14 @@ class ServicesController extends MyController {
                         'bkng.unit_amount as unit_cost',
                         'bkng.total_amount as total_cost',
                         'pmnt.payment_method as payment_channel',
-                        'crnci.sign as currency',
+                        'cntri.currency as currency',
                         'bkng.status', 'bkng.payment_status',
                         DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Pending')) as booking_status_text"),
                         DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
                     ])
                     ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                     ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                    ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
+                   
                     ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                     ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                     ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -403,9 +403,9 @@ class ServicesController extends MyController {
         $service_plans = DB::table('service_plan')
                 ->select('id', 'plan', 'title')
                 ->get();
-        $currencies = DB::table('currencies')
-                ->select('id', 'code', 'sign', 'name')
-                ->get();
+        // $currencies = DB::table('currencies')
+        //         ->select('id', 'code', 'sign', 'name')
+        //         ->get();
         $weekdays = DB::table('weekdays')
                 ->select('id', 'day')
                 ->get();
@@ -430,7 +430,7 @@ class ServicesController extends MyController {
                     'durations' => $durations_list,
                     'dependencies' => $dependencies,
                     'service_for' => $service_for,
-                    'currencies' => $currencies,
+                   // 'currencies' => $currencies,
                     'service_plans' => $service_plans,
                     'weekdays' => $weekdays,
                     'activities_list' => $activities_list,
@@ -453,7 +453,8 @@ class ServicesController extends MyController {
                     'styp.type as service_type', 
                     'slvl.level as service_level',
                      'cntri.country',
-                    'rgn.region', 'curr.code as currency', 
+                    'rgn.region', 
+                    'cntri.currency as currency', 
                     DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"), 
                     'slike.is_like'
                     ])
@@ -464,7 +465,7 @@ class ServicesController extends MyController {
                 ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+                
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->leftJoin('service_likes as slike', 'slike.service_id', '=', 'srvc.id')
@@ -601,7 +602,7 @@ class ServicesController extends MyController {
                     'bkng.unit_amount as unit_cost',
                     'bkng.total_amount as total_cost',
                     'pmnt.payment_method as payment_channel',
-                    'crnci.sign as currency',
+                    'cntri.currency as currency',
                     'client.dob', 'client.Height', 'client.Weight', 'bkng.message',
                     'bkng.status', 'bkng.payment_status',
                     DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
@@ -611,7 +612,7 @@ class ServicesController extends MyController {
                 ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                 ->leftJoin('service_categories as catg', 'catg.id', '=', 'srvc.service_category')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
+               //->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                 ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -638,7 +639,19 @@ class ServicesController extends MyController {
             $where .= ' && srvc.id = ' . $id;
         }
         $services = DB::table('services as srvc')
-                ->select(['srvc.*', 'usr.name as provider_name', DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 'scat.category as service_category', 'ssec.sector as service_sector', 'styp.type as service_type', 'slvl.level as service_level', 'cntri.country', 'crnci.sign as currency_sign', 'rgns.region', DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")])
+                ->select([
+                    'srvc.*', 
+                    'usr.name as provider_name', 
+                    DB::raw("CONCAT(srvc.duration,' Min') AS duration"), 
+                    'scat.category as service_category',
+                     'ssec.sector as service_sector', 
+                     'styp.type as service_type', 
+                     'slvl.level as service_level', 
+                     'cntri.country', 
+                     'cntri.currency as currency_sign', 
+                     'rgns.region',
+                      DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")
+                      ])
                 ->join('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
                 ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
@@ -648,7 +661,7 @@ class ServicesController extends MyController {
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
-                ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
+                //->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
                 ->where(['srvc.deleted_at' => NULL, 'srvc.status' => 0])
                 ->whereRaw($where)
                 ->orderBy('srvc.id', 'DESC')
@@ -787,14 +800,14 @@ class ServicesController extends MyController {
                         'bkng.unit_amount as unit_cost',
                         'bkng.total_amount as total_cost',
                         'pmnt.payment_method as payment_channel',
-                        'crnci.sign as currency',
+                        'cntri.currency as currency',
                         'bkng.status', 'bkng.payment_status',
                         DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Pending')) as booking_status_text"),
                         DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
                     ])
                     ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                     ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                    ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
+                    //->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
                     ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                     ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                     ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -816,7 +829,7 @@ class ServicesController extends MyController {
                          'styp.type as service_type',
                          'slvl.level as service_level',
                           'cntri.country', 
-                          'crnci.sign as currency_sign', 
+                          'cntri.currency as currency_sign', 
                           'rgns.region'
                           ])
                     ->join('users as usr', 'usr.id', '=', 'srvc.owner')
@@ -826,7 +839,7 @@ class ServicesController extends MyController {
                     ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
                     ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                     ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                    ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
+                    //->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
                     ->where(['srvc.deleted_at' => NULL])
                     ->orderBy('srvc.id', 'DESC')
                     ->get();
@@ -1204,7 +1217,7 @@ class ServicesController extends MyController {
                     'slvl.level as service_level',
                      'cntri.country',
                     'rgn.region',
-                    'curr.code as currency',
+                    'cntri.currency as currency',
                     DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for"),
                     'slike.is_like'
                     ])
@@ -1215,7 +1228,7 @@ class ServicesController extends MyController {
                 ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-                ->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
+                //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->leftJoin('service_likes as slike', 'slike.service_id', '=', 'srvc.id')
@@ -1276,14 +1289,14 @@ class ServicesController extends MyController {
                     'bkng.unit_amount as unit_cost',
                     'bkng.total_amount as total_cost',
                     'pmnt.payment_method as payment_channel',
-                    'crnci.sign as currency',
+                    'cntri.currency as currency',
                     'bkng.status', 'bkng.payment_status',
                     DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
                     DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text")
                 ])
                 ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
+                //->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                 ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -1353,7 +1366,7 @@ class ServicesController extends MyController {
                     'bkng.unit_amount as unit_cost',
                     'bkng.total_amount as total_cost',
                     'pmnt.payment_method as payment_channel',
-                    'crnci.sign as currency',
+                    'cntri.currency as currency',
                     'client.dob', 
                     'client.Height', 
                     'client.Weight', 
@@ -1367,7 +1380,7 @@ class ServicesController extends MyController {
                 ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                 ->leftJoin('service_categories as catg', 'catg.id', '=', 'srvc.service_category')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
+               // ->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                 ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -1406,7 +1419,7 @@ class ServicesController extends MyController {
                     'styp.type as service_type', 
                     'slvl.level as service_level', 
                     'cntri.country',
-                    'crnci.sign as currency_sign', 
+                    'cntri.currency as currency_sign', 
                     'rgns.region', 
                     DB::raw("GROUP_CONCAT(sfor.sfor) as aimed_for")
                     ])
@@ -1419,7 +1432,7 @@ class ServicesController extends MyController {
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
                 ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
-                ->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
+                //->leftJoin('currencies as crnci', 'crnci.id', '=', 'srvc.currency')
                 ->where(['srvc.deleted_at' => NULL, 'srvc.status' => 0])
                 ->whereRaw($where)
                 ->orderBy('srvc.id', 'DESC')

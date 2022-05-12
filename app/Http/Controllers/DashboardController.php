@@ -93,6 +93,7 @@ class DashboardController extends MyController
                 'bkng.id as booking_id',
                 'srvc.id as service_id',
                 'cntri.country',
+                'cntri.currency',
                 'rgn.region',
                 'srvc.adventure_name',
                 'usr.name as provider_name',

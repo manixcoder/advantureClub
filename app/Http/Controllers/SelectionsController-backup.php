@@ -137,17 +137,17 @@ class SelectionsController extends MyController
                 $result = $resss;
                 $active_tab = 'dependency';
                 break;
-            case 9:
-                $response = DB::table('currencies')
-                    ->select('id', 'name', DB::raw("'Currency' as under"), 'created_at')
-                    ->get();
-                $resss = [];
-                foreach ($response as $res) {
-                    $resss[] = (array) $res;
-                }
-                $result = $resss;
-                $active_tab = 'currency';
-                break;
+            // case 9:
+            //     $response = DB::table('currencies')
+            //         ->select('id', 'name', DB::raw("'Currency' as under"), 'created_at')
+            //         ->get();
+            //     $resss = [];
+            //     foreach ($response as $res) {
+            //         $resss[] = (array) $res;
+            //     }
+            //     $result = $resss;
+            //     $active_tab = 'currency';
+            //     break;
             default:
         }
         $data['content'] = 'admin.selections.selections';
@@ -269,16 +269,16 @@ class SelectionsController extends MyController
                         }
                         return redirect('/selections/add');
                         break;
-                    case 9:
-                        if (DB::table('currencies')->insert([
-                            'name' => $request->selection_name
-                        ])) {
-                            $request->session()->flash('success', "Record has been added successfully.");
-                        } else {
-                            $request->session()->flash('error', 'Something went wrong. Please try again.');
-                        }
-                        return redirect('/selections/add');
-                        break;
+                    // case 9:
+                    //     if (DB::table('currencies')->insert([
+                    //         'name' => $request->selection_name
+                    //     ])) {
+                    //         $request->session()->flash('success', "Record has been added successfully.");
+                    //     } else {
+                    //         $request->session()->flash('error', 'Something went wrong. Please try again.');
+                    //     }
+                    //     return redirect('/selections/add');
+                    //     break;
                     default:
                 }
             }
@@ -364,11 +364,11 @@ class SelectionsController extends MyController
                 }
                 break;
             case 9:
-                if (DB::table('currencies')->where('id', '=', $item_id)->delete()) {
-                    $request->session()->flash('success', "Record has been deleted successfully.");
-                } else {
-                    $request->session()->flash('error', 'Something went wrong. Please try again.');
-                }
+                // if (DB::table('currencies')->where('id', '=', $item_id)->delete()) {
+                //     $request->session()->flash('success', "Record has been deleted successfully.");
+                // } else {
+                //     $request->session()->flash('error', 'Something went wrong. Please try again.');
+                // }
                 break;
             default:
         }
