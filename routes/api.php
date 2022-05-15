@@ -70,6 +70,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/contact_us', 'Api\V1\ServicesController@contactUs');
     Route::get('/get_contact_us_pupose', 'Api\V1\ServicesController@getPurpose');
     Route::get('/get_requests', 'Api\V1\ServicesController@getRequests');
+    Route::post('/get_client_requests', 'Api\V1\ServicesController@getClientRequests');
+    Route::post('/booking_accept', 'Api\V1\ServicesController@bookingAcceptDecline');
     Route::get('/about-us', 'Api\V1\FiltersController@aboutUs');
     Route::get('/terms-conditions', 'Api\V1\FiltersController@termsConditions');
     Route::get('/privacy-policy', 'Api\V1\FiltersController@privacyPolicy');
@@ -81,6 +83,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/future_plan', 'Api\V1\ServicesController@planForFuture');
     Route::post('/get_notification_list', 'Api\V1\UsersController@getNotificationList');
     Route::post('/createnotification', 'Api\V1\UsersController@createnotification');
+
+    Route::post('/get_reviews', 'Api\V1\ServicesController@getReviews');
 });
 
 Route::group(['middleware' => 'api_auth:api'], function () {
