@@ -1,29 +1,28 @@
 <?php
 $segment = Request::segment(3);
 $base_url = URL::to('/');
- if($service->nationality_id !='' ){
-   $countriesData = DB::table('countries')->where(['id' => $service->nationality_id])->first();
-   $nationality = $countriesData->short_name;
+if ($service->nationality_id != '') {
+    $countriesData = DB::table('countries')->where(['id' => $service->nationality_id])->first();
+    $nationality = $countriesData->short_name;
+} else {
+    $nationality = "";
+}
 
- }else{
-    $nationality="";
- }
+$bookingUserData = DB::table('users')
+    ->select(['users.*', 'countries.country', 'regions.region'])
+    ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
+    ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
+    ->where('users.id', $service->booking_user)
+    ->first();
+//dd($editdata);
 
- $bookingUserData = DB::table('users')
-            ->select(['users.*', 'countries.country', 'regions.region'])
-            ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
-            ->leftJoin('regions', 'users.country_id', '=', 'regions.country_id')
-            ->where('users.id', $service->booking_user)
-            ->first();
-        //dd($editdata);
-
-        $health_conditions = $bookingUserData->health_conditions ? explode(',', $bookingUserData->health_conditions) : [];
-        if (count($health_conditions)) {
-            $cond = DB::table('health_conditions')
-                ->select(['name'])
-                ->whereIn('id', $health_conditions)->get();
-            $bookingUserData->health_conditions = $cond;
-        }
+$health_conditions = $bookingUserData->health_conditions ? explode(',', $bookingUserData->health_conditions) : [];
+if (count($health_conditions)) {
+    $cond = DB::table('health_conditions')
+        ->select(['name'])
+        ->whereIn('id', $health_conditions)->get();
+    $bookingUserData->health_conditions = $cond;
+}
 ?>
 <div class="content">
     <div class="container-fluid">
@@ -84,7 +83,7 @@ $base_url = URL::to('/');
                                     <td class="th">Nationality :</td>
                                     <td>{{ $nationality }}</td>
                                 </tr>
-                                 <tr>
+                                <tr>
                                     <td class="th">country :</td>
                                     <td>{{ $service->country }}</td>
                                 </tr>
@@ -116,7 +115,8 @@ $base_url = URL::to('/');
                                     <td class="th">Health Condition :</td>
                                     <td><?php foreach ($bookingUserData->health_conditions as $hc) { ?>
                                             <li>{{$hc->name}}</li>
-                                        <?php } ?></td>
+                                        <?php } ?>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="th">Height & Weight :</td>
@@ -137,7 +137,15 @@ $base_url = URL::to('/');
                         <div class="row">
 
                             <div class="col-md-4">
-                                <span class="badge bg-blue"><i class="fa fa-comments"></i> &nbsp;&nbsp;<span class="text-blue">Status : <?php if ($service->status == 0){ echo "Requested";}else if($service->status == 1){ echo "Payment Done";}else if($service->status == 2){ echo "Cancelled";}else if($service->status == 3){ echo "Accepted";} ?></span></span>
+                                <span class="badge bg-blue"><i class="fa fa-comments"></i> &nbsp;&nbsp;<span class="text-blue">Status : <?php if ($service->status == 0) {
+                                                                                                                                            echo "Requested";
+                                                                                                                                        } else if ($service->status == 1) {
+                                                                                                                                            echo "Payment Done";
+                                                                                                                                        } else if ($service->status == 2) {
+                                                                                                                                            echo "Cancelled";
+                                                                                                                                        } else if ($service->status == 3) {
+                                                                                                                                            echo "Accepted";
+                                                                                                                                        } ?></span></span>
                             </div>
 
                             <div class="col-md-4">
@@ -145,9 +153,9 @@ $base_url = URL::to('/');
                             </div>
 
                             <div class="col-md-4">
-                                <button  class="badge bg-blue" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                <button class="badge bg-blue" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                                     <i class="fa fa-bell"></i> &nbsp;&nbsp;<span class="text-blue">Notify</span>
-                                </button >
+                                </button>
                             </div>
                             <?php
                             if ($service->status == 0) {
@@ -191,7 +199,7 @@ $base_url = URL::to('/');
                         </div>
                         <div class="profile section">
                             <div class="profile_image">
-                                <img src="{{ URL::to('/public/uploads/') }}/{{ $service->profile_image }}" >
+                                <img src="{{ URL::to('/public/uploads/') }}/{{ $service->profile_image }}">
                                 <ul>
                                     <li>User Name : {{ $service->customer }}</li>
                                     <li>User Email : {{ $service->email }}</li>
@@ -202,16 +210,16 @@ $base_url = URL::to('/');
                             @csrf
                             <input type="hidden" name="user_id" value="{{$service->booking_user}}">
                             <input type="hidden" name="sender_id" value="{{ Auth::user()->id }}">
-                        <div class="modal-body">
-                            <input type="text" name="title" placeholder="notify title"></br>
+                            <div class="modal-body">
+                                <input type="text" name="title" placeholder="notify title"></br>
 
-                            <textarea name="message" placeholder="Write message to notify...……..."></textarea>
-                            ...
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
-                        </div>
+                                <textarea name="message" placeholder="Write message to notify...……..."></textarea>
+                                ...
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
                         </form>
                     </div>
                 </div>
