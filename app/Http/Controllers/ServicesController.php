@@ -61,7 +61,6 @@ class ServicesController extends MyController
                 ])
                 ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                //->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                 ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -492,18 +491,18 @@ class ServicesController extends MyController
             ->get();
         if (!$services->isEmpty()) {
             $activities = DB::table('service_activities as s_act')
-            ->select(['act.id', 'act.activity'])
-            ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
-            ->where('s_act.service_id', $id)
-            ->get()
-            ->toArray();
+                ->select(['act.id', 'act.activity'])
+                ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
+                ->where('s_act.service_id', $id)
+                ->get()
+                ->toArray();
             $services[0]->included_activities = $activities ?? [];
             $dependencies = DB::table('service_dependencies as s_dep')
-            ->select(['dep.id', 'dep.dependency_name'])
-            ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
-            ->where('s_dep.service_id', $id)
-            ->get()
-            ->toArray();
+                ->select(['dep.id', 'dep.dependency_name'])
+                ->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')
+                ->where('s_dep.service_id', $id)
+                ->get()
+                ->toArray();
             $services[0]->dependencies = $dependencies ?? [];
             $programs = DB::table('service_programs')->select([
                 'id',
@@ -513,29 +512,29 @@ class ServicesController extends MyController
                 'end_datetime',
                 'description'
             ])
-            ->where('service_id', $id)
-            ->get();
+                ->where('service_id', $id)
+                ->get();
             $services[0]->programs = $programs;
             if ($services[0]->service_plan == 1) {
                 $availability = DB::table('service_plan_day_date as spdd')
-                ->select(['spdd.id', 'wkd.day'])
-                ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
-                ->where('spdd.service_id', $id)
-                ->get()
-                ->toArray();
+                    ->select(['spdd.id', 'wkd.day'])
+                    ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
+                    ->where('spdd.service_id', $id)
+                    ->get()
+                    ->toArray();
                 $services[0]->availability = $availability ?? [];
             } else if ($services[0]->service_plan == 2) {
                 $availability = DB::table('service_plan_day_date as spdd')
-                ->select(['spdd.id', 'spdd.date'])
-                ->where('spdd.service_id', $id)
-                ->get()
-                ->toArray();
+                    ->select(['spdd.id', 'spdd.date'])
+                    ->where('spdd.service_id', $id)
+                    ->get()
+                    ->toArray();
                 $services[0]->availability = $availability ?? [];
             }
             $star_ratings_res = DB::table('service_reviews')
                 ->select([
-                    'service_id', 
-                    DB::raw("AVG(star) AS stars"), 
+                    'service_id',
+                    DB::raw("AVG(star) AS stars"),
                     DB::raw("COUNT(user_id) AS reviewd_by")
                 ])
                 ->where('service_id', $id)
@@ -634,7 +633,7 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-           
+
             ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
             ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
             ->leftJoin('service_likes as slike', 'slike.service_id', '=', 'srvc.id')
@@ -767,7 +766,7 @@ class ServicesController extends MyController
             ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
             ->leftJoin('service_categories as catg', 'catg.id', '=', 'srvc.service_category')
             ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-            
+
             ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
             ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
             ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
@@ -807,7 +806,7 @@ class ServicesController extends MyController
             'cntri.country',
             'cntri.currency as currency_sign',
             'rgns.region'
-            ])
+        ])
             ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
             ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
             ->leftJoin('regions as rgns', 'rgns.id', '=', 'srvc.region')
@@ -815,7 +814,7 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            
+
             ->where([
                 'srvc.deleted_at' => NULL,
                 'srvc.status' => 0
@@ -823,8 +822,8 @@ class ServicesController extends MyController
             ->whereRaw($where)
             ->orderBy('srvc.id', 'DESC')
             ->get();
-            $data['content'] = 'admin.services.adventure_request';
-            return view('layouts.content', compact('data'))->with(['services' => $services]);
+        $data['content'] = 'admin.services.adventure_request';
+        return view('layouts.content', compact('data'))->with(['services' => $services]);
     }
     public function getRegions(Request $request, $id)
     {
@@ -840,8 +839,8 @@ class ServicesController extends MyController
             ->where('rg.country_id', $id)
             ->orderBy('rg.region', 'ASC')
             ->get();
-            $options = '';
-            if (!$regions->isEmpty()) {
+        $options = '';
+        if (!$regions->isEmpty()) {
             $options .= '<option value="">Select</option>';
             foreach ($regions as $reg) {
                 $sel = '';
@@ -883,7 +882,114 @@ class ServicesController extends MyController
     }
     public function listServiceReviews(Request $request)
     {
-        $reviewData = DB::table('services as srvc')
+        $services = DB::table('service_reviews as rev')
+            ->select([
+                'srvc.*',
+                'srvc.id as service_id',
+                'rev.star',
+                'rev.remark'
+            ])
+            ->join('services as srvc', 'rev.service_id', '=', 'srvc.id')
+            ->groupBy('rev.service_id')
+            ->get()
+            ->toArray();
+
+        $url = asset('public');
+        $s_img = asset('public/uploads') . '/';
+        if ($services) {
+            foreach ($services as $key => $ser) {
+                $service_id = $ser->id;
+                $imageData = DB::table('service_images')->where('service_id', $service_id)->get();
+                $services[$key]->is_liked = 0;
+                if ($request->user_id >= 1) {
+                    $is_liked = DB::table('service_likes')
+                        ->select(['service_id'])
+                        ->where('user_id', $request->user_id)
+                        ->first();
+                    $services[$key]->is_liked = isset($is_liked->service_id) ? 1 : 0;
+                }
+                $services[$key]->baseurl = $s_img;
+                $services[$key]->images =  $imageData;
+                $activities = DB::table('service_activities as s_act')->select(['s_act.*', 'act.activity'])
+                    ->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')
+                    ->where('s_act.service_id', $service_id)
+                    ->whereIn('s_act.activity_id', [$activity_ids])
+                    ->get()
+                    ->toArray();
+                $services[$key]->included_activities = $activities ?? [];
+
+                if ($services[$key]->service_plan == 1) {
+                    $availability = DB::table('service_plan_day_date as spdd')
+                        ->select(['spdd.id', 'wkd.day'])
+                        ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
+                        ->where('spdd.service_id', $service_id)
+                        ->get()
+                        ->toArray();
+                    $services[$key]->availability = $availability ?? [];
+                } else if ($services[$key]->service_plan == 2) {
+                    $availability = DB::table('service_plan_day_date as spdd')
+                        ->select(['spdd.id', 'spdd.date'])
+                        ->where('spdd.service_id', $service_id)
+                        ->get()
+                        ->toArray();
+                    $services[$key]->availability = $availability ?? [];
+                }
+                $star_ratings_res = DB::table(
+                    'service_reviews'
+                )
+                    ->select([
+                        'service_id',
+                        DB::raw("AVG(star) AS stars"),
+                        DB::raw("COUNT(user_id) AS reviewd_by")
+                    ])
+                    ->where('service_id', $service_id)
+                    ->groupBy('service_id')
+                    ->first();
+
+                if ($services[$key]->service_plan == 1) {
+                    $availability = DB::table('service_plan_day_date as spdd')
+                        ->select(['spdd.id', 'wkd.day'])
+                        ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
+                        ->where('spdd.service_id', $service_id)
+                        ->get()
+                        ->toArray();
+                    $services[$key]->availability = $availability ?? [];
+                } else if ($services[$key]->service_plan == 2) {
+                    // $availability = DB::table('service_plan_day_date as spdd')
+                    //     ->select(['spdd.id', 'spdd.date'])
+                    //     ->where('spdd.service_id', $service_id)
+                    //     ->get()
+                    //     ->toArray();
+                    $availability = DB::table('services as srvc')
+                        ->select(['srvc.start_date', 'srvc.end_date'])
+                        ->where('srvc.id', $service_id)
+                        ->get()
+                        ->toArray();
+                    $services[$key]->availability = $availability ?? [];
+                }
+
+                $services[$key]->stars = $star_ratings_res ? number_format($star_ratings_res->stars, 2, '.', '') : 0;
+                $services[$key]->reviewd_by = $star_ratings_res ? $star_ratings_res->reviewd_by : 0;
+                $booked_seats_qry = DB::table('bookings')->select(['id'])->where(['service_id' => $service_id, 'status' => 1])->get();
+                $booked_seats = $booked_seats_qry->count();
+                $services[$key]->booked_seats = $booked_seats;
+                $aimedforData = DB::table('service_service_for as ssfor')
+                    ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+                    ->select('sfor.*', 'ssfor.service_id')
+                    ->where('ssfor.service_id', $service_id)
+                    ->get();
+                $services[$key]->aimed_for = $aimedforData;
+                $programsData = DB::table('service_programs')
+                    ->where('service_id', $service_id)
+                    ->get();
+                $services[$key]->programs = $programsData;
+                $services[$key]->remaining_seats = $services[0]->available_seats - $booked_seats;
+            }
+            
+
+            dd($services);
+            /* 
+            $reviewData = DB::table('services as srvc')
             ->select([
                 'srvc.id',
                 'usr.id as user_id',
@@ -912,19 +1018,21 @@ class ServicesController extends MyController
             ->groupBy('rev.service_id')
             ->get()
             ->toArray();
-        $likesData = DB::table('service_likes as srvclks')
-            ->select(['rev.*', 'srvclks.is_like'])
-            ->join('service_reviews as rev', 'rev.service_id', '=', 'srvclks.service_id')
-            ->groupBy('rev.service_id')
-            ->get()
-            ->toArray();
-           // echo "<pre>";print_r( $likesData);exit;
-        $data['content'] = 'admin.services.list_reviews';
-        return view('layouts.content', compact('data'))
-            ->with([
-                'reviewdata' => $reviewData,
-                'likesData' => $likesData
-            ]);
+            */
+            $likesData = DB::table('service_likes as srvclks')
+                ->select(['rev.*', 'srvclks.is_like'])
+                ->join('service_reviews as rev', 'rev.service_id', '=', 'srvclks.service_id')
+                ->groupBy('rev.service_id')
+                ->get()
+                ->toArray();
+            // echo "<pre>";print_r( $likesData);exit;
+            $data['content'] = 'admin.services.list_reviews';
+            return view('layouts.content', compact('data'))
+                ->with([
+                    'reviewdata' => $reviewData,
+                    'likesData' => $likesData
+                ]);
+        }
     }
     public function deleteServiceReviews(Request $request, $id)
     {

@@ -1132,9 +1132,9 @@ class ServicesController extends MyController
             }
 
             if (!$services->isEmpty()) {
-            return $this->sendResponse('Data found successfully', $services, 200);
-        }
-        return $this->sendError('No data found', [], 400);
+                return $this->sendResponse('Data found successfully', $services, 200);
+            }
+            return $this->sendError('No data found', [], 400);
             return $this->sendResponse(config('constants.DATA_FOUND'), $services, 200);
         }
     }
@@ -1206,6 +1206,55 @@ class ServicesController extends MyController
                 return $this->sendError('Something went wrong. Try again.', [], 401);
             }
         }
+    }
+    public function getClientRequests(Request $request){
+        $validator = Validator::make($request->all(), [
+            'partner_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $validation = array();
+            foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                $validation[$field_name] = $messages[0];
+            }
+            return $this->sendError(implode(',', array_values($validation)), [], 401);
+        } else {
+            $service = DB::table('bookings as bkng')
+            ->select([
+                'bkng.id as booking_id',
+                'srvc.id as service_id',
+                'rgn.region',
+                'srvc.adventure_name',
+                'usr.name as provider_name',
+                'client.name as customer',
+                'bkng.booking_date',
+                'bkng.adult',
+                'bkng.kids',
+                'bkng.unit_amount as unit_cost',
+                'bkng.total_amount as total_cost',
+                'pmnt.payment_method as payment_channel',
+                'cntri.currency as currency',
+                'cntri.country',
+                'bkng.status', 
+                'bkng.payment_status',
+                DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Pending')) as booking_status_text"),
+                DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
+            ])
+            ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
+            ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
+            ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
+            ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
+            ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
+            ->leftJoin('payments as pmnt', 'pmnt.booking_id', '=', 'bkng.id')
+            ->where('srvc.owner',$request->partner_id)
+            ->orderBy('bkng.id', 'DESC')
+            ->get();
+            if ($service) {
+                return $this->sendResponse("Request list", $service, 200);
+            } else {
+                return $this->sendError('No record found', [], 401);
+            }
+            }
+
     }
 
     public function getRequests(Request $request)
