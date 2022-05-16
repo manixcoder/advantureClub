@@ -67,28 +67,29 @@
                         </tr>
                      </thead>
                      <tbody>
+                       
                         @foreach($reviewdata as $key => $data)
-                        <!-- echo"<pre>";{{print_r($data)}};exit;  -->
+                        <?php // echo"<pre>";print_r($data);exit;  ?>
                         <tr class="gradeX">
-                           <td>#{{$data->id}} - <br /> {{ $data->adventure_name }}</td>
-                           <td>{{ $data->country }}</td>
+                           <td>#{{ $key+1 }} - <br /> {{ $data->adventure_name }}</td>
+                           <td>{{ $data->countries }}</td>
                            <td>{{ $data->category }}</td>
                            <td>{{ $data->sector }}</td>
-                           <td>{{ $data->type}}</td>
-                           <td>{{ $data->name}}</td>
+                           <td>{{ $data->service_types }}</td>
+                           <td>{{ $data->users_name }}</td>
                            <td>
                               <?php
                               for ($i = 0; $i < 5; $i++) {
                                  $checked = '';
-                                 if ($i < $data->stars) {
+                                 if ($i < $data->star) {
                                     $checked = 'checked';
                                  }
                               ?>
                                  <span class="fa fa-star <?php echo $checked; ?>"></span>
                               <?php } ?>
                               
-                           <td>{{ $data->date}}</td>
-                           <td>{{ $data->likes}}</td>
+                           <td></td>
+                           <td></td>
 
                            <td class="actions">
                               <ul class="edit_icon action_icons dashboard_icons">
