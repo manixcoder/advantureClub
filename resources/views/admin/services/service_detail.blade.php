@@ -18,7 +18,7 @@ $base_url = URL::to('/');
                 <img class="img-responsive" src="{{ URL::asset('/public/uploads/') }}/{{ $serviceImages->image_url }}" alt="Photo">
             </div>
             @empty
-            <div class="col-md-3 booking-detail-banner">
+            <!-- <div class="col-md-3 booking-detail-banner">
                 <img class="img-responsive" src="{{asset('public/walls/1.jpg')}}" alt="Photo">
             </div>
 
@@ -30,7 +30,7 @@ $base_url = URL::to('/');
             </div>
             <div class="col-md-3 booking-detail-banner">
                 <img class="img-responsive" src="{{asset('public/walls/4.jpg')}}" alt="Photo">
-            </div>
+            </div> -->
             @endforelse
         </div>
 

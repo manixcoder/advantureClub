@@ -61,7 +61,6 @@ class BookingsController extends MyController
                 ])
                 ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                //->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                 ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
