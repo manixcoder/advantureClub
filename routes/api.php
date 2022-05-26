@@ -20,6 +20,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/get_countries', 'Api\V1\CountriesController@get_all');
      Route::post('/get_regions', 'Api\V1\CountriesController@getRegions');
     Route::post('/get_cities', 'Api\V1\CountriesController@getCities');
+    Route::get('/getallDependency', 'Api\V1\ServicesController@getallDependency');
+    Route::get('/getServiceFor', 'Api\V1\ServicesController@getServiceFor');
 
 
    
@@ -47,6 +49,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/myServicereview', 'Api\V1\ServicesController@myServicereview');
     Route::post('/add_review', 'Api\V1\ServicesController@addReview');
     Route::post('/create_service', 'Api\V1\ServicesController@create_service');
+    Route::post('/edit_service', 'Api\V1\ServicesController@editService');
     Route::get('/get_service_sector', 'Api\V1\ServicesController@getservice_sector');
     Route::get('/get_service_categories', 'Api\V1\ServicesController@getservice_categories');
     Route::get('/get_service_type', 'Api\V1\ServicesController@getservice_type');
@@ -77,6 +80,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/get_requests', 'Api\V1\ServicesController@getRequests');
     Route::post('/get_client_requests', 'Api\V1\ServicesController@getClientRequests');
     Route::post('/booking_accept', 'Api\V1\ServicesController@bookingAcceptDecline');
+    Route::post('/services_delete', 'Api\V1\ServicesController@servicesDelete');
     Route::get('/about-us', 'Api\V1\FiltersController@aboutUs');
     Route::get('/terms-conditions', 'Api\V1\FiltersController@termsConditions');
     Route::get('/privacy-policy', 'Api\V1\FiltersController@privacyPolicy');
