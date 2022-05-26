@@ -17,14 +17,14 @@ class BannersController extends MyController
 
     public function get(Request $request)
     {
-        $servicesData = DB::table('services')->where(['country' => $request->country_id])->get();
+        $servicesData = DB::table('services')->where(['country' => $request->country_id,'status'=>'1'])->get();
         $serviceid=array();
         foreach ($servicesData as $key => $services) {
             array_push($serviceid,$services->id);
             //dd($services->id);
         }
         $serviceid = implode (", ", $serviceid);
-        $bannerData =DB::table('service_offers')->whereIn('service_id',[$serviceid])->get();
+        $bannerData =DB::table('service_offers')->whereIn('service_id',[$serviceid])->where('status','1')->get();
         $url = asset('public/uploads/');
         
 

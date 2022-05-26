@@ -20,6 +20,10 @@ Route::prefix('v1')->group(function () {
     Route::get('/get_countries', 'Api\V1\CountriesController@get_all');
      Route::post('/get_regions', 'Api\V1\CountriesController@getRegions');
     Route::post('/get_cities', 'Api\V1\CountriesController@getCities');
+    Route::get('/getallDependency', 'Api\V1\ServicesController@getallDependency');
+    Route::get('/getServiceFor', 'Api\V1\ServicesController@getServiceFor');
+
+
    
     Route::get('/get_healths', 'Api\V1\HealthConditionsController@get_all');
     Route::get('/get_heights_weights', 'Api\V1\HealthConditionsController@getHeightsWeights');
@@ -38,17 +42,21 @@ Route::prefix('v1')->group(function () {
 
     Route::post('/banners', 'Api\V1\BannersController@get');
     Route::get('/services/{id?}', 'Api\V1\ServicesController@get')->where(['id' => '[0-9]+']);
-    Route::get('/get_allservices', 'Api\V1\ServicesController@get_all');
+    Route::post('/get_allservices', 'Api\V1\ServicesController@get_all');
     Route::get('/categories/{id?}', 'Api\V1\CategoriesController@get')->where(['id' => '[0-9]+']);
     Route::get('/filter_modal_data', 'Api\V1\FiltersController@get');
     Route::post('/like_service', 'Api\V1\ServicesController@likeService');
     Route::post('/myServicereview', 'Api\V1\ServicesController@myServicereview');
     Route::post('/add_review', 'Api\V1\ServicesController@addReview');
     Route::post('/create_service', 'Api\V1\ServicesController@create_service');
+    Route::post('/edit_service', 'Api\V1\ServicesController@editService');
     Route::get('/get_service_sector', 'Api\V1\ServicesController@getservice_sector');
     Route::get('/get_service_categories', 'Api\V1\ServicesController@getservice_categories');
     Route::get('/get_service_type', 'Api\V1\ServicesController@getservice_type');
     Route::get('/get_service_level', 'Api\V1\ServicesController@getservice_level');
+    Route::get('/get_duration', 'Api\V1\ServicesController@getDuration');
+    Route::get('/get_activity_includes', 'Api\V1\ServicesController@getActivityIncludes');
+    Route::post('/get_participant', 'Api\V1\ServicesController@getParticipants');
     
     
     Route::get('/get_countries', 'Api\V1\ServicesController@getCountries');
@@ -72,6 +80,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/get_requests', 'Api\V1\ServicesController@getRequests');
     Route::post('/get_client_requests', 'Api\V1\ServicesController@getClientRequests');
     Route::post('/booking_accept', 'Api\V1\ServicesController@bookingAcceptDecline');
+    Route::post('/services_delete', 'Api\V1\ServicesController@servicesDelete');
     Route::get('/about-us', 'Api\V1\FiltersController@aboutUs');
     Route::get('/terms-conditions', 'Api\V1\FiltersController@termsConditions');
     Route::get('/privacy-policy', 'Api\V1\FiltersController@privacyPolicy');
@@ -85,6 +94,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/createnotification', 'Api\V1\UsersController@createnotification');
 
     Route::post('/get_reviews', 'Api\V1\ServicesController@getReviews');
+
+    Route::post('/booking_delete', 'Api\V1\ServicesController@bookingDelete');
 });
 
 Route::group(['middleware' => 'api_auth:api'], function () {

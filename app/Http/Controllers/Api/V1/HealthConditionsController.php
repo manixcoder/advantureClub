@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Health_condition;
 use App\Models\Height;
 use App\Model\Weight;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\MyController;
@@ -20,7 +21,6 @@ class HealthConditionsController extends MyController {
         $healths = Health_condition::select('id', 'name')
         ->orderBy('name', 'ASC')
         ->get();
-        //dd($healths);
         if (!empty($healths)) {
             foreach ($healths as $health) {
                 $result[] = $health->attributesToArray();

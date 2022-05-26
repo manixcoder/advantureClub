@@ -21,7 +21,7 @@ class UsersController extends MyController
     public function add(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           //  'name' => 'required|name|max:255|unique:users',
+            //  'name' => 'required|name|max:255|unique:users',
             'name' => 'required|unique:users|max:255',
             //'name' => 'required|min:3|max:50|unique:users',
             'mobile_code' => 'required|numeric',
@@ -206,7 +206,7 @@ class UsersController extends MyController
                 }
                 $otp_model->otp = $this->getRandomNumber();
                 if ($field == 'mobile') {
-                    $otp_model->mobile_code ="+". $request->mobile_code;
+                    $otp_model->mobile_code = "+" . $request->mobile_code;
                     $otp_model->mobile = $user_mobile;
                 } else {
                     $otp_model->otp_on = 2;
@@ -410,7 +410,7 @@ class UsersController extends MyController
         $validator = Validator::make($request->all(), [
             'email' => 'required|string',
             'password' => 'required|min:5|max:40',
-            'device_id'=>'required',
+            'device_id' => 'required',
         ]);
         if ($validator->fails()) {
             $errors = array();
@@ -430,10 +430,10 @@ class UsersController extends MyController
         $result = User::select([
             '*',
             DB::raw("CONCAT('+',mobile_code) AS mobile_code"),
-           // DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")
+            // DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")
         ])->where($where)->first();
-        $device_id="$request->device_id";
-        $result->device_id=$device_id;
+        $device_id = "$request->device_id";
+        $result->device_id = $device_id;
         $result->update();
 
         //DB::table('users')->where('id',$result->id)->update(['device_id'=>$device_id]);
