@@ -76,7 +76,7 @@ class LocationController extends Controller
                 $validator = Validator::make($request->all(), [
                     'country'       => 'required|unique:countries|min:3|max:50',
                     'code'          => 'required|regex:/^\+\d{1,3}$/|unique:countries',
-                    'short_name'    => 'required|min:2|max:4|unique:countries',
+                    'short_name'    => 'required|min:2|max:50|unique:countries',
                     'currency'      => 'required',
                     'flag'          => 'required',
                 ]);

@@ -8,15 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Aimed extends Authenticatable {
+class Dependency extends Authenticatable {
 
     use SoftDeletes;
-    protected $table = 'aimed';
-     protected $primaryKey = 'id';
+    protected $primaryKey = 'id';
+	protected $table = 'dependency';
     protected $fillable = [
-        'AimedName',
-        'created_at',
-        'updated_at'
+        'dependency_name', 
     ];
 
 }
