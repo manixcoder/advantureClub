@@ -11,9 +11,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Aimed extends Authenticatable {
 
     use SoftDeletes;
-
+    protected $table = 'aimed';
+     protected $primaryKey = 'id';
     protected $fillable = [
-        'AimedName'
+        'AimedName',
+        'created_at',
+        'updated_at'
     ];
 
 }

@@ -232,9 +232,9 @@ $base_url = URL::to('/');
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="star-div">
-                                        <button type="button" class="btn btn-block btn-primary">Notify</button>
-                                        <button type="button" class="btn btn-block btn-success">Accept</button>
-                                        <button type="button" class="btn btn-block btn-danger">Decline</button>
+                                        <a href="{{ URL::to('service/accept/') }}/{{ $service->id }}" class="btn btn-block btn-primary">Notify</a>
+                                        <a href="{{ URL::to('service/accept/') }}/{{ $service->id }}" class="btn btn-block btn-success">Accept</a>
+                                        <a href="{{ URL::to('service/decline/') }}/{{ $service->id }}" class="btn btn-block btn-danger">Decline</a>
                                     </div>
                                 </div>
                             </div>

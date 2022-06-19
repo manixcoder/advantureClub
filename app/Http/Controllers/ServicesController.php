@@ -814,7 +814,6 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            
             ->where([
                 'srvc.deleted_at' => NULL,
                 'srvc.status' => 0
@@ -822,6 +821,7 @@ class ServicesController extends MyController
             ->whereRaw($where)
             ->orderBy('srvc.id', 'DESC')
             ->get();
+            //dd($services);
             $data['content'] = 'admin.services.adventure_request';
             return view('layouts.content', compact('data'))->with(['services' => $services]);
     }

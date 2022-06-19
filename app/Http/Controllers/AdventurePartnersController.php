@@ -360,10 +360,17 @@ class AdventurePartnersController extends Controller
             ])
             ->whereIn('service_id', $service_ids)
             ->get();
+            //dd($reviews);
             $ratingStart=0;
             foreach($reviews as $review){
               $ratingStart +=$review->star;
             }
+            if(!$reviews->isEmpty()){
+              $stars = $ratingStart/count($reviews);
+            }else{
+              $stars = 0;
+            }
+            
             $data['content'] = 'admin.adventure_partners.view_adventure_partner';
             return view('layouts.content', compact('data'))->with([
               'editdata' => $editdata,
@@ -372,7 +379,7 @@ class AdventurePartnersController extends Controller
               'services' => $services,
               'bookings' => $bookings,
               'subscriptionData' => $subscriptionData,
-              'starRating'=>$ratingStart/count($reviews),
+              'starRating'=>$stars,
               'numberofreview'=>count($reviews),
               
             ]);

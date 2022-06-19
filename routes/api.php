@@ -35,6 +35,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/create_forgot_password', 'Api\V1\UsersController@createNewPassword');
     Route::post('/change_password', 'Api\V1\UsersController@changePassword');
     Route::post('/become_partner', 'Api\V1\UsersController@becomepartner');
+    Route::post('/edit_partner_official_details', 'Api\V1\UsersController@editPartnerOfficialDetails');
+    Route::post('/edit_payment_details', 'Api\V1\UsersController@editPaymentDetails');
     Route::post('/update_subscription', 'Api\V1\UsersController@updateSubscription');
     Route::post('/remaining_days', 'Api\V1\UsersController@remainingDays');
     Route::post('/get_profile', 'Api\V1\UsersController@userProfile');
@@ -58,6 +60,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/get_activity_includes', 'Api\V1\ServicesController@getActivityIncludes');
     Route::post('/get_participant', 'Api\V1\ServicesController@getParticipants');
     
+     Route::post('/visited_location', 'Api\V1\ServicesController@visitedLocation');
+      Route::get('/get_visited_location', 'Api\V1\ServicesController@getVisitedLocation');
+    
     
     Route::get('/get_countries', 'Api\V1\ServicesController@getCountries');
     
@@ -66,7 +71,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/hillclimblingdelete', 'Api\V1\ServicesController@hillclimblingdelete');
 
     Route::post('/book_service', 'Api\V1\ServicesController@bookService');
-    Route::post('/cancelrequest', 'Api\V1\ServicesController@cancelrequest');
+    //Route::post('/cancelrequest', 'Api\V1\ServicesController@cancelrequest');
     Route::post('/acceptrequest', 'Api\V1\ServicesController@acceptrequest');
     Route::post('/check_promocode', 'Api\V1\ServicesController@checkPromoCode');
     Route::post('/update_payments', 'Api\V1\ServicesController@updatePayment');
@@ -92,10 +97,9 @@ Route::prefix('v1')->group(function () {
     Route::post('/future_plan', 'Api\V1\ServicesController@planForFuture');
     Route::post('/get_notification_list', 'Api\V1\UsersController@getNotificationList');
     Route::post('/createnotification', 'Api\V1\UsersController@createnotification');
-
     Route::post('/get_reviews', 'Api\V1\ServicesController@getReviews');
-
     Route::post('/booking_delete', 'Api\V1\ServicesController@bookingDelete');
+    Route::post('/servicesImage', 'Api\V1\ServicesController@servicesImage');
 });
 
 Route::group(['middleware' => 'api_auth:api'], function () {
