@@ -60,11 +60,15 @@ $base_url = URL::to('/');
 
                                     <td>
                                         <?php if ($bkng->status == 1) { ?>
-                                            <span class="text-green">{{$bkng->booking_status_text}}</span>
+                                            <span class="text-green">Accepted</span>
                                         <?php } elseif ($bkng->status == 2) { ?>
-                                            <span class="text-red">{{$bkng->booking_status_text}}</span>
-                                        <?php } else { ?>
-                                            <span class="text-yellow">{{$bkng->booking_status_text}}</span>
+                                            <span class="text-red">Payment Done</span>
+                                        <?php } elseif ($bkng->status == 3) {?>
+                                            <span class="text-red">Cancelled</span>
+                                      <?php  } elseif ($bkng->status == 4) {?>
+                                        <span class="text-red">Completed</span>
+                                        <?php }else { ?>
+                                            <span class="text-yellow">dropped</span>
                                         <?php } ?>
                                     </td>
                                     <td>

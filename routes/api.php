@@ -35,6 +35,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/create_forgot_password', 'Api\V1\UsersController@createNewPassword');
     Route::post('/change_password', 'Api\V1\UsersController@changePassword');
     Route::post('/become_partner', 'Api\V1\UsersController@becomepartner');
+    Route::post('/edit_partner_official_details', 'Api\V1\UsersController@editPartnerOfficialDetails');
+    Route::post('/edit_payment_details', 'Api\V1\UsersController@editPaymentDetails');
     Route::post('/update_subscription', 'Api\V1\UsersController@updateSubscription');
     Route::post('/remaining_days', 'Api\V1\UsersController@remainingDays');
     Route::post('/get_profile', 'Api\V1\UsersController@userProfile');

@@ -981,6 +981,118 @@ class UsersController extends MyController
             return $responseData;
         }
     }
+    public function editPartnerOfficialDetails(Request $request){
+       // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            // 'company_name' => 'required',
+            // 'address' => 'required',
+            // 'location' => 'required',
+            // 'description' => 'required',
+            // 'license' => 'required',
+            // 'cr_name' => 'required',
+            // 'cr_number' => 'required',
+            // 'cr_copy' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendResponse('error', $validator->errors(), 404);
+            return response()->json(['error' => $validator->errors()], 404);
+        }
+        try {
+            
+            if ($file = $request->file('cr_copy')) {
+                    $destinationPath = base_path('public/crCopy/');
+                    $cr_copy = uniqid('file') . "-" . $file->getClientOriginalName();
+                    $path = $file->move($destinationPath, $cr_copy);
+                } else {
+                    $cr_copy = "";
+                }
+             $updateData = array(
+                   
+                    'company_name' => $request->company_name,
+                    'address' => $request->address,
+                    'location' => $request->location,
+                    'description' => $request->description,
+                    'license' => $request->license,
+                    'cr_name' => $request->cr_name,
+                    'cr_number' => $request->cr_number,
+                    'cr_copy' => $cr_copy
+                );
+                $like = DB::table('become_partner')->where('user_id', $request->user_id)->update($updateData);
+                 $result = User::select([
+            '*',
+            DB::raw("CONCAT('+',mobile_code) AS mobile_code"),
+            // DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")
+        ])
+        ->where('id', $request->user_id)
+        ->first();
+        $health = $result->health_conditions;
+        $health_condtions = DB::table('health_conditions')->select([DB::raw("GROUP_CONCAT(name) AS healths")])
+            ->whereIn('id', explode(',', $health))
+            ->first();
+        $become_partner = DB::table('become_partner')->select('*')->where('user_id', $result->id)->first();
+        //dd($become_partner);
+        $result['health_conditions_id'] = $health;
+        $result['health_conditions'] = $health_condtions->healths;
+        $result['become_partner'] = $become_partner;
+                return $this->sendResponse('Data Updated Successfully', $result, 200);
+        } catch (\Exception $e) {
+            return $this->sendResponse($e->getMessage(), [], 404);
+        }
+        
+    }
+    public function editPaymentDetails(Request $request){
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            // 'debit_card' => 'required',
+            // 'visa_card' => 'required',
+            // 'payon_arrival' => 'required',
+            // 'paypal' => 'required',
+            // 'bankname' => 'required',
+            // 'account_holdername' => 'required',
+            // 'account_number' => 'required',
+            // 'is_online' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendResponse('error', $validator->errors(), 404);
+            return response()->json(['error' => $validator->errors()], 404);
+        }
+        try {
+            $updateData = array(
+                 'debit_card' => $request->debit_card,
+                 'visa_card' => $request->visa_card,
+                 'payon_arrival' => $request->payon_arrival,
+                 'paypal' => $request->paypal,
+                 'bankname' => $request->bankname,
+                 'account_holdername' => $request->account_holdername,
+                 'account_number' => $request->account_number,
+                 'is_wiretransfer'=>$request->is_wiretransfer,
+                 'is_online' => $request->is_online,
+                 );
+                $like = DB::table('become_partner')->where('user_id', $request->user_id)->update($updateData);
+                
+                
+                $result = User::select([
+            '*',
+            DB::raw("CONCAT('+',mobile_code) AS mobile_code"),
+            // DB::raw("CONCAT('" . $url . "',profile_image) AS profile_image")
+        ])
+        ->where('id', $request->user_id)
+        ->first();
+        $health = $result->health_conditions;
+        $health_condtions = DB::table('health_conditions')->select([DB::raw("GROUP_CONCAT(name) AS healths")])
+            ->whereIn('id', explode(',', $health))
+            ->first();
+        $become_partner = DB::table('become_partner')->select('*')->where('user_id', $result->id)->first();
+        //dd($become_partner);
+        $result['health_conditions_id'] = $health;
+        $result['health_conditions'] = $health_condtions->healths;
+        $result['become_partner'] = $become_partner;
+                return $this->sendResponse('Data Updated Successfully', $result, 200);
+        } catch (\Exception $e) {
+            return $this->sendResponse($e->getMessage(), [], 404);
+        }
+    }
     public function becomepartner(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -998,17 +1110,7 @@ class UsersController extends MyController
             if ($become_partnerData) {
                 return $this->sendResponse('Your request allready send', [], 404);
             } else {
-                // if ($request->file('cr_copy')) {
-                //     $extension = $request->file('cr_copy')->extension();
-                //     $filepath = Storage::disk('public')
-
-                //         ->putFileAs('profile_pictures', $request->file('cr_copy'), time() . '.' . $extension);
-
-                // } else {
-
-                //     $filepath = null;
-
-                // }
+               
                 if ($file = $request->file('cr_copy')) {
                     $destinationPath = base_path('public/crCopy/');
                     $cr_copy = uniqid('file') . "-" . $file->getClientOriginalName();

@@ -46,7 +46,7 @@ class ServicesController extends MyController
             'geo_location' => 'required',
             'destination_address'=> 'required',
             'dest_mobile' => 'required',
-            'dest_website' => 'required',
+            // 'dest_website' => 'required',
             'destination_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         if ($validator->fails()) {
@@ -153,7 +153,7 @@ class ServicesController extends MyController
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
-                ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
+                ->leftJoin('aimed as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 
                 ->where(['srvc.deleted_at' => NULL])
                 ->groupBy('ssfor.service_id')
@@ -163,6 +163,25 @@ class ServicesController extends MyController
 
             if (!$services->isEmpty()) {
                 $imageData = DB::table('service_images')->where('service_id', $id)->get();
+                
+                $ratingData = DB::table('service_reviews')->where('service_id', $id)->get();
+                if(count($ratingData) >0 ){
+                   $rating = DB::table('service_reviews')
+                    ->select([
+                        'service_id',
+                        DB::raw("AVG(star) AS stars"),
+                        DB::raw("COUNT(user_id) AS reviewd_by")
+                    ])
+                    ->where('service_id', $id)
+                    ->groupBy('service_id')
+                    ->first(); 
+                    $services[0]->rating =  $rating->stars;
+                    $services[0]->reviewd_by =  $rating->reviewd_by;
+                    
+                }else{
+                    $services[0]->rating =  '0';
+                    $services[0]->reviewd_by =  '0';
+                }
                 $services[0]->is_liked = 0;
                 if ($request->user_id >= 1) {
                     $is_liked = DB::table('service_likes')->select(['service_id'])->where('user_id', $request->user_id)->first();
@@ -170,6 +189,7 @@ class ServicesController extends MyController
                 }
                 $services[0]->baseurl = $s_img;
                 $services[0]->images =  $imageData;
+               // $services[0]->rating =  $rating;
                 $activities = DB::table('service_activities as s_act')->select(['s_act.*', 'act.activity'])->leftJoin('activities as act', 'act.id', '=', 's_act.activity_id')->where('s_act.service_id', $id)->get()->toArray();
                 $services[0]->included_activities = $activities ?? [];
                 $dependencies = DB::table('service_dependencies as s_dep')->select(['dep.*', 'dep.dependency_name'])->leftJoin('dependency as dep', 'dep.id', '=', 's_dep.dependency_id')->where('s_dep.service_id', $id)->get()->toArray();
@@ -193,15 +213,7 @@ class ServicesController extends MyController
                         ->toArray();
                     $services[0]->availability = $availability ?? [];
                 }
-                $star_ratings_res = DB::table('service_reviews')
-                    ->select([
-                        'service_id',
-                        DB::raw("AVG(star) AS stars"),
-                        DB::raw("COUNT(user_id) AS reviewd_by")
-                    ])
-                    ->where('service_id', $id)
-                    ->groupBy('service_id')
-                    ->first();
+                $star_ratings_res = DB::table('service_reviews')->select(['service_id',DB::raw("AVG(star) AS stars"),DB::raw("COUNT(user_id) AS reviewd_by")])->where('service_id', $id)->groupBy('service_id')->first();
                 $services[0]->stars = $star_ratings_res ? number_format($star_ratings_res->stars, 2, '.', '') : 0;
                 $services[0]->reviewd_by = $star_ratings_res ? $star_ratings_res->reviewd_by : 0;
                 $booked_seats_qry = DB::table('bookings')
@@ -214,7 +226,7 @@ class ServicesController extends MyController
                 $booked_seats = $booked_seats_qry->count();
                 $services[0]->booked_seats = $booked_seats;
                 $aimedforData = DB::table('service_service_for as ssfor')
-                    ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+                    ->join('aimed as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
                     ->select('sfor.*', 'ssfor.service_id')
                     ->where('ssfor.service_id', $id)
                     ->get();
@@ -284,7 +296,7 @@ class ServicesController extends MyController
                 ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
-                ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
+                ->leftJoin('aimed as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->leftJoin('durations as dur', 'dur.id', '=', 'srvc.duration')
                 ->leftJoin('service_images as simg', 'simg.service_id', '=', 'srvc.id')
                 ->whereRaw($where)
@@ -297,7 +309,7 @@ class ServicesController extends MyController
                 $service_id = $ser->id;
                 $imageData = DB::table('service_images')->where('service_id', $service_id)->get();
                 $aimedforData = DB::table('service_service_for as ssfor')
-                    ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+                    ->join('aimed as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
                     ->select('sfor.*', 'ssfor.service_id')
                     ->where('ssfor.service_id', $service_id)
                     ->get();
@@ -408,6 +420,7 @@ class ServicesController extends MyController
                     'srvc.*',
                     'srvc.id as service_id',
                     'srvc.service_plan',
+                    'srvc.descreption',
                     'usr.name as provided_name',
                     DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
                     DB::raw("CONCAT(srvc.duration,' Min') AS duration"),
@@ -444,7 +457,7 @@ class ServicesController extends MyController
                 $service_id = $ser->id;
                 $imageData = DB::table('service_images')->where('service_id', $service_id)->get();
                 $aimedforData = DB::table('service_service_for as ssfor')
-                    ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+                    ->join('aimed as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
                     ->select('sfor.*', 'ssfor.service_id')
                     ->where('ssfor.service_id', $service_id)
                     ->get();
@@ -618,6 +631,22 @@ class ServicesController extends MyController
             $flag = false;
             if ($request->promo_code) {
                 $promocode = DB::table('promocode')->where(['code' => $request->promo_code])->first();
+                
+                $promocodeUsed = DB::table('promocode_users')->select('*')
+                 ->where(
+                     [
+                         'user_id' => $request->user_id, 
+                         'promocode_id' => $promocode->id
+                    ]
+                    )
+                ->get();
+                if(!$promocodeUsed->isEmpty()){
+                    //dd(count($promocodeUsed));
+                  if(count($promocodeUsed) >= (int)$promocode->redeemed_count){
+                      
+                     return $this->sendError('You have allready used max limit', [], 401); 
+                  }  
+                }
                 if ($promocode) {
                     if ($promocode->discount_type == '1') {
                         $disc_typ = 1; //Direct amount
@@ -688,12 +717,30 @@ class ServicesController extends MyController
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
+            
             $promocode = DB::table('promocode')->select([
                 '*',
                 DB::raw("IF(discount_type = '1','Amount','Percentage') AS discount_type")
             ])
                 ->where('code', '=', $request->promo_code)
                 ->first();
+           //  dd($promocode);   
+               $promocodeUsed = DB::table('promocode_users')->select('*')
+                 ->where(
+                     [
+                         'user_id' => $request->user_id, 
+                         'promocode_id' => $promocode->id
+                    ]
+                    )
+                ->get();
+                if(!$promocodeUsed->isEmpty()){
+                    //dd(count($promocodeUsed));
+                  if(count($promocodeUsed) >= (int)$promocode->redeemed_count){
+                      
+                     return $this->sendError('You have allready used max limit', [], 401); 
+                  }  
+                }
+                
             //  dd(time());
             //  dd(strtotime($promocode->start_date));
             if ($promocode) {
@@ -954,7 +1001,7 @@ class ServicesController extends MyController
                 ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
                 //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
                 ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
-                ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
+                ->leftJoin('aimed as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
                 ->leftJoin('durations as dur', 'dur.id', '=', 'srvc.duration')
                 ->leftJoin('service_likes as slike', 'slike.service_id', '=', 'srvc.id')
                 ->leftJoin('favourites as fav', 'fav.service_id', '=', 'srvc.id')
@@ -967,7 +1014,7 @@ class ServicesController extends MyController
                     //dd($ser);
                     $service_id = $ser->service_id;
                     $aimedforData = DB::table('service_service_for as ssfor')
-                        ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+                        ->join('aimed as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
                         ->select('sfor.*', 'ssfor.service_id')
                         ->where('ssfor.service_id', $service_id)
                         ->get();
@@ -1091,7 +1138,7 @@ class ServicesController extends MyController
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
             //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
             ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
-            ->leftJoin('service_for as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
+            ->leftJoin('aimed as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
             ->where(['srvc.deleted_at' => NULL,'srvc.status'=>'1'])
             // ->groupBy('ssfor.service_id')
             ->whereRaw($where)
@@ -1178,7 +1225,7 @@ class ServicesController extends MyController
                 $booked_seats = $booked_seats_qry->count();
                 $services[$key]->booked_seats = $booked_seats;
                 $aimedforData = DB::table('service_service_for as ssfor')
-                    ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+                    ->join('aimed as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
                     ->select('sfor.*', 'ssfor.service_id')
                     ->where('ssfor.service_id', $service_id)
                     ->get();
@@ -1323,6 +1370,7 @@ class ServicesController extends MyController
                 ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
                 ->leftJoin('payments as pmnt', 'pmnt.booking_id', '=', 'bkng.id')
                 ->where('bkng.user_id', $request->partner_id)
+                ->where('srvc.country', $request->country_id)
                 ->orderBy('bkng.id', 'DESC')
                 ->get();
             //dd($services);
@@ -1353,11 +1401,26 @@ class ServicesController extends MyController
 
     public function bookingAcceptDecline(Request $request)
     {
+        if($request->status=='2'){
+          $bookingData = DB::table('bookings')->where(['id' => $request->booking_id])->first(); 
+          $service_id = $bookingData->service_id;
+          $totalseatBooking= $bookingData->adult + $bookingData->kids;
+          
+           $servicesData = DB::table('services')->where(['id' => $service_id])->first();
+          $available_seats= $servicesData->available_seats-$totalseatBooking;
+          $servicesUpdate = DB::table('services')->where(['id' => $service_id])->update([
+              'available_seats'=>$available_seats
+              ]);
+         // dd($servicesUpdate);
+        }
+        
         // dd($request->all());
         DB::table('bookings')->where(['id' => $request->booking_id])->update([
             'status' => $request->status,
             'updated_by' => $request->user_id
         ]);
+        
+        
         return $this->sendResponse("Success", [], 200);
     }
 
@@ -1367,7 +1430,7 @@ class ServicesController extends MyController
         if (!$servicesData->isEmpty()) {
             $bookingsData = DB::table('bookings')->where('service_id', $request->services_id)->get();
             if (!$bookingsData->isEmpty()) {
-                return $this->sendError('First Deleted booking', [], 401);
+                return $this->sendError('To delete your service, please  contact the administrator to remove reservations first', [], 401);
             }
             DB::table('services')->where('id', $request->services_id)->delete();
             DB::table('service_activities')->where('service_id', $request->services_id)->delete();
@@ -1481,6 +1544,7 @@ class ServicesController extends MyController
                 ->select([
                     'srvc.*',
                     'srvc.id as service_id',
+                    'srvc.descreption',
                     'srvc.service_plan',
                     'usr.name as provided_name',
                     DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
@@ -1519,7 +1583,7 @@ foreach ($services as $key => $ser) {
                 $service_id = $ser->id;
                 $imageData = DB::table('service_images')->where('service_id', $service_id)->get();
                 $aimedforData = DB::table('service_service_for as ssfor')
-                    ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+                    ->join('aimed as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
                     ->select('sfor.*', 'ssfor.service_id')
                     ->where('ssfor.service_id', $service_id)
                     ->get();
@@ -1600,7 +1664,7 @@ foreach ($services as $key => $ser) {
             //     foreach ($booking as $key => $ser) {
             //         $service_id = $ser->service_id;
             //         $aimedforData = DB::table('service_service_for as ssfor')
-            //             ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+            //             ->join('aimed as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
             //             ->select('sfor.*', 'ssfor.service_id')
             //             ->where('ssfor.service_id', $service_id)
             //             ->get();
@@ -1674,15 +1738,15 @@ foreach ($services as $key => $ser) {
 
     public function planForFuture(Request $request)
     {
+       // dd($request->all());
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|numeric',
             'service_id' => 'required|numeric',
             'adult' => 'required|numeric',
             'kids' => 'required|numeric',
             'message' => 'required',
-            'points' => 'numeric',
+           // 'points' => 'numeric',
             'coupon_applied' => 'required|numeric',
-            'promo_code' => '',
             'desired_date' => 'required|date_format:Y-m-d|after:today'
         ]);
         if ($validator->fails()) {
@@ -1705,16 +1769,18 @@ foreach ($services as $key => $ser) {
             $flag = false;
             if ($request->promo_code) {
                 $promocode = DB::table('promocode')->where(['code' => $request->promo_code])->first();
+                
+                
                 if ($promocode) {
-                    if ($promocode->discount_type == '1') {
-                        $disc_typ = 1; //Direct amount
-                        $disc_amt = $promocode->discount_amount;
-                        $service_disc_amt = $total_amt - $disc_amt;
-                    } elseif ($promocode->discount_type == '2') {
-                        $disc_typ = 2; // Percentage discount
-                        $disc_amt = $promocode->discount_amount;
-                        $service_disc_amt = $total_amt - (($total_amt * $disc_amt) / 100);
-                    }
+                    // if ($promocode->discount_type == '1') {
+                    //     $disc_typ = 1; //Direct amount
+                    //     $disc_amt = $promocode->discount_amount;
+                    //     $service_disc_amt = $total_amt - $disc_amt;
+                    // } elseif ($promocode->discount_type == '2') {
+                    //     $disc_typ = 2; // Percentage discount
+                    //     $disc_amt = $promocode->discount_amount;
+                    //     $service_disc_amt = $total_amt - (($total_amt * $disc_amt) / 100);
+                    // }
                     $flag = true;
                 }
             }
@@ -1729,21 +1795,19 @@ foreach ($services as $key => $ser) {
                 'booking_date' => $request->desired_date,
                 'currency' => $service_detail->currency,
                 'coupon_applied' => $flag,
-                'unit_amount' => $service_inc_amt,
-                'total_amount' => $total_amt,
-                'discounted_amount' => $service_disc_amt,
+                'unit_amount' => $request->amount,
+                'total_amount' => $request->final_amount,
+                'discounted_amount' => $request->discount_amount,
+                
+                //  'unit_amount' => $service_inc_amt,
+                // 'total_amount' => $total_amt,
+                // 'discounted_amount' => $service_disc_amt,
                 'created_at' => date('Y-m-d H:i:s'),
             ])) {
                 $booking_id = DB::getPdo()->lastInsertId();
-                $booking_data = DB::table('bookings')->select([
-                    '*',
-                    'id as booking_id'
-                ])
-                    ->where(['id' => $booking_id])
-                    ->first();
+                $booking_data = DB::table('bookings')->select(['*','id as booking_id' ])->where(['id' => $booking_id])->first();
                 if ($flag) {
-                    DB::table('promocode_users')
-                        ->insert([
+                    DB::table('promocode_users')->insert([
                             'booking_id' => $booking_id,
                             'user_id' => $request->user_id,
                             'service_id' => $request->service_id,
@@ -2088,6 +2152,7 @@ public function getExtensionSize($file)
                         $service->cost_inc = $request->cost_inc;
                         $service->cost_exc = $request->cost_exc;
                         $service->currency = $request->currency;
+                        $service->descreption = $request->write_information;
                         $service->pre_requisites = $request->pre_requisites;
                         $service->minimum_requirements = $request->minimum_requirements;
                         $service->terms_conditions = $request->terms_conditions;
@@ -2557,7 +2622,7 @@ public function getExtensionSize($file)
                     // $booked_seats = $booked_seats_qry->count();
                     // $services[$key]->booked_seats = $booked_seats;
                     // $aimedforData = DB::table('service_service_for as ssfor')
-                    //     ->join('service_for as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
+                    //     ->join('aimed as sfor', 'ssfor.sfor_id', '=', 'sfor.id')
                     //     ->select('sfor.*', 'ssfor.service_id')
                     //     ->where('ssfor.service_id', $service_id)
                     //     ->get();
@@ -2633,7 +2698,7 @@ public function getExtensionSize($file)
                     'client.weight',
                     'bkng.message',
                     'bkng.status as booking_status',
-                    'srvc.status',
+                    'bkng.status',
                     'bkng.payment_status',
                    // DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
                    // DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
