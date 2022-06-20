@@ -129,6 +129,7 @@ class ServicesController extends MyController
                 ->select([
                     'srvc.*',
                     'srvc.service_plan',
+                    'srvc.owner as provider_id',
                     'usr.name as provider_name',
                     DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
                     DB::raw("CONCAT('" . $s_img . "/',simg.thumbnail) AS thumbnail"),
@@ -271,6 +272,7 @@ class ServicesController extends MyController
             $services = DB::table('services as srvc')
                 ->select([
                     'srvc.*',
+                    'srvc.owner as provider_id',
                     'usr.name as provided_name',
                     DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
                     DB::raw("CONCAT('" . $s_img . "/',simag.thumbnail) AS thumbnail"),
@@ -418,6 +420,7 @@ class ServicesController extends MyController
             $services = DB::table('services as srvc')
                 ->select([
                     'srvc.*',
+                    'srvc.owner as provider_id',
                     'srvc.id as service_id',
                     'srvc.service_plan',
                     'srvc.descreption',
@@ -971,6 +974,7 @@ class ServicesController extends MyController
             $services = DB::table('services as srvc')
                 ->select([
                     'srvc.id as service_id',
+                    'srvc.owner as provider_id',
                     'srvc.adventure_name',
                     'srvc.service_plan',
                     'srvc.cost_inc',
@@ -1113,6 +1117,7 @@ class ServicesController extends MyController
             ->select([
                 'srvc.*',
                 'srvc.id as service_id',
+                'srvc.owner as provider_id',
                 'srvc.service_plan',
                 'usr.name as provider_name',
                 DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
@@ -1337,6 +1342,7 @@ class ServicesController extends MyController
                     'usr.nationality_id',
                     'srvc.id as service_id',
                     'srvc.owner as owner_id',
+                    'srvc.owner as provider_id',
                     'client.health_conditions',
                     'cntri.country',
                     'rgn.region',
@@ -1477,6 +1483,7 @@ class ServicesController extends MyController
                 ->select([
                     'bkng.id as booking_id',
                     'srvc.id as service_id',
+                    'srvc.owner as provider_id',
                     'srvc.service_plan',
                     'cntri.country',
                     'cntri.currency',
@@ -1548,6 +1555,7 @@ class ServicesController extends MyController
                 ->select([
                     'srvc.*',
                     'srvc.id as service_id',
+                    'srvc.owner as provider_id',
                     'srvc.descreption',
                     'srvc.service_plan',
                     'usr.name as provided_name',
@@ -1978,6 +1986,7 @@ foreach ($services as $key => $ser) {
                 $serviceuser = DB::table('users')->where('id', $val->owner)->first();
                 $servicesname['id'] = $val->id;
                 $servicesname['adventure_name'] = $val->adventure_name;
+                $servicesname['provider_id'] = $val->owner;
                 $servicesname['status'] = $val->status;
                 $servicesname['cost_incclude'] = $val->cost_inc;
                 $servicesname['cost_exclude'] = $val->cost_exc;
@@ -2677,6 +2686,7 @@ public function getExtensionSize($file)
                 ->select([
                     'bkng.id as booking_id',
                     'bkng.user_id as booking_user',
+                    'srvc.owner as provider_id',
                     'usr.profile_image as profile_image',
                     'usr.email',
                     'usr.nationality_id',
