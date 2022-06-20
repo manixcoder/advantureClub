@@ -954,6 +954,77 @@ class UsersController extends MyController
             return $this->sendResponse(config('custom.DATA_FOUND'), $result, 200);
         }
     }
+     public function readNotification(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            $errors = array();
+            foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                $errors[$field_name] = $messages[0];
+            }
+            return $this->sendError(implode(',', $errors), [], 422);
+        } else {
+            
+            $result = DB::table('notifications as noti')
+            ->where(['user_id' => $request->user_id])
+            ->update([
+                'is_read'=>'1',
+                'raed_at'=>date("Y-m-d")
+                ]);
+           
+            return  $this->sendResponse('Notification Read Successfully.', [], 200);
+        }
+    }
+    public function getNotificationListBudge(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            $errors = array();
+            foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                $errors[$field_name] = $messages[0];
+            }
+            return $this->sendError(implode(',', $errors), [], 422);
+        } else {
+           
+            $resultAccount = DB::table('notifications as noti')
+            ->where([
+                'user_id' => $request->user_id,
+                'notification_type'=>'0',
+                'is_read'=>'0'
+                ])
+            ->orderBy('id', 'DESC')
+            ->count();
+            $resultService = DB::table('notifications as noti')
+            ->where([
+                'user_id' => $request->user_id,
+                'notification_type'=>'1',
+                'is_read'=>'0'
+                ])
+            ->orderBy('id', 'DESC')
+            ->count();
+            $resultRequest = DB::table('notifications as noti')
+            ->where([
+                'user_id' => $request->user_id,
+                'notification_type'=>'1',
+                'is_read'=>'0'
+                ])
+            ->orderBy('id', 'DESC')
+            ->count();
+            $notificationData[]=array(
+                'resultAccount'=>(string)$resultAccount,
+                'resultService'=>(string)$resultService,
+                'resultRequest'=>(string)$resultRequest
+                
+                );
+            $responseData = $this->sendResponse('Notification found Successfully.', $notificationData, 200);
+            return $responseData;
+            return $this->sendResponse(config('custom.DATA_FOUND'), $notificationData, 200);
+        }
+    }
     public function createnotification(Request $request)
     {
         $validator = Validator::make($request->all(), [

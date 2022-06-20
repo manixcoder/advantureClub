@@ -603,6 +603,7 @@ class ServicesController extends MyController
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'service_id' => 'required',
+            'provider_id'=> 'required',
             'adult' => 'required',
             'kids' => 'required',
             'message' => 'required',
@@ -641,10 +642,8 @@ class ServicesController extends MyController
                     )
                 ->get();
                 if(!$promocodeUsed->isEmpty()){
-                    //dd(count($promocodeUsed));
                   if(count($promocodeUsed) >= (int)$promocode->redeemed_count){
-                      
-                     return $this->sendError('You have allready used max limit', [], 401); 
+                      return $this->sendError('You have allready used max limit', [], 401); 
                   }  
                 }
                 if ($promocode) {
@@ -664,6 +663,7 @@ class ServicesController extends MyController
             if (DB::table('bookings')->insert([
                 'user_id' => $request->user_id,
                 'service_id' => $request->service_id,
+                'provider_id'=>$request->provider_id,
                 'adult' => $request->adult,
                 'kids' => $request->kids,
                 'message' => $request->message,
@@ -1056,21 +1056,19 @@ class ServicesController extends MyController
     {
         $url = asset('public');
         $s_img = asset('public/uploads') . '/';
-        if ($request->sector) {
-            $where = 'srvc.service_category = ' . $request->category . ' ';
+         if ($request->country) {
+            $where = ' and srvc.country = ' . $request->country;
         } else {
             $where = '1';
         }
+        if ($request->sector) {
+            $where = 'srvc.service_category = ' . $request->category . ' ';
+        } 
 
         if ($request->category) {
             $where = 'srvc.service_category = ' . $request->category . ' ';
-        } else {
-            $where = '1';
-        }
-
-        if ($request->country) {
-            $where .= ' and srvc.country = ' . $request->country;
-        }
+        } 
+       
         if ($request->owner > 0) {
             $where .= " and srvc.owner =  " . $request->owner;
         } 
@@ -1136,10 +1134,13 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
-            ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
-            ->leftJoin('aimed as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
-            ->where(['srvc.deleted_at' => NULL,'srvc.status'=>'1'])
+            
+            //->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
+            //->leftJoin('aimed as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
+            ->where([
+                'srvc.deleted_at' => NULL,
+                'srvc.status'=>'1'
+            ])
             // ->groupBy('ssfor.service_id')
             ->whereRaw($where)
             ->get();
@@ -1371,6 +1372,7 @@ class ServicesController extends MyController
                 ->leftJoin('payments as pmnt', 'pmnt.booking_id', '=', 'bkng.id')
                 ->where('bkng.user_id', $request->partner_id)
                 ->where('srvc.country', $request->country_id)
+                ->where('bkng.status', '0')
                 ->orderBy('bkng.id', 'DESC')
                 ->get();
             //dd($services);
@@ -1477,6 +1479,7 @@ class ServicesController extends MyController
                     'srvc.id as service_id',
                     'srvc.service_plan',
                     'cntri.country',
+                    'cntri.currency',
                     'rgn.region',
                     'srvc.adventure_name',
                     'usr.name as provider_name',
@@ -1506,6 +1509,7 @@ class ServicesController extends MyController
                     $join->on('pmnt.booking_id', '=', 'bkng.id')
                         ->where('pmnt.status', '=', 1);
                 })
+                //->whereIn('bkng.status', ['0', 'PHILIPS'])
                 ->where('bkng.status', '!=','3')
                 ->where(['bkng.user_id' => $request->user_id])
                ->whereRaw($where)
