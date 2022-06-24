@@ -699,6 +699,16 @@ class ServicesController extends MyController
                         'created_at' => date('Y-m-d H:i:s'),
                     ]);
                 }
+                
+                 $notiData = array(
+                'sender_id' => '1',
+                'user_id' => $request->user_id,
+                'title' => 'Booking',
+                'message' => 'Your booking has been submitted',
+                'notification_type' => '2',
+
+            );
+            DB::table('notifications')->insert($notiData);
                 return $this->sendResponse('Booking has been successfull.', $booking_data, 200);
             } else {
                 return $this->sendError('Something went wrong', [], 401);
@@ -1331,9 +1341,49 @@ class ServicesController extends MyController
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
-
-
-            $services = DB::table('bookings as bkng')
+            $services=DB::table('bookings as bkng')
+            ->select([
+                    'bkng.id as booking_id',
+                    'bkng.user_id as booking_user',
+                    'srvc.id as service_id',
+                    'srvc.owner as owner_id',
+                    'srvc.adventure_name',
+                    'bkng.booking_date as service_date',
+                    'bkng.created_at as booked_on',
+                    'bkng.adult',
+                    'bkng.kids',
+                    'bkng.unit_amount as unit_cost',
+                    'bkng.total_amount as total_cost',
+                    'bkng.message',
+                    'bkng.status',
+                    'bkng.payment_status',
+                    'usr.profile_image as profile_image',
+                    'usr.email',
+                    'usr.nationality_id',
+                    'usr.name as provider_name',
+                    'srvc.*',
+                    'cntri.country',
+                     'rgn.region',
+                     'client.health_conditions',
+                      'client.name as customer',
+                    'client.email as client_email',
+                    'client.dob',
+                    'client.height',
+                    'client.weight',
+                    'catg.category'
+                    ])
+            ->Join('services as srvc', 'srvc.id', '=', 'bkng.service_id')
+            ->leftJoin('service_categories as catg', 'catg.id', '=', 'srvc.service_category')
+            ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
+            ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
+            ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
+            ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
+            ->where('bkng.provider_id', $request->partner_id)
+            ->where('srvc.country', $request->country_id)
+            ->get();
+           // dd($services);
+        /*   
+        $services = DB::table('bookings as bkng')
                 ->select([
                     'bkng.id as booking_id',
                     'bkng.user_id as booking_user',
@@ -1349,7 +1399,7 @@ class ServicesController extends MyController
                     'srvc.adventure_name',
                     'usr.name as provider_name',
                     'client.name as customer',
-                    'client.email',
+                    'client.email as client_email',
                     'bkng.booking_date as service_date',
                     'bkng.created_at as booked_on',
                     'bkng.adult',
@@ -1357,13 +1407,13 @@ class ServicesController extends MyController
                     'bkng.unit_amount as unit_cost',
                     'bkng.total_amount as total_cost',
                     'pmnt.payment_method as payment_channel',
-                    'cntri.currency as currency',
+                    'cntri.currency as currency',  
                     'client.dob',
                     'client.height',
                     'client.weight',
                     'bkng.message',
                     'bkng.status',
-                    'bkng.payment_status',
+                    'bkng.payment_status', 
                    // DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
                    // DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
                     'catg.category'
@@ -1371,31 +1421,37 @@ class ServicesController extends MyController
                 ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                 ->leftJoin('service_categories as catg', 'catg.id', '=', 'srvc.service_category')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                //->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                 ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
-                ->leftJoin('payments as pmnt', 'pmnt.booking_id', '=', 'bkng.id')
-                ->where('bkng.user_id', $request->partner_id)
+               // ->leftJoin('payments as pmnt', 'pmnt.booking_id', '=', 'bkng.id')
+               // ->where('bkng.user_id', $request->partner_id)
+               ->where('bkng.provider_id', $request->partner_id)
                 ->where('srvc.country', $request->country_id)
                 ->where('bkng.status', '0')
                 ->orderBy('bkng.id', 'DESC')
-                ->get();
-            //dd($services);
-            if (!$services->isEmpty()) {
+                ->get();*/
+           // dd($services);
+            if (count($services) >0) {
                 foreach ($services as $key => $service) {
-                    //dd($service);
-                    $country = DB::table('countries')->where('id', $service->nationality_id)->first();
-                    $services[$key]->nationality = $country->short_name;
-                    $service_images = DB::table('service_images')->where('service_id', $service->service_id)->get();
-                    $services[$key]->service_images = $service_images;
-                    $health_condtions = DB::table('health_conditions')
+                 // dd($service);
+                 $nationality = DB::table('countries')->where('id', $service->nationality_id)->first();
+                 $services[$key]->nationality = $nationality->short_name;
+                 $bookingUser = DB::table('countries')->where('id', $service->nationality_id)->first();
+                 $services[$key]->nationality = $nationality->short_name;
+                 
+                 $service_images = DB::table('service_images')->where('service_id', $service->service_id)->get();
+                 $services[$key]->service_images = $service_images;
+                 $health_condtions = DB::table('health_conditions')
                         ->select([DB::raw("GROUP_CONCAT(name) AS healths")])
                         ->whereIn('id', explode(',', $service->health_conditions))
                         ->first();
                     $services[$key]->health_conditions =  $health_condtions->healths;
+                   
+                    
+                    
                 }
-                //dd($service);
+               // dd($service);
                 if ($services) {
                     return $this->sendResponse("Request list", $services, 200);
                 } else {
@@ -1409,18 +1465,99 @@ class ServicesController extends MyController
 
     public function bookingAcceptDecline(Request $request)
     {
+         $bookingData = DB::table('bookings')->where(['id' => $request->booking_id])->first(); 
+         if($bookingData){
+            $servicesData = DB::table('services')->where(['id' => $bookingData->service_id])->first(); 
+           if($request->status=='1'){
+             $notiData=array(
+                 'sender_id'=>$request->user_id,
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking Accept',
+                 'message'=>"Your booking '.$servicesData->adventure_name.' has accepted",
+                 'notification_type'=>'2',
+                //  'created_at'=>'',
+                //  'raed_at'=>'',
+                //  'send_at'=>'',
+                //  'updated_at'=>''
+            );
+         }else if($request->status=='2'){
+            $notiData=array(
+                 'sender_id'=>$request->user_id,
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking Payment Done',
+                 'message'=>"Your booking '.$servicesData->adventure_name.' has been Payment Done",
+                 'notification_type'=>'2',
+                 //  'created_at'=>'',
+                 //  'raed_at'=>'',
+                 //  'send_at'=>'',
+                 //  'updated_at'=>''
+                 );
+         }else if($request->status=='3'){
+           $notiData=array(
+                 'sender_id'=>$request->user_id,
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking Cancelled',
+                 'message'=>"Your booking '.$servicesData->adventure_name.' has been Cancelled",
+                 'notification_type'=>'2',
+                //  'created_at'=>'',
+                //  'raed_at'=>'',
+                //  'send_at'=>'',
+                //  'updated_at'=>''
+            );  
+         }else if($request->status=='4'){
+             $notiData=array(
+                 'sender_id'=>$request->user_id,
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking Completed',
+                 'message'=>"Your booking '.$servicesData->adventure_name.' has been Completed",
+                 'notification_type'=>'2',
+                //  'created_at'=>'',
+                //  'raed_at'=>'',
+                //  'send_at'=>'',
+                //  'updated_at'=>''
+            );
+         }
+         else if($request->status=='5'){
+             $notiData=array(
+                 'sender_id'=>$request->user_id,
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking dropped ',
+                 'message'=>"Your booking '.$servicesData->adventure_name.' has been dropped ",
+                 'notification_type'=>'2',
+                //  'created_at'=>'',
+                //  'raed_at'=>'',
+                //  'send_at'=>'',
+                //  'updated_at'=>''
+            );
+         }else{
+              $notiData=array(
+                 'sender_id'=>$request->user_id,
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking Conformed ',
+                 'message'=>'Your booking '.$servicesData->adventure_name.' has been Conformed ',
+                 'notification_type'=>'2',
+                //  'created_at'=>'',
+                //  'raed_at'=>'',
+                //  'send_at'=>'',
+                //  'updated_at'=>''
+            );
+         } 
+         
+         DB::table('notifications')->insert($notiData);
+         
+         }
+         
         if($request->status=='2'){
           $bookingData = DB::table('bookings')->where(['id' => $request->booking_id])->first(); 
           $service_id = $bookingData->service_id;
           $totalseatBooking= $bookingData->adult + $bookingData->kids;
-          
-           $servicesData = DB::table('services')->where(['id' => $service_id])->first();
+          $servicesData = DB::table('services')->where(['id' => $service_id])->first();
           $available_seats= $servicesData->available_seats-$totalseatBooking;
           $servicesUpdate = DB::table('services')->where(['id' => $service_id])->update([
               'available_seats'=>$available_seats
-              ]);
-         // dd($servicesUpdate);
+          ]);
         }
+       
         
         // dd($request->all());
         DB::table('bookings')->where(['id' => $request->booking_id])->update([
@@ -1757,7 +1894,7 @@ foreach ($services as $key => $ser) {
             'adult' => 'required|numeric',
             'kids' => 'required|numeric',
             'message' => 'required',
-           // 'points' => 'numeric',
+            'provider_id' => 'numeric',
             'coupon_applied' => 'required|numeric',
             'desired_date' => 'required|date_format:Y-m-d|after:today'
         ]);
@@ -1800,6 +1937,7 @@ foreach ($services as $key => $ser) {
             if (DB::table('bookings')->insert([
                 'user_id' => $request->user_id,
                 'service_id' => $request->service_id,
+                'provider_id'=> $request->provider_id,
                 'adult' => $request->adult,
                 'kids' => $request->kids,
                 'message' => $request->message,
@@ -1832,7 +1970,15 @@ foreach ($services as $key => $ser) {
                             'created_at' => date('Y-m-d H:i:s'),
                         ]);
                 }
+                $notiData = array(
+                'sender_id' => '1',
+                'user_id' => $request->user_id,
+                'title' => 'Booking',
+                'message' => 'Your booking has been submitted',
+                'notification_type' => '2',
 
+            );
+            DB::table('notifications')->insert($notiData);
                 return $this->sendResponse('Request has been sent successfull.', $booking_data, 200);
             } else {
                 return $this->sendError('Something went wrong', [], 401);
@@ -2303,6 +2449,16 @@ public function getExtensionSize($file)
                                 DB::table('service_plan_day_date')->insert($pd_data);
                             }
                             $service = Service::find($service_id);
+                            $notiData=array(
+                                'sender_id'=>'1',
+                                'user_id'=>$request->customer_id,
+                                'title'=>'Activities',
+                                'message'=>'Your activity has been created successfully ',
+                                'notification_type'=>'1',
+                                
+                                );
+                                DB::table('notifications')->insert($notiData);
+                            
                             return $this->sendResponse('Service Created Successfully!', $service, 200);
                             return $this->sendResponse('Service Created Successfully!', 200);
                         } else {

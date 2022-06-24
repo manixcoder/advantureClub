@@ -93,6 +93,19 @@ class UsersController extends MyController
             $data->profile_image        = 'profile_image/no-image.png';
             $data->save();
             $data['become_partner'] = null;
+            
+            $notiData=array(
+                 'sender_id'=>'1',
+                 'user_id'=>$data->id,
+                 'title'=>'Register',
+                 'message'=>"You registered successfully",
+                 'notification_type'=>'0',
+                //  'created_at'=>'',
+                //  'raed_at'=>'',
+                //  'send_at'=>'',
+                //  'updated_at'=>''
+            );
+         DB::table('notifications')->insert($notiData);
             return $this->sendResponse($msg, $data, 201);
         }
     }
@@ -456,6 +469,18 @@ class UsersController extends MyController
         if ($result->status == 0) {
             return $this->sendError('Account Deactivated.Please contact to admin.', [], 401, 'account_deactivated');
         }
+        $notiData=array(
+                 'sender_id'=>'1',
+                 'user_id'=>$result->id,
+                 'title'=>'Login',
+                 'message'=>'You logged in successfully',
+                 'notification_type'=>'0',
+                 //  'created_at'=>'',
+                //  'raed_at'=>'',
+                //  'send_at'=>'',
+                //  'updated_at'=>''
+            );
+         DB::table('notifications')->insert($notiData);
         return $this->sendResponse(config('constants.LOGIN'), $result);
     }
     /**
@@ -957,7 +982,7 @@ class UsersController extends MyController
      public function readNotification(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|numeric',
+            'noti_id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             $errors = array();
@@ -968,7 +993,7 @@ class UsersController extends MyController
         } else {
             
             $result = DB::table('notifications as noti')
-            ->where(['user_id' => $request->user_id])
+            ->where(['id' => $request->noti_id])
             ->update([
                 'is_read'=>'1',
                 'raed_at'=>date("Y-m-d")
@@ -1001,7 +1026,7 @@ class UsersController extends MyController
             $resultService = DB::table('notifications as noti')
             ->where([
                 'user_id' => $request->user_id,
-                'notification_type'=>'1',
+                'notification_type'=>'2',
                 'is_read'=>'0'
                 ])
             ->orderBy('id', 'DESC')
@@ -1014,7 +1039,16 @@ class UsersController extends MyController
                 ])
             ->orderBy('id', 'DESC')
             ->count();
+            
+            $totalNotification = DB::table('notifications as noti')
+            ->where([
+                'user_id' => $request->user_id,
+                'is_read'=>'0'
+                ])
+            ->orderBy('id', 'DESC')
+            ->count();
             $notificationData[]=array(
+                'total_notification'=>(string)$totalNotification,
                 'resultAccount'=>(string)$resultAccount,
                 'resultService'=>(string)$resultService,
                 'resultRequest'=>(string)$resultRequest

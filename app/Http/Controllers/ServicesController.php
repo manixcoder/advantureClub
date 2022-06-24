@@ -380,7 +380,15 @@ class ServicesController extends MyController
                             DB::table('service_plan_day_date')
                                 ->insert($pd_data);
                         }
+ $notiData = array(
+                'sender_id' => '1',
+                'user_id' => $service->owner,
+                'title' => 'Activities',
+                'message' => 'Your service has Been approved',
+                'notification_type' => '1',
 
+            );
+            DB::table('notifications')->insert($notiData);
                         $request->session()->flash('success', 'Service has been added successfully.');
                     } else {
                         $request->session()->flash('error', 'Something went wrong. Please try again.');
@@ -713,6 +721,15 @@ class ServicesController extends MyController
         if ($service) {
             $service->status = 1;
             $service->save();
+            
+             $notiData = array(
+                'sender_id' => '1',
+                'user_id' => $service->owner,
+                'title' => 'Activities',
+                'message' => 'Your service has Been approved',
+                'notification_type' => '1',
+            );
+            DB::table('notifications')->insert($notiData);
             $request->session()->flash('success', 'Service has been accepted successfully.');
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');

@@ -91,7 +91,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/get_notification_list', 'Api\V1\UsersController@getNotificationList');
     Route::post('/get_notification_list_budge', 'Api\V1\UsersController@getNotificationListBudge');
     Route::post('/read_notification', 'Api\V1\UsersController@readNotification');
-    Route::post('/createnotification', 'Api\V1\UsersController@createnotification');
+   // Route::post('/createnotification', 'Api\V1\UsersController@createnotification');
     Route::post('/get_reviews', 'Api\V1\ServicesController@getReviews');
     Route::post('/booking_delete', 'Api\V1\ServicesController@bookingDelete');
     Route::post('/servicesImage', 'Api\V1\ServicesController@servicesImage');
