@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 21, 2022 at 01:20 AM
+-- Generation Time: Jun 29, 2022 at 11:39 PM
 -- Server version: 8.0.29
 -- PHP Version: 7.4.29
 
@@ -123,13 +123,6 @@ CREATE TABLE `announcements` (
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
---
--- Dumping data for table `announcements`
---
-
-INSERT INTO `announcements` (`id`, `user_id`, `sender_id`, `title`, `content`, `reach_for`, `deleted_at`) VALUES
-(1, 12, 1, 'tester', 'tester', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -164,8 +157,8 @@ CREATE TABLE `become_partner` (
   `cr_name` varchar(255) DEFAULT NULL,
   `cr_number` varchar(255) DEFAULT NULL,
   `cr_copy` varchar(255) DEFAULT NULL,
-  `debit_card` varchar(255) DEFAULT NULL,
-  `visa_card` varchar(255) DEFAULT NULL,
+  `debit_card` int DEFAULT '0',
+  `visa_card` int DEFAULT '0',
   `payon_arrival` enum('1','0') CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT '0' COMMENT '''1'' Active , ''0'' Inactive',
   `paypal` varchar(255) DEFAULT NULL,
   `bankname` varchar(255) DEFAULT NULL,
@@ -187,9 +180,10 @@ CREATE TABLE `become_partner` (
 --
 
 INSERT INTO `become_partner` (`id`, `user_id`, `company_name`, `address`, `location`, `description`, `license`, `cr_name`, `cr_number`, `cr_copy`, `debit_card`, `visa_card`, `payon_arrival`, `paypal`, `bankname`, `account_holdername`, `account_number`, `is_online`, `is_approved`, `packages_id`, `start_date`, `end_date`, `is_wiretransfer`, `is_free_used`, `created_at`, `updated_at`) VALUES
-(5, 27, 'universal-skills', 'Muscat, Alkhudh6', 'Unnamed Road ,  , Oman', 'We offer verity of adventure tours,', 'Yes', 'AdventuresClub', '62y3gsggsvshw627', 'file62ad6f7dd0d1e-01a7bb4b-6b2f-47c8-a0a9-128f59d0a787images.jpeg-3.jpg', NULL, NULL, '1', '9875423', 'bankmuscat', 'universal-skills', '04123654871236458', '1', '1', 2, '2022-06-07 21:48:03', '2022-09-04 10:48:03', '1', '1', '2022-05-25 12:09:22', '2022-05-25 01:09:22'),
-(6, 22, 'badaralsahi', 'tester', 'Unnamed Road ,  , Oman', 'tester', 'No', NULL, NULL, '', NULL, NULL, NULL, NULL, 'bank.uscat', 'badaralsahi', '04875565312464887', '1', '1', 1, '2022-06-07 00:42:11', '2022-06-12 13:42:11', '1', '1', '2022-05-27 23:12:11', '2022-05-27 12:12:11'),
-(7, 35, 'ark', 'noida', '1511 , Gurugram , India', 'test', 'No', NULL, NULL, '', '1', NULL, NULL, NULL, NULL, NULL, NULL, '1', '1', 1, '2022-06-19 17:49:21', '2022-06-25 12:19:21', '0', '1', '2022-06-19 17:47:57', '2022-06-19 12:17:57');
+(1, 2, 'ark newtech', 'Bareilly, Uttar Pradesh, India', 'Haryana Gurugram Gurgaon India', 'test', 'Yes', 'cr name', 'cr number 2467', 'file62b4a3e8b2220-df38bb06-1bc7-44f2-bdfd-5b59b7e0c7f5IMG20220610220427.jpg', 1, NULL, '1', '4563465', 'hh', 'hh', '66', '1', '1', 1, '2022-06-23 23:12:23', '2022-06-29 17:42:23', '1', '1', '2022-06-23 23:03:28', '2022-06-23 17:33:28'),
+(2, 3, 'Universal-Skills', 'MuscatOman', 'Al Batinah North Governorate   Oman', 'We provide verityof adventure tourism since 2013,a', 'Yes', 'Universal-skills', 'CR# ABC123def456', 'file62b59aa51d544-06b84b0f-457e-4ddf-a55c-7b69df851bacIMG-20220624-WA0015.jpg', 1, NULL, '1', NULL, 'bankmuscat', 'badaralsahi', '0879645321576', '1', '1', 1, '2022-06-26 11:54:40', '2022-07-02 06:24:40', '1', '1', '2022-06-24 16:36:13', '2022-06-24 11:06:13'),
+(3, 6, 'ark', 'bb', 'jj', 'b', 'No', NULL, NULL, '', NULL, NULL, '1', NULL, NULL, NULL, NULL, '1', '1', 1, '2022-06-25 17:24:30', '2022-07-01 11:54:30', '0', '1', '2022-06-25 17:23:56', '2022-06-25 11:53:56'),
+(4, 7, 'h', 'Bareilly, Uttar Pradesh, India', 'f', 't', 'No', NULL, NULL, '', NULL, NULL, '1', NULL, NULL, NULL, NULL, '1', '1', 1, '2022-06-26 00:34:59', '2022-07-01 19:04:59', '0', '1', '2022-06-26 00:25:58', '2022-06-25 18:55:58');
 
 -- --------------------------------------------------------
 
@@ -212,7 +206,7 @@ CREATE TABLE `bookings` (
   `booking_date` date NOT NULL,
   `currency` int NOT NULL,
   `coupon_applied` tinyint NOT NULL,
-  `status` enum('0','1','2','3','4','5','6') NOT NULL DEFAULT '0' COMMENT '0=Pending/Requested,1=Accepted,2=Payment Done,3=Cancelled,4= Completed, 5 dropped ,6 =Conform',
+  `status` enum('0','1','2','3','4','5','6') CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '0=Requested,1=Accepted,2=PaymentDone,3=decline(Provider cancle),4= Completed, 5 dropped(User cancle) ,6 =Conform',
   `updated_by` int NOT NULL,
   `cancelled_reason` varchar(255) DEFAULT NULL,
   `payment_status` varchar(255) DEFAULT NULL,
@@ -226,17 +220,28 @@ CREATE TABLE `bookings` (
 --
 
 INSERT INTO `bookings` (`id`, `user_id`, `service_id`, `provider_id`, `adult`, `kids`, `message`, `unit_amount`, `total_amount`, `discounted_amount`, `future_plan`, `booking_date`, `currency`, `coupon_applied`, `status`, `updated_by`, `cancelled_reason`, `payment_status`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(5, 27, 1, 0, 1, 0, 'ubu', '222.00', '222.00', '0.00', 1, '2022-06-25', 1, 0, '2', 27, NULL, NULL, NULL, '2022-06-19 09:21:01', NULL),
-(6, 27, 1, 0, 1, 1, 'vg', '222.00', '444.00', '0.00', 1, '2022-06-20', 1, 0, '3', 27, NULL, NULL, NULL, '2022-06-19 09:22:47', NULL),
-(7, 27, 1, 0, 1, 0, 'bgv', '222.00', '222.00', '0.00', 1, '2022-06-24', 1, 0, '3', 27, NULL, NULL, NULL, '2022-06-19 09:26:22', NULL),
-(8, 27, 4, 0, 2, 0, 'tow ppl plz  ...', '3000.00', '5980.00', '20.00', 1, '2022-06-20', 1, 0, '3', 27, NULL, NULL, NULL, '2022-06-19 11:49:49', NULL),
-(9, 27, 4, 0, 2, 0, 'tow ppl plz  ...', '3000.00', '5980.00', '20.00', 1, '2022-06-20', 1, 0, '2', 27, NULL, NULL, NULL, '2022-06-19 11:50:02', NULL),
-(11, 35, 5, 0, 2, 0, 'vgv', '500.00', '1000.00', '0.00', 1, '2022-06-25', 1, 0, '3', 35, NULL, NULL, NULL, '2022-06-19 13:02:43', NULL),
-(12, 35, 5, 0, 1, 0, 'vg', '500.00', '500.00', '0.00', 1, '2022-06-22', 1, 0, '2', 35, NULL, NULL, NULL, '2022-06-19 13:21:19', NULL),
-(13, 35, 5, 0, 1, 0, 'fvg', '500.00', '480.00', '20.00', 1, '2022-06-25', 1, 0, '2', 35, NULL, NULL, NULL, '2022-06-19 13:40:27', NULL),
-(15, 35, 5, 0, 1, 1, 'ctc', '500.00', '1000.00', '0.00', 1, '2022-06-25', 1, 0, '2', 35, NULL, NULL, NULL, '2022-06-19 14:03:32', NULL),
-(16, 22, 4, 0, 2, 0, 'requested by badar, provided by AdventuresClub', '3000.00', '5980.00', '20.00', 1, '2022-06-20', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-19 17:08:14', NULL),
-(17, 35, 1, 0, 1, 1, 'b', '222.00', '444.00', '0.00', 1, '2022-06-24', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-19 19:35:10', NULL);
+(7, 2, 1, 2, 1, 0, 'fv', '222.00', '222.00', '0.00', 1, '2022-06-26', 1, 0, '3', 2, NULL, NULL, NULL, '2022-06-23 20:21:52', NULL),
+(11, 2, 1, 2, 1, 1, 'jvb', '222.00', '444.00', '0.00', 1, '2022-06-26', 1, 0, '1', 2, NULL, NULL, NULL, '2022-06-24 16:43:28', NULL),
+(12, 4, 1, 2, 1, 0, 'badar', '222.00', '222.00', '0.00', 1, '2022-06-26', 1, 0, '3', 4, NULL, NULL, NULL, '2022-06-24 18:43:47', NULL),
+(23, 6, 1, 2, 1, 0, 'b', '222.00', '222.00', '0.00', 1, '2022-06-26', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-25 11:50:05', NULL),
+(24, 6, 1, 2, 1, 0, 'g', '222.00', '222.00', '0.00', 1, '2022-06-26', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-25 11:52:25', NULL),
+(25, 6, 2, 2, 1, 0, 'hh', '22.00', '22.00', '0.00', 1, '2022-06-27', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-25 11:58:09', NULL),
+(26, 7, 2, 2, 1, 0, 'c', '22.00', '22.00', '0.00', 1, '2022-06-26', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-25 18:12:11', NULL),
+(27, 7, 2, 2, 1, 0, 'x', '22.00', '22.00', '0.00', 1, '2022-06-26', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-25 18:13:05', NULL),
+(29, 7, 2, 2, 1, 0, 'h', '22.00', '22.00', '0.00', 1, '2022-06-27', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-25 19:06:04', NULL),
+(35, 4, 6, 3, 1, 0, 'h', '30.00', '30.00', '0.00', 1, '2022-06-27', 2, 0, '1', 3, NULL, NULL, NULL, '2022-06-26 10:21:04', NULL),
+(36, 8, 1, 2, 1, 0, '@Pankaj! received booking notification?', '222.00', '222.00', '0.00', 1, '2022-06-27', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-26 10:32:00', NULL),
+(37, 8, 6, 3, 1, 0, 'check notification', '30.00', '30.00', '0.00', 1, '2022-06-27', 2, 0, '1', 3, NULL, NULL, NULL, '2022-06-26 10:34:44', NULL),
+(39, 9, 6, 3, 2, 0, 'abc', '30.00', '60.00', '0.00', 1, '2022-06-28', 2, 0, '1', 3, NULL, NULL, NULL, '2022-06-26 18:11:51', NULL),
+(40, 4, 6, 3, 2, 0, 'd', '30.00', '60.00', '0.00', 1, '2022-06-28', 2, 0, '2', 3, NULL, NULL, NULL, '2022-06-26 18:40:20', NULL),
+(41, 9, 2, 2, 1, 0, 'ggggģgggģ', '22.00', '22.00', '0.00', 1, '2022-06-28', 1, 0, '0', 0, NULL, NULL, NULL, '2022-06-27 02:48:41', NULL),
+(65, 2, 1, 2, 1, 0, 'hhj', '222.00', '222.00', '0.00', 1, '2022-06-30', 1, 0, '1', 2, NULL, NULL, NULL, '2022-06-28 20:22:48', NULL),
+(66, 4, 7, 3, 1, 0, 'to cancel (Drop) by user after its approved by provide', '30.00', '30.00', '0.00', 1, '2022-06-30', 2, 0, '3', 4, NULL, NULL, NULL, '2022-06-29 16:36:13', NULL),
+(67, 4, 7, 3, 1, 0, 'to drop (cancel request) by user.', '30.00', '30.00', '0.00', 1, '2022-06-30', 2, 0, '3', 4, NULL, NULL, NULL, '2022-06-29 16:54:06', NULL),
+(68, 4, 7, 3, 1, 0, 'to decline user request : check k notification', '30.00', '30.00', '0.00', 1, '2022-06-30', 2, 0, '3', 3, NULL, NULL, NULL, '2022-06-29 16:54:45', NULL),
+(69, 4, 7, 3, 1, 0, 'cancel before approval', '30.00', '30.00', '0.00', 1, '2022-06-30', 2, 0, '3', 4, NULL, NULL, NULL, '2022-06-29 17:05:07', NULL),
+(70, 4, 7, 3, 1, 0, 'pay', '30.00', '30.00', '0.00', 1, '2022-06-30', 2, 0, '1', 3, NULL, NULL, NULL, '2022-06-29 17:26:50', NULL),
+(71, 3, 7, 3, 1, 0, 'my adventure', '30.00', '30.00', '0.00', 1, '2022-06-30', 2, 0, '1', 3, NULL, NULL, NULL, '2022-06-29 17:35:16', NULL);
 
 -- --------------------------------------------------------
 
@@ -314,7 +319,7 @@ CREATE TABLE `contact_us` (
 --
 
 INSERT INTO `contact_us` (`id`, `name`, `mobile_code`, `mobile_number`, `email`, `subject`, `purpose`, `message`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(6, 'AdventuresClub', '+968', '96000891', 'badaralsahiii@gmail.com', 'bubub', 'Add a country', 'vhhbun g h', '2022-06-19 17:15:05', '2022-06-19 17:15:05', NULL);
+(7, 'AdventuresClub', '++96', '961235889', 'info@adventuresclub.net', 'add Bungee Jumping', 'Add Activity type', 'hi there,\nplz add BunjeeJump activity type to the app so we can select!\nthanks,\nBadar test', '2022-06-24 20:37:13', '2022-06-24 20:37:13', NULL);
 
 -- --------------------------------------------------------
 
@@ -489,7 +494,7 @@ CREATE TABLE `favourites` (
 --
 
 INSERT INTO `favourites` (`id`, `user_id`, `service_id`, `created_at`, `updated_at`) VALUES
-(1, 22, 1, '2022-06-19 22:25:41', '2022-06-19 22:25:41');
+(1, 3, 1, '2022-06-25 00:41:45', '2022-06-25 00:41:45');
 
 -- --------------------------------------------------------
 
@@ -642,44 +647,20 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `sender_id`, `user_id`, `title`, `message`, `is_approved`, `is_read`, `notification_type`, `created_at`, `raed_at`, `send_at`) VALUES
-(1, 27, 27, 'Adventure', 'Adventure create successfully.', '0', '1', '0', '2022-06-19 14:43:39', '2022-06-21', NULL),
-(2, 27, 27, 'Adventure', 'your Request has been submitted successfully.', '0', '1', '0', '2022-06-19 14:56:28', '2022-06-21', NULL),
-(3, 27, 27, 'Booking has been confirmed', 'Your booking water has been confirmed.', '0', '1', '0', '2022-06-19 15:14:42', '2022-06-21', NULL),
-(4, 27, 27, 'Adventure', 'Adventure create successfully.', '0', '1', '0', '2022-06-19 15:30:34', '2022-06-21', NULL),
-(5, 27, 27, 'Adventure', 'Adventure create successfully.', '0', '1', '0', '2022-06-19 15:37:41', '2022-06-21', NULL),
-(6, 27, 27, 'Adventure', 'Adventure create successfully.', '0', '1', '0', '2022-06-19 15:42:05', '2022-06-21', NULL),
-(7, 35, 35, 'Register', 'You have register successfully with adventure club', '0', '0', '0', '2022-06-19 17:46:41', NULL, NULL),
-(8, 35, 35, 'Your Request submitted', 'After approval you\'ll be notified and have to buy your subscription package.', '0', '0', '0', '2022-06-19 17:47:58', NULL, NULL),
-(9, 1, 35, 'Your request has been approved', 'Now you may proceed to buy subscription package & will be able to provide your service.', '1', '0', '0', '2022-06-19 17:49:15', NULL, NULL),
-(10, 27, 27, 'Booking has been cancelled', 'Your booking water has been cancelled.', '0', '1', '0', '2022-06-19 17:50:46', '2022-06-21', NULL),
-(11, 27, 27, 'Booking has been confirmed', 'Your booking Tandem paragliding has been confirmed.', '0', '1', '0', '2022-06-19 17:53:25', '2022-06-21', NULL),
-(12, 35, 35, 'Adventure', 'Adventure create successfully.', '0', '0', '0', '2022-06-19 17:55:20', NULL, NULL),
-(13, 35, 35, 'Adventure', 'your Request has been submitted successfully.', '0', '0', '0', '2022-06-19 18:20:29', NULL, NULL),
-(14, 35, 35, 'Booking has been confirmed', 'Your booking rafting has been confirmed.', '0', '0', '0', '2022-06-19 18:21:20', NULL, NULL),
-(15, 35, 35, 'Adventure', 'your Request has been submitted successfully.', '0', '0', '0', '2022-06-19 18:32:54', NULL, NULL),
-(16, 35, 35, 'Booking has been confirmed', 'Your booking rafting has been confirmed.', '0', '0', '0', '2022-06-19 18:33:23', NULL, NULL),
-(17, 35, 35, 'Adventure', 'your Request has been submitted successfully.', '0', '0', '0', '2022-06-19 18:51:21', NULL, NULL),
-(18, 35, 35, 'Adventure', 'your Request has been submitted successfully.', '0', '0', '0', '2022-06-19 19:10:29', NULL, NULL),
-(19, 35, 35, 'Booking has been confirmed', 'Your booking rafting has been confirmed.', '0', '0', '0', '2022-06-19 19:15:26', NULL, NULL),
-(20, 22, 22, 'Login', 'You have login successfully with adventure club', '0', '0', '0', '2022-06-19 19:26:34', NULL, NULL),
-(21, 22, 22, 'Adventure', 'your Request has been submitted successfully.', '0', '0', '0', '2022-06-19 19:27:51', '2022-06-21', NULL),
-(22, 27, 27, 'Login', 'You have login successfully with adventure club', '0', '1', '0', '2022-06-19 19:30:13', '2022-06-21', NULL),
-(23, 22, 22, 'Login', 'You have login successfully with adventure club', '0', '0', '0', '2022-06-19 19:32:31', NULL, NULL),
-(24, 35, 35, 'Adventure', 'your Request has been submitted successfully.', '0', '0', '0', '2022-06-19 19:33:33', NULL, NULL),
-(25, 37, 37, 'Register', 'You have register successfully with adventure club', '0', '0', '0', '2022-06-19 22:04:51', NULL, NULL),
-(26, 22, 22, 'Adventure', 'your Request has been submitted successfully.', '0', '0', '2', '2022-06-19 22:38:16', NULL, NULL),
-(27, 27, 27, 'Login', 'You have login successfully with adventure club', '0', '1', '0', '2022-06-19 22:38:58', '2022-06-21', NULL),
-(28, 22, 22, 'Login', 'You have login successfully with adventure club', '0', '0', '0', '2022-06-19 22:55:33', NULL, NULL),
-(29, 27, 27, 'Login', 'You have login successfully with adventure club', '0', '1', '0', '2022-06-19 22:56:37', '2022-06-21', NULL),
-(30, 27, 27, 'Booking has been cancelled', 'Your booking water has been cancelled.', '0', '1', '0', '2022-06-19 23:47:19', '2022-06-21', NULL),
-(31, 27, 27, 'Booking has been confirmed', 'Your booking water has been confirmed.', '0', '1', '0', '2022-06-19 23:47:32', '2022-06-21', NULL),
-(32, 27, 27, 'Booking has been cancelled', 'Your booking water has been cancelled.', '0', '1', '0', '2022-06-20 00:06:57', '2022-06-21', NULL),
-(33, 35, 35, 'Adventure', 'your Request has been submitted successfully.', '0', '0', '0', '2022-06-20 01:05:13', NULL, NULL),
-(34, 27, 27, 'Login', 'You have login successfully with adventure club', '0', '1', '0', '2022-06-20 02:24:48', '2022-06-21', NULL),
-(35, 27, 27, 'Login', 'You have login successfully with adventure club', '0', '1', '0', '2022-06-20 09:27:55', '2022-06-21', NULL),
-(36, 22, 22, 'Login', 'You have login successfully with adventure club', '0', '0', '0', '2022-06-20 09:46:32', '2022-06-20', NULL),
-(37, 27, 27, 'Login', 'You have login successfully with adventure club', '0', '1', '0', '2022-06-21 00:02:31', '2022-06-21', NULL),
-(38, 27, 27, 'Booking has been cancelled', 'Your booking water has been cancelled.', '0', '1', '0', '2022-06-21 00:05:07', '2022-06-21', NULL);
+(1, 1, 3, 'Booking', 'Booking request shared by a client, please validation health conditions and details before approving/declining the request!', '0', '0', '2', '2022-06-29 22:56:50', NULL, NULL),
+(2, 1, 4, 'Booking', 'Your booking has been submitted', '0', '0', '2', '2022-06-29 22:56:50', NULL, NULL),
+(3, 1, 3, 'Login', 'You logged in successfully', '0', '0', '0', '2022-06-29 22:57:18', NULL, NULL),
+(4, 1, 3, 'Booking accepted', ' badaralsahi request #70 has been accepted by you, plesse check payment status on service participants section.', '0', '0', '2', '2022-06-29 22:57:32', NULL, NULL),
+(5, 1, 4, 'Booking accepted', 'Your booking #70 has been accepted, please make payment via provided channels', '0', '0', '2', '2022-06-29 22:57:32', NULL, NULL),
+(6, 1, 4, 'Login', 'You logged in successfully', '0', '0', '0', '2022-06-29 22:57:52', NULL, NULL),
+(7, 1, 3, 'Login', 'You logged in successfully', '0', '0', '0', '2022-06-29 23:00:01', NULL, NULL),
+(8, 1, 4, 'Login', 'You logged in successfully', '0', '0', '0', '2022-06-29 23:02:40', NULL, NULL),
+(9, 1, 3, 'Login', 'You logged in successfully', '0', '0', '0', '2022-06-29 23:04:43', NULL, NULL),
+(10, 1, 3, 'Booking', 'Booking request shared by a client, please validation health conditions and details before approving/declining the request!', '0', '0', '2', '2022-06-29 23:05:16', NULL, NULL),
+(11, 1, 3, 'Booking', 'Your booking has been submitted', '0', '0', '2', '2022-06-29 23:05:16', NULL, NULL),
+(12, 1, 3, 'Booking accepted', ' AdventuresClub request #71 has been accepted by you, plesse check payment status on service participants section.', '0', '0', '2', '2022-06-29 23:05:42', NULL, NULL),
+(13, 1, 3, 'Booking accepted', 'Your booking #71 has been accepted, please make payment via provided channels', '0', '0', '2', '2022-06-29 23:05:42', NULL, NULL),
+(14, 1, 4, 'Login', 'You logged in successfully', '0', '0', '0', '2022-06-29 23:07:23', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -707,7 +688,7 @@ CREATE TABLE `otp` (
 --
 
 INSERT INTO `otp` (`id`, `user_id`, `otp_on`, `type`, `email`, `mobile_code`, `mobile`, `otp`, `created_at`, `updated_at`, `deleted_at`, `status`) VALUES
-(2, 36, 1, 1, NULL, '+968', 92216252, 1172, '2022-06-19 21:54:36', '2022-06-19 21:57:10', NULL, 0);
+(5, 5, 1, 1, NULL, '+91', 7830335039, 1686, '2022-06-25 16:46:39', '2022-06-25 16:46:39', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -1207,7 +1188,7 @@ CREATE TABLE `services` (
   `minimum_requirements` text,
   `terms_conditions` text,
   `recommended` tinyint(1) NOT NULL DEFAULT '0',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0=Pending,1=Accept,2=Decline',
+  `status` enum('0','1','2') CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '0=Pending,1=Accept,2=Decline',
   `image` varchar(200) NOT NULL,
   `descreption` text,
   `favourite_image` varchar(200) NOT NULL,
@@ -1221,11 +1202,10 @@ CREATE TABLE `services` (
 --
 
 INSERT INTO `services` (`id`, `owner`, `adventure_name`, `country`, `region`, `city_id`, `service_sector`, `service_category`, `service_type`, `service_level`, `duration`, `available_seats`, `start_date`, `end_date`, `write_information`, `service_plan`, `sfor_id`, `availability`, `geo_location`, `specific_address`, `cost_inc`, `cost_exc`, `currency`, `points`, `pre_requisites`, `minimum_requirements`, `terms_conditions`, `recommended`, `status`, `image`, `descreption`, `favourite_image`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 27, 'water', 1, 1, NULL, 36, 11, 1, 16, 17, 50, NULL, NULL, 'test bj', 1, NULL, NULL, 'noida', 'noids', '222.00', '222.00', '1', 0, 'hub', 'ygv', 'gyvy', 1, 1, '', 'test bj', '', '2022-06-19 14:43:38', '2022-06-19 14:44:24', NULL),
-(2, 27, 'Archery', 1, 12, NULL, 36, 11, 1, 15, 18, 10, '2022-06-24 00:00:00', '2022-06-25 00:00:00', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 2, NULL, NULL, ', Oman', 'Roundabout', '20.00', '25.00', '1', 0, 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 1, 0, '', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '', '2022-06-19 15:30:32', '2022-06-19 15:30:32', NULL),
-(3, 27, 'Cycling', 1, 1, NULL, 36, 11, 17, 16, 16, 10, '2022-06-25 00:00:00', '2022-06-26 00:00:00', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 2, NULL, NULL, ', Oman', 'MG,Road', '20.00', '25.00', '1', 0, 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 1, 0, '', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '', '2022-06-19 15:37:39', '2022-06-19 15:37:39', NULL),
-(4, 27, 'Tandem paragliding', 1, 18, NULL, 35, 11, 9, 16, 19, 8, NULL, NULL, 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 1, NULL, NULL, ', Oman', 'Ooty', '3000.00', '2500.00', '1', 0, 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', 1, 1, '', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '', '2022-06-19 15:42:03', '2022-06-19 17:17:07', NULL),
-(5, 35, 'rafting', 1, 12, NULL, 36, 11, 1, 15, 16, 0, NULL, NULL, 'rgfg', 1, NULL, NULL, 'Gurgaon , India', 'noida', '500.00', '500.00', '1', 0, 'c', 'a', 'b', 1, 1, '', 'rgfg', '', '2022-06-19 17:55:19', '2022-06-19 17:56:01', NULL);
+(1, 2, 'rafting', 1, 12, NULL, 37, 11, 1, 15, 16, 11, NULL, NULL, 'test', 1, NULL, NULL, 'Haryana Gurugram Gurgaon India', 'Bareilly', '222.00', '222.00', '1', 0, 'c', 'a', 'b', 1, '1', '', 'test', '', '2022-06-23 23:47:07', '2022-06-23 23:47:07', NULL),
+(2, 2, 'water 2', 1, 12, NULL, 35, 11, 1, 15, 13, 52, NULL, NULL, 'vg', 1, NULL, NULL, 'Haryana Gurugram Gurgaon India', 'noida', '22.00', '22.00', '1', 0, 'k', 'r', 'j', 1, '1', '', 'vg', '', '2022-06-24 01:23:32', '2022-06-25 17:27:43', NULL),
+(6, 3, 'Morning cycling', 2, 21, NULL, 36, 11, 17, 15, 16, 6, NULL, NULL, 'A tandem cycling is designed to carry two people — the instructor and the passenger. The passenger is strapped into a harness right in front of an experienced paragliding pilot during the paraglidi', 1, NULL, NULL, 'Muscat Governorate Muscat  Oman', 'MG.Road <Tea corner>', '30.00', '25.00', '2', 0, 'A tandem paraglider is designed to carry two people — the instructor and the passenger. The passenger is strapped into a harness right in front of an experienced paragliding pilot during the paraglidi', 'A tandem paraglider is designed to carry two people — the instructor and the passenger. The passenger is strapped into a harness right in front of an experienced paragliding pilot during the paraglidi', 'A tandem paraglider is designed to carry two people — the instructor and the passenger. The passenger is strapped into a harness right in front of an experienced paragliding pilot during the paraglidi', 1, '1', '', 'A tandem cycling is designed to carry two people — the instructor and the passenger. The passenger is strapped into a harness right in front of an experienced paragliding pilot during the paraglidi', '', '2022-06-26 12:03:41', '2022-06-26 12:05:43', NULL),
+(7, 3, 'Masirat Alnikhir (Alhamra)', 2, 23, NULL, 36, 11, 1, 16, 20, 3, '2022-07-22 00:00:00', '2022-07-23 00:00:00', 'Wadi Al-Nakhr, located in the western part of Wilayat Al-Hamra in Al-Dakhiliyah Governorate, is one of the most beautiful and wonderful tourist places, as it derives its name from the local word.', 2, NULL, NULL, 'Muscat Governorate Seeb  Oman', 'BurjAlsahwa', '30.00', '25.00', '2', 0, 'example pre requisits', 'Example terms and condition', 'example required basics', 1, '1', '', 'Wadi Al-Nakhr, located in the western part of Wilayat Al-Hamra in Al-Dakhiliyah Governorate, is one of the most beautiful and wonderful tourist places, as it derives its name from the local word.', '', '2022-06-27 23:28:19', '2022-06-27 23:30:55', NULL);
 
 -- --------------------------------------------------------
 
@@ -1244,30 +1224,10 @@ CREATE TABLE `service_activities` (
 --
 
 INSERT INTO `service_activities` (`id`, `service_id`, `activity_id`) VALUES
-(1, 1, '4'),
-(2, 1, '7'),
-(3, 2, '1'),
-(4, 2, '2'),
-(5, 2, '3'),
-(6, 3, '2'),
-(7, 3, '3'),
-(8, 3, '13'),
-(9, 4, '1'),
-(10, 4, '2'),
-(11, 4, '13'),
-(12, 5, '1'),
-(13, 5, '2'),
-(14, 5, '3'),
-(15, 5, '4'),
-(16, 5, '5'),
-(17, 5, '6'),
-(18, 5, '7'),
-(19, 5, '8'),
-(20, 5, '9'),
-(21, 5, '10'),
-(22, 5, '11'),
-(23, 5, '12'),
-(24, 5, '13');
+(3, 1, '8'),
+(14, 6, '2'),
+(15, 6, '3'),
+(16, 6, '13');
 
 -- --------------------------------------------------------
 
@@ -1316,18 +1276,12 @@ CREATE TABLE `service_dependencies` (
 --
 
 INSERT INTO `service_dependencies` (`id`, `service_id`, `dependency_id`) VALUES
-(1, 1, '5'),
-(2, 1, '7'),
-(3, 2, '5'),
-(4, 2, '6'),
-(5, 3, '5'),
-(6, 3, '6'),
-(7, 4, '5'),
-(8, 4, '6'),
-(9, 5, '5'),
-(10, 5, '6'),
-(11, 5, '7'),
-(12, 5, '8');
+(2, 1, '6'),
+(3, 2, '6'),
+(9, 6, '5'),
+(10, 6, '6'),
+(11, 7, '5'),
+(12, 7, '6');
 
 -- --------------------------------------------------------
 
@@ -1371,22 +1325,18 @@ CREATE TABLE `service_images` (
 --
 
 INSERT INTO `service_images` (`id`, `service_id`, `is_default`, `image_url`, `thumbnail`) VALUES
-(1, 1, 1, 'services/services-0-1655630018.jpg', 'services/services-0-1655630018.jpg'),
-(2, 1, 0, 'services/services-1-1655630018.jpg', 'services/services-1-1655630018.jpg'),
-(3, 2, 1, 'services/services-0-1655632832.jpg', 'services/services-0-1655632832.jpg'),
-(4, 2, 0, 'services/services-1-1655632832.jpg', 'services/services-1-1655632832.jpg'),
-(5, 2, 0, 'services/services-2-1655632832.jpg', 'services/services-2-1655632832.jpg'),
-(6, 2, 0, 'services/services-3-1655632832.jpg', 'services/services-3-1655632832.jpg'),
-(7, 3, 1, 'services/services-0-1655633259.jpg', 'services/services-0-1655633259.jpg'),
-(8, 3, 0, 'services/services-1-1655633259.jpg', 'services/services-1-1655633259.jpg'),
-(9, 3, 0, 'services/services-2-1655633259.jpg', 'services/services-2-1655633259.jpg'),
-(10, 3, 0, 'services/services-3-1655633259.jpg', 'services/services-3-1655633259.jpg'),
-(11, 4, 1, 'services/services-0-1655633523.jpg', 'services/services-0-1655633523.jpg'),
-(12, 4, 0, 'services/services-1-1655633523.jpg', 'services/services-1-1655633523.jpg'),
-(13, 4, 0, 'services/services-2-1655633523.jpg', 'services/services-2-1655633523.jpg'),
-(14, 4, 0, 'services/services-3-1655633523.jpg', 'services/services-3-1655633523.jpg'),
-(15, 5, 1, 'services/services-0-1655641519.jpg', 'services/services-0-1655641519.jpg'),
-(16, 5, 0, 'services/services-1-1655641519.jpg', 'services/services-1-1655641519.jpg');
+(1, 1, 1, 'services/services-0-1656008227.jpg', 'services/services-0-1656008227.jpg'),
+(2, 1, 0, 'services/services-1-1656008227.jpg', 'services/services-1-1656008227.jpg'),
+(3, 2, 1, 'services/services-0-1656014012.jpg', 'services/services-0-1656014012.jpg'),
+(4, 2, 0, 'services/services-1-1656014012.jpg', 'services/services-1-1656014012.jpg'),
+(17, 6, 1, 'services/services-0-1656225221.jpg', 'services/services-0-1656225221.jpg'),
+(18, 6, 0, 'services/services-1-1656225221.jpg', 'services/services-1-1656225221.jpg'),
+(19, 6, 0, 'services/services-2-1656225221.jpg', 'services/services-2-1656225221.jpg'),
+(20, 6, 0, 'services/services-3-1656225221.jpg', 'services/services-3-1656225221.jpg'),
+(21, 7, 1, 'services/services-0-1656352699.jpg', 'services/services-0-1656352699.jpg'),
+(22, 7, 0, 'services/services-1-1656352699.jpg', 'services/services-1-1656352699.jpg'),
+(23, 7, 0, 'services/services-2-1656352699.jpg', 'services/services-2-1656352699.jpg'),
+(24, 7, 0, 'services/services-3-1656352699.jpg', 'services/services-3-1656352699.jpg');
 
 -- --------------------------------------------------------
 
@@ -1450,13 +1400,6 @@ CREATE TABLE `service_offers` (
   `deleted_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
---
--- Dumping data for table `service_offers`
---
-
-INSERT INTO `service_offers` (`id`, `service_id`, `name`, `start_date`, `end_date`, `discount_type`, `discount_amount`, `banner`, `description`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(2, 5, 'AdventuresClub', '2022-06-20', '2022-06-30', 'P', 20, 'offer_image/1655657441.jpeg', 'Something', '0', '2022-06-19 22:20:41', '2022-06-19 22:20:41', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -1495,20 +1438,15 @@ CREATE TABLE `service_plan_day_date` (
 --
 
 INSERT INTO `service_plan_day_date` (`id`, `service_id`, `day`, `date`) VALUES
-(1, 1, 3, NULL),
-(2, 1, 5, NULL),
-(3, 2, NULL, '1970-01-01'),
-(4, 3, NULL, '1970-01-01'),
-(5, 4, 2, NULL),
-(6, 4, 4, NULL),
-(7, 4, 6, NULL),
-(8, 5, 1, NULL),
-(9, 5, 2, NULL),
-(10, 5, 3, NULL),
-(11, 5, 4, NULL),
-(12, 5, 5, NULL),
-(13, 5, 6, NULL),
-(14, 5, 7, NULL);
+(3, 1, 2, NULL),
+(4, 1, 6, NULL),
+(5, 2, 3, NULL),
+(6, 2, 6, NULL),
+(19, 6, 1, NULL),
+(20, 6, 3, NULL),
+(21, 6, 5, NULL),
+(22, 6, 7, NULL),
+(23, 7, NULL, '1970-01-01');
 
 -- --------------------------------------------------------
 
@@ -1534,20 +1472,16 @@ CREATE TABLE `service_programs` (
 --
 
 INSERT INTO `service_programs` (`id`, `service_id`, `title`, `description`, `start_datetime`, `end_datetime`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'morning', 'hji', '2022-06-24 10:45:00', '2022-06-24 11:55:00', '1', '2022-06-19 09:13:38', '2022-06-19 09:13:38', NULL),
-(2, 2, 'morning', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-25 06:00:00', '2022-06-25 09:00:00', '1', '2022-06-19 10:00:32', '2022-06-19 10:00:32', NULL),
-(3, 2, 'afternoon', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-25 09:00:00', '2022-06-25 12:00:00', '1', '2022-06-19 10:00:32', '2022-06-19 10:00:32', NULL),
-(4, 2, 'evening', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-25 12:00:00', '2022-06-25 18:00:00', '1', '2022-06-19 10:00:32', '2022-06-19 10:00:32', NULL),
-(5, 3, 'morning', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-25 06:00:00', '2022-06-25 09:00:00', '1', '2022-06-19 10:07:39', '2022-06-19 10:07:39', NULL),
-(6, 3, 'afternoon', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-25 09:00:00', '2022-06-25 12:00:00', '1', '2022-06-19 10:07:39', '2022-06-19 10:07:39', NULL),
-(7, 3, 'night', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-25 15:00:00', '2022-06-25 20:45:00', '1', '2022-06-19 10:07:39', '2022-06-19 10:07:39', NULL),
-(8, 3, 'Nezt morning', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-26 07:00:00', '2022-06-26 10:00:00', '1', '2022-06-19 10:07:39', '2022-06-19 10:07:39', NULL),
-(9, 3, 'evening', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-26 19:00:00', '2022-06-26 23:28:00', '1', '2022-06-19 10:07:39', '2022-06-19 10:07:39', NULL),
-(10, 4, 'Morning', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-21 07:00:00', '2022-06-21 10:00:00', '1', '2022-06-19 10:12:03', '2022-06-19 10:12:03', NULL),
-(11, 4, 'afternoon', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-22 08:00:00', '2022-06-22 10:00:00', '1', '2022-06-19 10:12:03', '2022-06-19 10:12:03', NULL),
-(12, 4, 'Night', 'something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery, something about archery,', '2022-06-24 08:00:00', '2022-06-24 11:00:00', '1', '2022-06-19 10:12:03', '2022-06-19 10:12:03', NULL),
-(13, 5, 'morning', 'bh', '2022-06-22 03:20:00', '2022-06-22 10:50:00', '1', '2022-06-19 12:25:19', '2022-06-19 12:25:19', NULL),
-(14, 5, 'gh', 'jhb', '2022-07-05 02:10:00', '2022-07-05 10:49:00', '1', '2022-06-19 12:25:19', '2022-06-19 12:25:19', NULL);
+(2, 1, 'morning', 'jdj', '2022-07-20 04:20:00', '2022-07-20 10:50:00', '1', '2022-06-23 18:17:07', '2022-06-23 18:17:07', NULL),
+(3, 2, 'mo', 'vy', '2022-07-22 02:10:00', '2022-07-22 11:50:00', '1', '2022-06-23 19:53:32', '2022-06-23 19:53:32', NULL),
+(13, 6, 'Gathering', 'A tandem paraglider is designed to carry two people — the instructor and the passenger. The passenger is strapped into a harness right in front of an experienced paragliding pilot during the paragliding tandem flights.', '2022-06-26 06:00:00', '2022-06-26 09:00:00', '1', '2022-06-26 06:33:41', '2022-06-26 06:33:41', NULL),
+(14, 6, 'Cycling', 'A tandem paraglider is designed to carry two people — the instructor and the passenger. The passenger is strapped into a harness right in front of an experienced paragliding pilot during the paragliding tandem flights.', '2022-06-26 07:00:00', '2022-06-26 10:00:00', '1', '2022-06-26 06:33:41', '2022-06-26 06:33:41', NULL),
+(15, 6, 'snacks Break', 'A tandem paraglider is designed to carry two people — the instructor and the passenger. The passenger is strapped into a harness right in front of an experienced paragliding pilot during the paragliding tandem flights.', '2022-06-26 09:00:00', '2022-06-26 11:58:00', '1', '2022-06-26 06:33:41', '2022-06-26 06:33:41', NULL),
+(16, 6, 'Return', 'A tandem paraglider is designed to carry two people — the instructor and the passenger. The passenger is strapped into a harness right in front of an experienced paragliding pilot during the paragliding tandem flights.', '2022-06-26 11:00:00', '2022-06-26 13:00:00', '1', '2022-06-26 06:33:41', '2022-06-26 06:33:41', NULL),
+(17, 7, 'Gathering', 'We gather near BurjAlsahwa parking lot at 6:00am.', '2022-07-22 06:00:00', '2022-07-22 06:30:00', '1', '2022-06-27 17:58:19', '2022-06-27 17:58:19', NULL),
+(18, 7, 'Arrival', 'We drive at 6:15am towards wadibtanoof for 2 hours, as expected to arrive at 8am we will do precautionary briefing, we start the hike.', '2022-07-22 06:30:00', '2022-07-22 08:00:00', '1', '2022-06-27 17:58:19', '2022-06-27 17:58:19', NULL),
+(19, 7, 'Hiking', 'Hiking/Climbing/Abseiling / (Optional swimming) then we return back.', '2022-07-22 08:00:00', '2022-07-22 15:00:00', '1', '2022-06-27 17:58:19', '2022-06-27 17:58:19', NULL),
+(20, 7, 'Lunch', 'Drive towards local restaurant for lunch and drive back to Muscat to possibly arrive before 6pm (however, timing is dependent on participants performance)', '2022-07-22 15:00:00', '2022-07-22 17:00:00', '1', '2022-06-27 17:58:19', '2022-06-27 17:58:19', NULL);
 
 -- --------------------------------------------------------
 
@@ -1612,20 +1546,20 @@ CREATE TABLE `service_service_for` (
 --
 
 INSERT INTO `service_service_for` (`id`, `service_id`, `sfor_id`) VALUES
-(1, 1, '12'),
-(2, 1, '15'),
-(3, 2, '13'),
-(4, 2, '14'),
-(5, 3, '12'),
-(6, 3, '15'),
-(7, 4, '16'),
-(8, 5, '11'),
-(9, 5, '12'),
-(10, 5, '13'),
-(11, 5, '14'),
+(3, 1, '13'),
+(4, 1, '16'),
+(5, 2, '12'),
+(6, 2, '16'),
+(7, 3, '12'),
+(8, 3, '13'),
+(9, 4, '12'),
+(10, 4, '13'),
+(11, 5, '12'),
 (12, 5, '15'),
-(13, 5, '16'),
-(14, 5, '17');
+(13, 6, '12'),
+(14, 6, '15'),
+(15, 7, '12'),
+(16, 7, '13');
 
 -- --------------------------------------------------------
 
@@ -1752,7 +1686,18 @@ INSERT INTO `subscription_plan_history` (`id`, `user_id`, `package_id`, `order_i
 (22, 27, 2, '1127', 'Offline', '0', '20000.00', '2022-06-18 23:28:43', NULL),
 (23, 27, 2, '1127', 'Offline', '0', '20000.00', '2022-06-18 23:29:56', NULL),
 (24, 35, 1, '718935', 'Free', '0', '0', '2022-06-19 17:49:21', NULL),
-(25, 27, 2, '927', 'Offline', '0', '3000.00', '2022-06-19 17:53:47', NULL);
+(25, 27, 2, '927', 'Offline', '0', '3000.00', '2022-06-19 17:53:47', NULL),
+(26, 27, 2, '2127', 'Offline', '0', '3000.00', '2022-06-21 18:55:46', NULL),
+(27, 27, 2, '2027', 'Offline', '0', '3000.00', '2022-06-21 18:56:06', NULL),
+(28, 2, 1, '69342', 'Free', '0', '0', '2022-06-23 23:12:23', NULL),
+(29, 3, 1, '14633', 'Free', '0', '0', '2022-06-24 18:38:03', NULL),
+(30, 3, 1, '163', 'Offline', '0', '39.00', '2022-06-25 01:56:10', NULL),
+(31, 3, 1, '173', 'Offline', '0', '39.00', '2022-06-25 01:57:11', NULL),
+(32, 3, 1, '223', 'Offline', '0', '30.00', '2022-06-25 16:17:40', NULL),
+(33, 6, 1, '25806', 'Free', '0', '0', '2022-06-25 17:24:30', NULL),
+(34, 7, 1, '37707', 'Free', '0', '0', '2022-06-26 00:34:59', NULL),
+(35, 6, 2, '53236', 'Offline', '0', '100.00', '2022-06-26 02:15:19', NULL),
+(36, 3, 1, '333', 'BankMuscat', '1', '30.00', '2022-06-26 11:54:40', NULL);
 
 -- --------------------------------------------------------
 
@@ -1814,8 +1759,8 @@ CREATE TABLE `users` (
   `password` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `country_id` int DEFAULT NULL,
-  `region_id` int DEFAULT NULL,
-  `city_id` int NOT NULL,
+  `region_id` varchar(20) DEFAULT NULL,
+  `city_id` varchar(20) DEFAULT NULL,
   `now_in` varchar(255) DEFAULT NULL,
   `mobile` varchar(255) DEFAULT NULL,
   `mobile_verified_at` datetime DEFAULT NULL,
@@ -1847,15 +1792,14 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `users_role`, `profile_image`, `name`, `height`, `weight`, `password`, `email`, `country_id`, `region_id`, `city_id`, `now_in`, `mobile`, `mobile_verified_at`, `dob`, `gender`, `language_id`, `nationality_id`, `currency_id`, `app_notification`, `points`, `health_conditions`, `health_conditions_id`, `email_verified_at`, `mobile_code`, `remember_token`, `status`, `added_from`, `created_at`, `updated_at`, `deleted_at`, `username`, `first_name`, `last_name`, `device_id`) VALUES
-(1, '1', '20220405000947-Screenshot_20220226-162200_Samsung Internet.png', 'Admin', NULL, NULL, '$2y$10$rB2GIm4PGt6CNEePoWE40ev/xFZOa1uCJ3dcdGu7PffZnhj4lbuU2', 'admin@gmail.com', 1, 1, 1, NULL, '9020202020', NULL, '1993-05-04', 'male', 1, '1', 1, '1', '0', '1,4,6,7,8,9,10,11,12,13,14', NULL, '2021-06-17 12:34:39', '+968', '7K06a6jn604Z4fVv22i7xGDPZSM3nJG7sCopao9Hir0B62u76TfAhKyCxrVb', '1', 0, NULL, '2022-04-03 15:01:18', NULL, NULL, NULL, NULL, ''),
-(12, '2', 'profile_image/1c35f638-5023-47a4-8332-ee7a5eac0701img.jpg', 'rajesh', '100 - 105 CM', '26 - 28 KG', '$2y$10$rB2GIm4PGt6CNEePoWE40ev/xFZOa1uCJ3dcdGu7PffZnhj4lbuU2', 'rajesh@gmail.com', 1, NULL, 0, NULL, '9627204181', '2022-05-15 14:32:20', '1979-05-15', 'male', 1, '1', 1, NULL, '0', '17,1', NULL, NULL, '+91', NULL, '1', 1, '2022-05-15 03:31:59', '2022-06-11 02:16:29', NULL, NULL, NULL, NULL, 'dcfc8de66a765f2d'),
-(16, '3', 'profile_image/1652713942.jpeg', 'alsahibadar', '145 - 150 CM', '74 - 76 KG', '$2y$10$2nkjJgHlhKJd1vKJmPi9SuVlOaESeMrL7DEflqH155cbYJTdibGpu', 'mscbadar@gmail.com', 2, 23, 2, NULL, '96123r5895', NULL, '2000-06-14', 'male', 1, '1', 1, NULL, '0', '1,17,18', NULL, NULL, '+968', NULL, '1', 0, '2022-05-16 09:42:22', '2022-05-16 11:44:37', '2022-05-16 22:44:37', NULL, NULL, NULL, NULL),
-(20, '3', 'profile_image/no-image.png', 'badaralsahi', '180 - 185 CM', '72 - 74 KG', '$2y$10$GLUAI4hfCBcvvrsWsuV2/eDrigZ8QAga7uxf0mwFmalmDeuyxFiqi', 'badaralsahi@gmail.com', 2, NULL, 0, NULL, '961235881', '2022-05-17 10:11:29', '1981-05-22', 'male', 1, '1', 1, NULL, '0', '17,8,4,6', NULL, NULL, '+968', NULL, '1', 1, '2022-05-16 23:08:01', '2022-05-16 23:13:51', '2022-05-17 10:13:51', NULL, NULL, NULL, '44a1a776ed95cc73'),
-(22, '2', 'profile_image/1652763041.png', 'badaralsahii', '175 - 180 CM', '72 - 74 KG', '$2y$10$AsWBQb35cbkSqhO/6ss3MuKJW1KFALanzdlI.D1kEbR656TzdRjsu', 'badaralsahii@gmail.com', 1, 1, 1, NULL, '98765432', NULL, '1990-05-22', 'male', 1, '18', 1, NULL, '0', '17,4', NULL, NULL, '+968', NULL, '1', 0, '2022-05-16 23:20:41', '2022-06-20 04:16:30', NULL, NULL, NULL, NULL, 'dcfc8de66a765f2d'),
-(27, '2', 'profile_image/7923234f-b241-49ca-a754-55fa2faf33eedtm9edd8_cycling_625x300_05_August_20.jpg', 'AdventuresClub', '130 - 135 CM', '38 - 40 KG', '$2y$10$qfdJ0QeZH9BxKlcjbqLGO.K1HLi6D6nBbeKcdkp2hMXOo7rxxSAG6', 'info@adventuresclub.net', 2, NULL, 0, NULL, '96000891', '2022-05-25 00:46:57', '1952-05-29', 'male', 1, '1', 1, NULL, '0', '8,11', NULL, NULL, '+968', NULL, '1', 1, '2022-05-24 13:10:39', '2022-06-19 20:54:45', NULL, NULL, NULL, NULL, 'dcfc8de66a765f2d'),
-(30, '3', 'profile_image/d180669e-5758-43ee-80e4-ca61826f0717Screenshot_20220525_151323_companyname.adventureclub.jpg', 'Mahmood3', '170 - 175 CM', '58 - 60 KG', '$2y$10$3aLiibFQcR6DQN836aqFa.ggm0LgJ8GZ9blnyybAwrHIprbiGUQDC', 'bofa968@gmail.com', 2, NULL, 0, NULL, '92698070', '2022-05-25 16:14:58', '1992-07-15', 'male', 1, '2', 1, NULL, '0', '1', NULL, NULL, '+968', NULL, '1', 1, '2022-05-25 05:14:43', '2022-05-25 05:45:45', NULL, NULL, NULL, NULL, '8d4cb28d04874a63'),
-(35, '2', 'profile_image/no-image.png', 'pankaj', '105 - 110 CM', '28 - 30 KG', '$2y$10$IqGPSsgXZYQBaEYvx7LQied.SZX39DQBBpt/0gks716WktMN71w2S', 'pankaj@gmail.com', 1, NULL, 0, NULL, '8081303373', '2022-06-19 17:45:52', '1952-06-27', 'male', 1, '1', 1, NULL, '0', '18,1,12,14', NULL, NULL, '+91', NULL, '1', 1, '2022-06-19 12:12:27', '2022-06-19 12:16:35', NULL, NULL, NULL, NULL, '50dcd20daa55d153'),
-(37, '3', 'profile_image/no-image.png', 'Rose', '150 - 155 CM', '48 - 50 KG', '$2y$10$LJpDYNcEiqecxIVgUMgpU.v.vRSq/QiaVMFE8q5r4bSRZrJYq36ZS', 'Precylinwandas_1981@gmail.com', 22, NULL, 0, NULL, '72216252', '2022-06-19 22:04:41', '1981-04-23', 'male', 1, '2', 1, NULL, '0', '18', NULL, NULL, '+968', NULL, '1', 1, '2022-06-19 16:34:17', '2022-06-19 16:34:47', NULL, NULL, NULL, NULL, 'c8f9b3f45ce0cd67');
+(1, '1', '20220405000947-Screenshot_20220226-162200_Samsung Internet.png', 'Admin', NULL, NULL, '$2y$10$rB2GIm4PGt6CNEePoWE40ev/xFZOa1uCJ3dcdGu7PffZnhj4lbuU2', 'admin@gmail.com', 1, NULL, '1', NULL, '9020202020', NULL, '1993-05-04', 'male', 1, '1', 1, '1', '0', '1,4,6,7,8,9,10,11,12,13,14', NULL, '2021-06-17 12:34:39', '+968', '7K06a6jn604Z4fVv22i7xGDPZSM3nJG7sCopao9Hir0B62u76TfAhKyCxrVb', '1', 0, NULL, '2022-04-03 09:31:18', NULL, NULL, NULL, NULL, ''),
+(2, '2', 'profile_image/no-image.png', 'pankaj', '150 - 155 CM', '44 - 46 KG', '$2y$10$HrZwcvCPK9uZ5yifuEURkuEL8iB2LtuBWvP7Y2bzle3FIeqfpTfma', 'pankaj@gmail.com', 1, NULL, '0', NULL, '8630920347', '2022-06-23 22:42:59', '1952-09-27', 'male', 1, '1', 1, NULL, '0', '17,8', NULL, NULL, '+91', NULL, '1', 1, '2022-06-23 17:12:41', '2022-06-28 20:18:51', NULL, NULL, NULL, NULL, '645e8fde447fa1c3'),
+(3, '2', 'profile_image/135ea5d4-d6e1-423e-ae71-6d6c4cd827adIMG_20220610_103543_255.jpg', 'AdventuresClub', '160 - 165 CM', '60 - 62 KG', '$2y$10$of2PDACJmEZBQ6Lq.QTJk.9BvTDctkL.unuDDhqJp8qfgO2p5Gl0C', 'info@adventuresclub.net', 2, NULL, NULL, NULL, '961235889', '2022-06-24 00:16:44', '1981-05-22', 'male', 1, '2', 1, NULL, '0', '17,8', NULL, NULL, '+968', NULL, '1', 1, '2022-06-23 18:46:17', '2022-06-28 20:19:44', NULL, NULL, NULL, NULL, 'dcfc8de66a765f2d'),
+(4, '3', 'profile_image/f2297dfe-42b5-476c-ac27-8bcd6fb3bcc0IMG_3356.heic', 'badaralsahi', '170 - 175 CM', '72 - 74 KG', '$2y$10$uscGN6blA68Z1pSgxaoYAOVZD7W7Attk0Uht3x6jOq.rgrZsbsk0y', 'badaralsahi@gmail.com', 2, NULL, NULL, NULL, '96123587', '2022-06-24 14:37:01', '1981-05-22', 'male', 1, '2', 1, NULL, '0', '11', NULL, NULL, '+968', NULL, '1', 1, '2022-06-24 09:06:39', '2022-06-29 06:38:38', NULL, NULL, NULL, NULL, 'dcfc8de66a765f2d'),
+(6, '2', 'profile_image/no-image.png', 'raj', '100 - 105 CM', '26 - 28 KG', '$2y$10$n8s.NCUrh1VIUrS9eitkbeMSxGBCSVJMQ/sGzdIMae7K09k2SKA7G', 'rajesh@gmail.com', 1, NULL, NULL, NULL, '9627204181', '2022-06-25 17:19:29', '1952-06-27', 'male', 1, '1', 1, NULL, '0', '17,8', NULL, NULL, '+91', NULL, '1', 1, '2022-06-25 11:49:10', '2022-06-28 20:15:55', NULL, NULL, NULL, NULL, '645e8fde447fa1c3'),
+(7, '2', 'profile_image/no-image.png', 'nitin', '100 - 105 CM', '26 - 28 KG', '$2y$10$POH8BjlLki2GKLspz5PkCu3.wZiZG/F/opubXUJONFez0boCxxp72', 'nitin@gmail.com', 1, NULL, NULL, NULL, '7830335039', '2022-06-25 23:40:23', '1952-06-26', 'male', 1, '1', 1, NULL, '0', '18,1', NULL, NULL, '+91', NULL, '1', 1, '2022-06-25 18:09:47', '2022-06-25 18:10:40', NULL, NULL, NULL, NULL, '50dcd20daa55d153'),
+(8, '3', 'profile_image/e31f0734-9a1d-44e9-a839-07e5c23306daIMG-20220626-WA0031.jpg', 'alsahi', '170 - 175 CM', '72 - 74 KG', '$2y$10$dPvQNBWJUepf9qmUh3TJlOT2dTvMjZyko/ZyEcmAIELer4NQQyMy6', 'alsahi@gmail.com', 1, NULL, NULL, NULL, '96123586', '2022-06-26 15:59:44', '1981-05-22', 'male', 1, '2', 1, NULL, '0', '1', NULL, NULL, '+968', NULL, '1', 1, '2022-06-26 10:29:26', '2022-06-26 10:44:44', NULL, NULL, NULL, NULL, '44a1a776ed95cc73'),
+(9, '3', 'profile_image/no-image.png', 'badar', '170 - 175 CM', '72 - 74 KG', '$2y$10$.IwKY3ipTCloSR0DZWHtdOc.0rIwVfIXmLD1xq8pI9ygN0HglpZVa', 'badar@gmail.com', 22, NULL, NULL, NULL, '96123588', '2022-06-26 16:16:05', '1981-05-22', 'male', 1, '2', 1, NULL, '0', '1', NULL, NULL, '+968', NULL, '1', 1, '2022-06-26 10:45:46', '2022-06-28 20:16:50', NULL, NULL, NULL, NULL, 'dcfc8de66a765f2d');
 
 -- --------------------------------------------------------
 
@@ -1928,7 +1872,10 @@ INSERT INTO `visited_location` (`id`, `user_id`, `destination_image`, `destinati
 (3, 27, 'destination_image/destination_image1655660552.jpg', 'philippines', 'Paragliding', 'Muscat  Oman', 'oman', '96123588', 'universal-skills.com', '', '0', '2022-06-19 23:12:32', NULL),
 (4, 35, 'destination_image/destination_image1655669065.jpg', 'bareilly', 'Cycling', 'Haryana Gurugram Gurgaon India', 'Gudgaon', '84252525282', 'www.google.com', '', '0', '2022-06-20 01:34:25', NULL),
 (5, 22, 'destination_image/destination_image1655700205.jpg', 'Mutrah Route', 'Cycling', 'Muscat Governorate Muscat  Oman', 'Muscat, mutrah', '96123588', 'www.universal-skills.com', '', '0', '2022-06-20 10:13:25', NULL),
-(6, 22, 'destination_image/destination_image1655737802.jpg', 'Shams mountain Summit', 'Caving', 'Al Batinah South Governorate   Oman', 'Alhamra', '96123588', 'universal-skills.com', '', '0', '2022-06-20 20:40:02', NULL);
+(6, 22, 'destination_image/destination_image1655737802.jpg', 'Shams mountain Summit', 'Caving', 'Al Batinah South Governorate   Oman', 'Alhamra', '96123588', 'universal-skills.com', '', '0', '2022-06-20 20:40:02', NULL),
+(7, 22, 'destination_image/destination_image1655875091.jpg', 'tester', 'Cycling', 'Muscat Governorate Muscat  Oman', 'Muscat, BurjAlsahwa', '96123588', 'Omanadventuresclub.com', '', '0', '2022-06-22 10:48:11', NULL),
+(8, 35, 'destination_image/destination_image1655918449.jpg', 'n', 'Hiking', 'Haryana Gurugram Gurgaon India', 'h', '9', 'bhb', '', '0', '2022-06-22 22:50:49', NULL),
+(9, 35, 'destination_image/destination_image1655920445.jpg', 'dfg', 'Sailing', 'Haryana Gurugram Gurgaon India', 'add', '8558585', 'vhy', '', '0', '2022-06-22 23:24:05', NULL);
 
 -- --------------------------------------------------------
 
@@ -2428,7 +2375,7 @@ ALTER TABLE `aimed`
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `banners`
@@ -2440,13 +2387,13 @@ ALTER TABLE `banners`
 -- AUTO_INCREMENT for table `become_partner`
 --
 ALTER TABLE `become_partner`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `cities`
@@ -2464,7 +2411,7 @@ ALTER TABLE `contactuspurposes`
 -- AUTO_INCREMENT for table `contact_us`
 --
 ALTER TABLE `contact_us`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `contact_us_purpose`
@@ -2524,13 +2471,13 @@ ALTER TABLE `languages`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `otp`
 --
 ALTER TABLE `otp`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `packages`
@@ -2602,13 +2549,13 @@ ALTER TABLE `role_assignments`
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `service_activities`
 --
 ALTER TABLE `service_activities`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `service_categories`
@@ -2632,7 +2579,7 @@ ALTER TABLE `service_for`
 -- AUTO_INCREMENT for table `service_images`
 --
 ALTER TABLE `service_images`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `service_levels`
@@ -2650,7 +2597,7 @@ ALTER TABLE `service_likes`
 -- AUTO_INCREMENT for table `service_offers`
 --
 ALTER TABLE `service_offers`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `service_plan`
@@ -2662,13 +2609,13 @@ ALTER TABLE `service_plan`
 -- AUTO_INCREMENT for table `service_plan_day_date`
 --
 ALTER TABLE `service_plan_day_date`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `service_programs`
 --
 ALTER TABLE `service_programs`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `service_reviews`
@@ -2686,7 +2633,7 @@ ALTER TABLE `service_sectors`
 -- AUTO_INCREMENT for table `service_service_for`
 --
 ALTER TABLE `service_service_for`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `service_types`
@@ -2704,7 +2651,7 @@ ALTER TABLE `subscription`
 -- AUTO_INCREMENT for table `subscription_plan_history`
 --
 ALTER TABLE `subscription_plan_history`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `terms_conditions`
@@ -2722,7 +2669,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `vendors_details`
@@ -2740,7 +2687,7 @@ ALTER TABLE `vendor_package`
 -- AUTO_INCREMENT for table `visited_location`
 --
 ALTER TABLE `visited_location`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `wallets`
