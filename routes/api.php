@@ -32,6 +32,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/get_otp', 'Api\V1\UsersController@getOtp');
     Route::post('/verify_otp', 'Api\V1\UsersController@verifyOtp');
     Route::post('/login', 'Api\V1\UsersController@login');
+    Route::post('/get_paymentGateway', 'Api\V1\UsersController@getPaymentGateway');
     Route::post('/create_forgot_password', 'Api\V1\UsersController@createNewPassword');
     Route::post('/change_password', 'Api\V1\UsersController@changePassword');
     Route::post('/become_partner', 'Api\V1\UsersController@becomepartner');
@@ -95,6 +96,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/get_reviews', 'Api\V1\ServicesController@getReviews');
     Route::post('/booking_delete', 'Api\V1\ServicesController@bookingDelete');
     Route::post('/servicesImage', 'Api\V1\ServicesController@servicesImage');
+     Route::post('/updateCountry', 'Api\V1\ServicesController@updateCountry');
 });
 
 Route::group(['middleware' => 'api_auth:api'], function () {

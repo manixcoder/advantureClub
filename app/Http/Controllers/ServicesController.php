@@ -719,7 +719,7 @@ class ServicesController extends MyController
     {
         $service = Service::find($id);
         if ($service) {
-            $service->status = 1;
+            $service->status = '1';
             $service->save();
             
              $notiData = array(
@@ -740,9 +740,17 @@ class ServicesController extends MyController
     {
         $service = Service::find($id);
         if ($service) {
-            $service->status = 2;
+            $service->status = '2';
             $service->save();
-            $request->session()->flash('success', 'Service has been rejected successfully.');
+            $notiData = array(
+                'sender_id' => '1',
+                'user_id' => $service->owner,
+                'title' => 'Activities',
+                'message' => 'Service has been rejected',
+                'notification_type' => '1',
+            );
+            DB::table('notifications')->insert($notiData);
+            $request->session()->flash('error', 'Service has been rejected successfully.');
         } else {
             $request->session()->flash('error', 'Something went wrong. Please try again.');
         }
@@ -833,9 +841,9 @@ class ServicesController extends MyController
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
             ->where([
                 'srvc.deleted_at' => NULL,
-                'srvc.status' => 0
+                'srvc.status' => '0'
             ])
-            ->whereRaw($where)
+           // ->whereRaw($where)
             ->orderBy('srvc.id', 'DESC')
             ->get();
             //dd($services);

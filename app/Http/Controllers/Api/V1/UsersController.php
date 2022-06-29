@@ -483,6 +483,28 @@ class UsersController extends MyController
          DB::table('notifications')->insert($notiData);
         return $this->sendResponse(config('constants.LOGIN'), $result);
     }
+    public function getPaymentGateway(Request $request){
+        $validator = Validator::make($request->all(), [
+            'provider_id' => 'required|numeric',
+            
+        ]);
+       if ($validator->fails()) {
+            $validation = array();
+            foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                $validation[$field_name] = $messages[0];
+            }
+            return $this->sendError(implode(',', array_values($validation)), [], 401);
+        } else {
+            $paymentGateWay = DB::table('become_partner')->where('user_id', $request->provider_id)->get();
+            if (!empty($paymentGateWay)) {
+                
+                
+                return $this->sendResponse('Data fetch successfully.', $paymentGateWay, 200);
+                
+            }
+            return $this->sendError('User not found. Please try again.', array('error' => 'Something went wrong. Please try again.'), 404);
+        }
+    }
     /**
      * Show the profile for the given user.
      * 
@@ -982,7 +1004,7 @@ class UsersController extends MyController
      public function readNotification(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'noti_id' => 'required|numeric',
+            'user_id' => 'required|numeric',
         ]);
         if ($validator->fails()) {
             $errors = array();
@@ -993,7 +1015,7 @@ class UsersController extends MyController
         } else {
             
             $result = DB::table('notifications as noti')
-            ->where(['id' => $request->noti_id])
+            ->where(['user_id' => $request->user_id])
             ->update([
                 'is_read'=>'1',
                 'raed_at'=>date("Y-m-d")
