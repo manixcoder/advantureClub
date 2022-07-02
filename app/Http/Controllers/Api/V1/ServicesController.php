@@ -1549,14 +1549,14 @@ class ServicesController extends MyController
              $notiData=array(
                  'sender_id'=>'1',
                  'user_id'=>$bookingData->user_id,
-                 'title'=>'Booking dropped ( Manish )',
+                 'title'=>'Booking dropped',
                  'message'=>"Your request ". $bookingData->id." of activity ".$servicesData->adventure_name." has been dropped by you, please inform the provider for convenience.",
                  'notification_type'=>'2',);
                  $providerNoti = array(
                     'sender_id' => '1',
                     'user_id' => $bookingData->provider_id,
-                    'title' => 'Booking',
-                    'message' => " ".$userData->name ." has dropped request ". $bookingData->id." of activity ".$servicesData->adventure_name,
+                    'title' => 'Booking dropped',
+                    'message' => " ".$userData->name ." has dropped booking request# ". $bookingData->id." of activity ".$servicesData->adventure_name,
                     'notification_type' => '2',
                 );
          }else{
@@ -1692,8 +1692,9 @@ class ServicesController extends MyController
                     $join->on('pmnt.booking_id', '=', 'bkng.id')
                         ->where('pmnt.status', '=', 1);
                 })
-                //->whereIn('bkng.status', ['0', 'PHILIPS'])
+                //->whereIn('bkng.status','!=', ['3', '5'])
                 ->where('bkng.status', '!=','3')
+                ->Where('bkng.status', '!=','5')
                 ->where(['bkng.user_id' => $request->user_id])
                ->whereRaw($where)
                 ->get();
