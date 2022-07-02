@@ -93,6 +93,19 @@ class UsersController extends MyController
             $data->profile_image        = 'profile_image/no-image.png';
             $data->save();
             $data['become_partner'] = null;
+            
+            $notiData=array(
+                 'sender_id'=>'1',
+                 'user_id'=>$data->id,
+                 'title'=>'Register',
+                 'message'=>"You registered successfully",
+                 'notification_type'=>'0',
+                //  'created_at'=>'',
+                //  'raed_at'=>'',
+                //  'send_at'=>'',
+                //  'updated_at'=>''
+            );
+         DB::table('notifications')->insert($notiData);
             return $this->sendResponse($msg, $data, 201);
         }
     }
@@ -456,7 +469,41 @@ class UsersController extends MyController
         if ($result->status == 0) {
             return $this->sendError('Account Deactivated.Please contact to admin.', [], 401, 'account_deactivated');
         }
+        $notiData=array(
+                 'sender_id'=>'1',
+                 'user_id'=>$result->id,
+                 'title'=>'Login',
+                 'message'=>'You logged in successfully',
+                 'notification_type'=>'0',
+                 //  'created_at'=>'',
+                //  'raed_at'=>'',
+                //  'send_at'=>'',
+                //  'updated_at'=>''
+            );
+         DB::table('notifications')->insert($notiData);
         return $this->sendResponse(config('constants.LOGIN'), $result);
+    }
+    public function getPaymentGateway(Request $request){
+        $validator = Validator::make($request->all(), [
+            'provider_id' => 'required|numeric',
+            
+        ]);
+       if ($validator->fails()) {
+            $validation = array();
+            foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                $validation[$field_name] = $messages[0];
+            }
+            return $this->sendError(implode(',', array_values($validation)), [], 401);
+        } else {
+            $paymentGateWay = DB::table('become_partner')->where('user_id', $request->provider_id)->get();
+            if (!empty($paymentGateWay)) {
+                
+                
+                return $this->sendResponse('Data fetch successfully.', $paymentGateWay, 200);
+                
+            }
+            return $this->sendError('User not found. Please try again.', array('error' => 'Something went wrong. Please try again.'), 404);
+        }
     }
     /**
      * Show the profile for the given user.
@@ -952,6 +999,86 @@ class UsersController extends MyController
                 return $this->sendError('Data not found.', [], 404);
             }
             return $this->sendResponse(config('custom.DATA_FOUND'), $result, 200);
+        }
+    }
+     public function readNotification(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            $errors = array();
+            foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                $errors[$field_name] = $messages[0];
+            }
+            return $this->sendError(implode(',', $errors), [], 422);
+        } else {
+            
+            $result = DB::table('notifications as noti')
+            ->where(['user_id' => $request->user_id])
+            ->update([
+                'is_read'=>'1',
+                'raed_at'=>date("Y-m-d")
+                ]);
+           
+            return  $this->sendResponse('Notification Read Successfully.', [], 200);
+        }
+    }
+    public function getNotificationListBudge(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            $errors = array();
+            foreach ($validator->messages()->getMessages() as $field_name => $messages) {
+                $errors[$field_name] = $messages[0];
+            }
+            return $this->sendError(implode(',', $errors), [], 422);
+        } else {
+           
+            $resultAccount = DB::table('notifications as noti')
+            ->where([
+                'user_id' => $request->user_id,
+                'notification_type'=>'0',
+                'is_read'=>'0'
+                ])
+            ->orderBy('id', 'DESC')
+            ->count();
+            $resultService = DB::table('notifications as noti')
+            ->where([
+                'user_id' => $request->user_id,
+                'notification_type'=>'2',
+                'is_read'=>'0'
+                ])
+            ->orderBy('id', 'DESC')
+            ->count();
+            $resultRequest = DB::table('notifications as noti')
+            ->where([
+                'user_id' => $request->user_id,
+                'notification_type'=>'1',
+                'is_read'=>'0'
+                ])
+            ->orderBy('id', 'DESC')
+            ->count();
+            
+            $totalNotification = DB::table('notifications as noti')
+            ->where([
+                'user_id' => $request->user_id,
+                'is_read'=>'0'
+                ])
+            ->orderBy('id', 'DESC')
+            ->count();
+            $notificationData[]=array(
+                'total_notification'=>(string)$totalNotification,
+                'resultAccount'=>(string)$resultAccount,
+                'resultService'=>(string)$resultService,
+                'resultRequest'=>(string)$resultRequest
+                
+                );
+            $responseData = $this->sendResponse('Notification found Successfully.', $notificationData, 200);
+            return $responseData;
+            return $this->sendResponse(config('custom.DATA_FOUND'), $notificationData, 200);
         }
     }
     public function createnotification(Request $request)

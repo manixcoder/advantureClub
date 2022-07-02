@@ -129,6 +129,7 @@ class ServicesController extends MyController
                 ->select([
                     'srvc.*',
                     'srvc.service_plan',
+                    'srvc.owner as provider_id',
                     'usr.name as provider_name',
                     DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
                     DB::raw("CONCAT('" . $s_img . "/',simg.thumbnail) AS thumbnail"),
@@ -271,6 +272,7 @@ class ServicesController extends MyController
             $services = DB::table('services as srvc')
                 ->select([
                     'srvc.*',
+                    'srvc.owner as provider_id',
                     'usr.name as provided_name',
                     DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
                     DB::raw("CONCAT('" . $s_img . "/',simag.thumbnail) AS thumbnail"),
@@ -418,6 +420,7 @@ class ServicesController extends MyController
             $services = DB::table('services as srvc')
                 ->select([
                     'srvc.*',
+                    'srvc.owner as provider_id',
                     'srvc.id as service_id',
                     'srvc.service_plan',
                     'srvc.descreption',
@@ -448,7 +451,7 @@ class ServicesController extends MyController
                     'srvc.country' => $request->country_id,
                     'srvc.status' => '1'
                 ])
-                ->where(['srvc.deleted_at' => NULL])
+                ->where(['srvc.deleted_at' => NULL,'srvc.status'=>'1'])
                 // ->groupBy('ssfor.service_id')
                 ->orderBy('srvc.id',  'DESC')
                 ->get();
@@ -603,6 +606,7 @@ class ServicesController extends MyController
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'service_id' => 'required',
+            'provider_id'=> 'required',
             'adult' => 'required',
             'kids' => 'required',
             'message' => 'required',
@@ -633,18 +637,14 @@ class ServicesController extends MyController
                 $promocode = DB::table('promocode')->where(['code' => $request->promo_code])->first();
                 
                 $promocodeUsed = DB::table('promocode_users')->select('*')
-                 ->where(
-                     [
-                         'user_id' => $request->user_id, 
-                         'promocode_id' => $promocode->id
-                    ]
-                    )
-                ->get();
+                 ->where([
+                     'user_id' => $request->user_id,
+                     'promocode_id' => $promocode->id
+                    ])
+                    ->get();
                 if(!$promocodeUsed->isEmpty()){
-                    //dd(count($promocodeUsed));
                   if(count($promocodeUsed) >= (int)$promocode->redeemed_count){
-                      
-                     return $this->sendError('You have allready used max limit', [], 401); 
+                      return $this->sendError('You have allready used max limit', [], 401); 
                   }  
                 }
                 if ($promocode) {
@@ -664,6 +664,7 @@ class ServicesController extends MyController
             if (DB::table('bookings')->insert([
                 'user_id' => $request->user_id,
                 'service_id' => $request->service_id,
+                'provider_id'=>$request->provider_id,
                 'adult' => $request->adult,
                 'kids' => $request->kids,
                 'message' => $request->message,
@@ -696,6 +697,25 @@ class ServicesController extends MyController
                         'created_at' => date('Y-m-d H:i:s'),
                     ]);
                 }
+                
+                 $providerNoti = array(
+                    'sender_id' => '1',
+                    'user_id' => $request->provider_id,
+                    'title' => 'Booking',
+                    'message' => 'Booking request shared by a client, please validation health conditions and details before approving/declining the request!',
+                    'notification_type' => '2',
+                );
+                DB::table('notifications')->insert($providerNoti); 
+                
+                 $notiData = array(
+                'sender_id' => '1',
+                'user_id' => $request->user_id,
+                'title' => 'Booking',
+                'message' => 'Your booking has been submitted',
+                'notification_type' => '2',
+
+            );
+            DB::table('notifications')->insert($notiData);
                 return $this->sendResponse('Booking has been successfull.', $booking_data, 200);
             } else {
                 return $this->sendError('Something went wrong', [], 401);
@@ -971,6 +991,7 @@ class ServicesController extends MyController
             $services = DB::table('services as srvc')
                 ->select([
                     'srvc.id as service_id',
+                    'srvc.owner as provider_id',
                     'srvc.adventure_name',
                     'srvc.service_plan',
                     'srvc.cost_inc',
@@ -1056,21 +1077,21 @@ class ServicesController extends MyController
     {
         $url = asset('public');
         $s_img = asset('public/uploads') . '/';
+        $countries = DB::table('countries')->first();
+        //dd($countries->id);
+         if ($request->country) {
+            $where = ' and srvc.country = ' . $request->country;
+        } else {
+            $where = $countries->id;
+        }
         if ($request->sector) {
             $where = 'srvc.service_category = ' . $request->category . ' ';
-        } else {
-            $where = '1';
-        }
+        } 
 
         if ($request->category) {
             $where = 'srvc.service_category = ' . $request->category . ' ';
-        } else {
-            $where = '1';
-        }
-
-        if ($request->country) {
-            $where .= ' and srvc.country = ' . $request->country;
-        }
+        } 
+       
         if ($request->owner > 0) {
             $where .= " and srvc.owner =  " . $request->owner;
         } 
@@ -1115,6 +1136,7 @@ class ServicesController extends MyController
             ->select([
                 'srvc.*',
                 'srvc.id as service_id',
+                'srvc.owner as provider_id',
                 'srvc.service_plan',
                 'usr.name as provider_name',
                 DB::raw("CONCAT('" . $url . "',usr.profile_image) AS provider_profile"),
@@ -1136,10 +1158,13 @@ class ServicesController extends MyController
             ->leftJoin('service_sectors as ssec', 'ssec.id', '=', 'srvc.service_sector')
             ->leftJoin('service_types as styp', 'styp.id', '=', 'srvc.service_type')
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
-            //->leftJoin('currencies as curr', 'curr.id', '=', 'srvc.currency')
-            ->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
-            ->leftJoin('aimed as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
-            ->where(['srvc.deleted_at' => NULL,'srvc.status'=>'1'])
+            
+            //->leftJoin('service_service_for as ssfor', 'ssfor.service_id', '=', 'srvc.id')
+            //->leftJoin('aimed as sfor', 'sfor.id', '=', 'ssfor.sfor_id')
+            ->where([
+                'srvc.deleted_at' => NULL,
+                'srvc.status'=>'1'
+            ])
             // ->groupBy('ssfor.service_id')
             ->whereRaw($where)
             ->get();
@@ -1317,6 +1342,7 @@ class ServicesController extends MyController
     {
         $validator = Validator::make($request->all(), [
             'partner_id' => 'required',
+            'country_id'=> 'required',
         ]);
         if ($validator->fails()) {
             $validation = array();
@@ -1325,9 +1351,53 @@ class ServicesController extends MyController
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
-
-
-            $services = DB::table('bookings as bkng')
+            $services=DB::table('bookings as bkng')
+            ->select([
+                    'bkng.id as booking_id',
+                    'bkng.user_id as booking_user',
+                    'srvc.id as service_id',
+                    'srvc.owner as owner_id',
+                    'srvc.adventure_name',
+                    'bkng.booking_date as service_date',
+                    'bkng.created_at as booked_on',
+                    'bkng.adult',
+                    'bkng.kids',
+                    'bkng.unit_amount as unit_cost',
+                    'bkng.total_amount as total_cost',
+                    'bkng.message',
+                    'bkng.status',
+                    'bkng.payment_status',
+                    'usr.profile_image as profile_image',
+                    'usr.email',
+                    'usr.nationality_id',
+                    'usr.name as provider_name',
+                    'srvc.*',
+                    'bkng.status as booking_status',
+                    'cntri.country',
+                    'cntri.currency',
+                    'rgn.region',
+                    'client.health_conditions',
+                    'client.name as customer',
+                    'client.email as client_email',
+                    'client.dob',
+                    'client.height',
+                    'client.weight',
+                    'catg.category'
+                    ])
+            ->Join('services as srvc', 'srvc.id', '=', 'bkng.service_id')
+            ->leftJoin('service_categories as catg', 'catg.id', '=', 'srvc.service_category')
+            ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
+            ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
+            ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
+            ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
+            ->where('bkng.provider_id', $request->partner_id)
+            ->where('bkng.status', '0')
+            ->where('srvc.country', $request->country_id)
+            ->orderBy('bkng.id', 'DESC')
+            ->get();
+           // dd($services);
+        /*   
+        $services = DB::table('bookings as bkng')
                 ->select([
                     'bkng.id as booking_id',
                     'bkng.user_id as booking_user',
@@ -1336,13 +1406,14 @@ class ServicesController extends MyController
                     'usr.nationality_id',
                     'srvc.id as service_id',
                     'srvc.owner as owner_id',
+                    'srvc.owner as provider_id',
                     'client.health_conditions',
                     'cntri.country',
                     'rgn.region',
                     'srvc.adventure_name',
                     'usr.name as provider_name',
                     'client.name as customer',
-                    'client.email',
+                    'client.email as client_email',
                     'bkng.booking_date as service_date',
                     'bkng.created_at as booked_on',
                     'bkng.adult',
@@ -1350,13 +1421,13 @@ class ServicesController extends MyController
                     'bkng.unit_amount as unit_cost',
                     'bkng.total_amount as total_cost',
                     'pmnt.payment_method as payment_channel',
-                    'cntri.currency as currency',
+                    'cntri.currency as currency',  
                     'client.dob',
                     'client.height',
                     'client.weight',
                     'bkng.message',
                     'bkng.status',
-                    'bkng.payment_status',
+                    'bkng.payment_status', 
                    // DB::raw("IF(bkng.status = 1,'Confirmed',IF(bkng.status=2,'Cancelled','Requested')) as booking_status_text"),
                    // DB::raw("IF(bkng.payment_status = 1,'Success',IF(bkng.payment_status=2,'Failed','Pending')) as payment_status_text"),
                     'catg.category'
@@ -1364,30 +1435,37 @@ class ServicesController extends MyController
                 ->leftJoin('services as srvc', 'srvc.id', '=', 'bkng.service_id')
                 ->leftJoin('service_categories as catg', 'catg.id', '=', 'srvc.service_category')
                 ->leftJoin('countries as cntri', 'cntri.id', '=', 'srvc.country')
-                //->leftJoin('currencies as crnci', 'crnci.id', '=', 'bkng.currency')
                 ->leftJoin('regions as rgn', 'rgn.id', '=', 'srvc.region')
                 ->leftJoin('users as usr', 'usr.id', '=', 'srvc.owner')
                 ->leftJoin('users as client', 'client.id', '=', 'bkng.user_id')
-                ->leftJoin('payments as pmnt', 'pmnt.booking_id', '=', 'bkng.id')
-                ->where('bkng.user_id', $request->partner_id)
+               // ->leftJoin('payments as pmnt', 'pmnt.booking_id', '=', 'bkng.id')
+               // ->where('bkng.user_id', $request->partner_id)
+               ->where('bkng.provider_id', $request->partner_id)
                 ->where('srvc.country', $request->country_id)
+                ->where('bkng.status', '0')
                 ->orderBy('bkng.id', 'DESC')
-                ->get();
-            //dd($services);
-            if (!$services->isEmpty()) {
+                ->get();*/
+           // dd($services);
+            if (count($services) >0) {
                 foreach ($services as $key => $service) {
-                    //dd($service);
-                    $country = DB::table('countries')->where('id', $service->nationality_id)->first();
-                    $services[$key]->nationality = $country->short_name;
-                    $service_images = DB::table('service_images')->where('service_id', $service->service_id)->get();
-                    $services[$key]->service_images = $service_images;
-                    $health_condtions = DB::table('health_conditions')
+                // dd($service);
+                 $nationality = DB::table('countries')->where('id', $service->nationality_id)->first();
+                 $services[$key]->nationality = $nationality->short_name;
+                 $bookingUser = DB::table('countries')->where('id', $service->nationality_id)->first();
+                 $services[$key]->nationality = $nationality->short_name;
+                 
+                 $service_images = DB::table('service_images')->where('service_id', $service->service_id)->get();
+                 $services[$key]->service_images = $service_images;
+                 $health_condtions = DB::table('health_conditions')
                         ->select([DB::raw("GROUP_CONCAT(name) AS healths")])
                         ->whereIn('id', explode(',', $service->health_conditions))
                         ->first();
-                    $services[$key]->health_conditions =  $health_condtions->healths;
+                $services[$key]->health_conditions =  $health_condtions->healths;
+                   
+                    
+                    
                 }
-                //dd($service);
+               // dd($service);
                 if ($services) {
                     return $this->sendResponse("Request list", $services, 200);
                 } else {
@@ -1401,18 +1479,118 @@ class ServicesController extends MyController
 
     public function bookingAcceptDecline(Request $request)
     {
+         $bookingData = DB::table('bookings')->where(['id' => $request->booking_id])->first(); 
+         if($bookingData){
+            $servicesData = DB::table('services')->where(['id' => $bookingData->service_id])->first(); 
+            $userData = DB::table('users')->where(['id' => $bookingData->user_id])->first(); 
+           if($request->status=='1'){
+               $notiData=array(
+                   'sender_id'=>'1',
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking accepted',
+                 'message' => "Your booking #".$bookingData->id." has been accepted, please make payment via provided channels", 
+               
+                 'notification_type'=>'2',
+                 );
+            $providerNoti = array(
+                    'sender_id' => '1',
+                    'user_id' => $bookingData->provider_id,
+                    'title' => 'Booking accepted',
+                    'message' => " ".$userData->name ." request #".$bookingData->id." has been accepted by you, plesse check payment status on service participants section.", 
+                    'notification_type' => '2',
+                );
+         }else if($request->status=='2'){
+            $notiData=array(
+                 'sender_id'=>'1',
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking Payment Done',
+                 'message'=>"Your booking ".$servicesData->adventure_name." has been Payment Done",
+                 'notification_type'=>'2',
+                 );
+             $providerNoti = array(
+                 'sender_id' => '1',
+                 'user_id' => $bookingData->provider_id,
+                 'title' => 'Booking',
+                 'message' => " ".$userData->name ."request has been accepted, check payment status on service participants section.".$userData->name ." attempted payment by provided payment methods, please confirm the registration.",
+                 'notification_type' => '2',
+                );
+         }else if($request->status=='3'){
+           $notiData=array(
+                 'sender_id'=>'1',
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking decline',
+                 'message'=>"Your request #". $bookingData->id." has been declined by provider, please clarify on chat.",
+                 'notification_type'=>'2',
+                 );  
+                 $providerNoti = array(
+                    'sender_id' => '1',
+                    'user_id' => $bookingData->provider_id,
+                    'title' => 'Booking declined',
+                    'message' => "Booking request#". $bookingData->id." for ".$userData->name ." has been declined by you.",
+                    'notification_type' => '2',
+                );
+         }else if($request->status=='4'){
+             $notiData=array(
+                 'sender_id'=>'1',
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking Completed',
+                 'message'=>"Your request ". $bookingData->id." of activity ".$servicesData->adventure_name." has been dropped by you, please inform the provider for convenience.",
+                 'notification_type'=>'2',
+                 );
+                 $providerNoti = array(
+                    'sender_id' => '1',
+                    'user_id' => $bookingData->provider_id,
+                    'title' => "Completed ( Manish )",
+                    'message' => " ".$userData->name ." has dropped request ". $bookingData->id." of activity ".$servicesData->adventure_name,
+                    'notification_type' => '2',
+                );
+         }
+         else if($request->status=='5'){
+             $notiData=array(
+                 'sender_id'=>'1',
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking dropped',
+                 'message'=>"Your request ". $bookingData->id." of activity ".$servicesData->adventure_name." has been dropped by you, please inform the provider for convenience.",
+                 'notification_type'=>'2',);
+                 $providerNoti = array(
+                    'sender_id' => '1',
+                    'user_id' => $bookingData->provider_id,
+                    'title' => 'Booking dropped',
+                    'message' => " ".$userData->name ." has dropped booking request# ". $bookingData->id." of activity ".$servicesData->adventure_name,
+                    'notification_type' => '2',
+                );
+         }else{
+              $notiData=array(
+                 'sender_id'=>'1',
+                 'user_id'=>$bookingData->user_id,
+                 'title'=>'Booking Conformed ',
+                 'message'=>'Your booking '.$servicesData->adventure_name.' has been Conformed ',
+                 'notification_type'=>'2',
+                 );
+                 $providerNoti = array(
+                    'sender_id' => '1',
+                    'user_id' => $bookingData->provider_id,
+                    'title' => 'Booking',
+                    'message' => 'Booking Conformed',
+                    'notification_type' => '2',
+                );
+         }
+         DB::table('notifications')->insert($providerNoti);
+         DB::table('notifications')->insert($notiData);
+         
+         }
+         
         if($request->status=='2'){
           $bookingData = DB::table('bookings')->where(['id' => $request->booking_id])->first(); 
           $service_id = $bookingData->service_id;
           $totalseatBooking= $bookingData->adult + $bookingData->kids;
-          
-           $servicesData = DB::table('services')->where(['id' => $service_id])->first();
+          $servicesData = DB::table('services')->where(['id' => $service_id])->first();
           $available_seats= $servicesData->available_seats-$totalseatBooking;
           $servicesUpdate = DB::table('services')->where(['id' => $service_id])->update([
               'available_seats'=>$available_seats
-              ]);
-         // dd($servicesUpdate);
+          ]);
         }
+       
         
         // dd($request->all());
         DB::table('bookings')->where(['id' => $request->booking_id])->update([
@@ -1422,6 +1600,12 @@ class ServicesController extends MyController
         
         
         return $this->sendResponse("Success", [], 200);
+    }
+    public function updateCountry(Request $request){
+        $servicesData = DB::table('users')->where('id', $request->user_id)->update([
+            'country_id'=>$request->country_id
+            ]);
+            return $this->sendResponse("Success", [], 200);
     }
 
     public function servicesDelete(Request $request)
@@ -1446,7 +1630,7 @@ class ServicesController extends MyController
         } else {
             return $this->sendError('No record found', [], 401);
         }
-        dd($servicesData);
+        
         return $this->sendResponse("Success", [], 200);
     }
 
@@ -1475,8 +1659,10 @@ class ServicesController extends MyController
                 ->select([
                     'bkng.id as booking_id',
                     'srvc.id as service_id',
+                    'srvc.owner as provider_id',
                     'srvc.service_plan',
                     'cntri.country',
+                    'cntri.currency',
                     'rgn.region',
                     'srvc.adventure_name',
                     'usr.name as provider_name',
@@ -1506,7 +1692,9 @@ class ServicesController extends MyController
                     $join->on('pmnt.booking_id', '=', 'bkng.id')
                         ->where('pmnt.status', '=', 1);
                 })
+                //->whereIn('bkng.status','!=', ['3', '5'])
                 ->where('bkng.status', '!=','3')
+                ->Where('bkng.status', '!=','5')
                 ->where(['bkng.user_id' => $request->user_id])
                ->whereRaw($where)
                 ->get();
@@ -1544,6 +1732,7 @@ class ServicesController extends MyController
                 ->select([
                     'srvc.*',
                     'srvc.id as service_id',
+                    'srvc.owner as provider_id',
                     'srvc.descreption',
                     'srvc.service_plan',
                     'usr.name as provided_name',
@@ -1745,7 +1934,7 @@ foreach ($services as $key => $ser) {
             'adult' => 'required|numeric',
             'kids' => 'required|numeric',
             'message' => 'required',
-           // 'points' => 'numeric',
+            'provider_id' => 'numeric',
             'coupon_applied' => 'required|numeric',
             'desired_date' => 'required|date_format:Y-m-d|after:today'
         ]);
@@ -1788,6 +1977,7 @@ foreach ($services as $key => $ser) {
             if (DB::table('bookings')->insert([
                 'user_id' => $request->user_id,
                 'service_id' => $request->service_id,
+                'provider_id'=> $request->provider_id,
                 'adult' => $request->adult,
                 'kids' => $request->kids,
                 'message' => $request->message,
@@ -1820,7 +2010,23 @@ foreach ($services as $key => $ser) {
                             'created_at' => date('Y-m-d H:i:s'),
                         ]);
                 }
+                $providerNoti = array(
+                    'sender_id' => '1',
+                    'user_id' => $request->provider_id,
+                    'title' => 'Booking',
+                    'message' => 'Booking request shared by a client, please validation health conditions and details before approving/declining the request!',
+                    'notification_type' => '2',
+                );
+                DB::table('notifications')->insert($providerNoti);
+                $notiData = array(
+                'sender_id' => '1',
+                'user_id' => $request->user_id,
+                'title' => 'Booking',
+                'message' => 'Your booking has been submitted',
+                'notification_type' => '2',
 
+            );
+            DB::table('notifications')->insert($notiData);
                 return $this->sendResponse('Request has been sent successfull.', $booking_data, 200);
             } else {
                 return $this->sendError('Something went wrong', [], 401);
@@ -1892,6 +2098,7 @@ foreach ($services as $key => $ser) {
     {
         $validator = Validator::make($request->all(), [
             'owner' => 'required',
+            'country_id'=> 'required',
 
         ]);
         if ($validator->fails()) {
@@ -1902,24 +2109,26 @@ foreach ($services as $key => $ser) {
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
             $image_url = asset('public/uploads/');
+             $status='1';
             $services = DB::table('services')
-                ->where('owner', $request->owner)
+            ->where('owner', $request->owner)
                 ->where('country', $request->country_id)
-                //->where('status', '1')
+                //->where('status', '=', "1")
                 ->where('deleted_at', NULL)
-                ->orderBy('id', 'desc')
+                ->orderBy('id', 'DESC')
                 ->get();
 
 
-            $serviceactivities = array();
-            $servicesname = array();
-            $countryname = array();
-            $servicesname1 = array();
+            // $serviceactivities = array();
+            // $servicesname = array();
+            // $countryname = array();
+            // $servicesname1 = array();
             foreach ($services as $key => $val) {
+              //  dd($val);
                 $images = DB::table('service_images')
                     ->where('service_id', $val->id)
                     ->get();
-                $serviceactivities['image_url'] = $images;
+                $services[$key]->image_url = $images;
                 // $serviceac = DB::table('service_activities')->where('service_id', $val->id)->get();
                 // $serviceactivities['activities'] = $serviceac;
 
@@ -1927,21 +2136,7 @@ foreach ($services as $key => $ser) {
                 // $serviceactivities['service_for'] = $serviceservicefor;
                 // $dependencies = DB::table('service_dependencies')->where('service_id', $val->id)->get();
                 // $serviceactivities['dependency'] = $dependencies;
-                if ($val->service_plan == '1') {
-                    $availability = DB::table('service_plan_day_date as spdd')
-                        ->select(['spdd.id', 'wkd.day'])
-                        ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
-                        ->where('spdd.service_id', $val->id)
-                        ->get()
-                        ->toArray();
-                    $serviceactivities['availability'] = $availability ?? [];
-                } else {
-                    //dd("Hello Here");
-                    $serviceactivities['availability'] = array(
-                        // 'start_date'=>$val->start_date,
-                        // 'end_date'=>$val->end_date
-                    );
-                }
+                
                 // $reviews = DB::table('service_reviews')->where('service_id', $val->id)->get();
                 // $serviceactivities['service_reviews'] = $reviews;
 
@@ -1963,42 +2158,59 @@ foreach ($services as $key => $ser) {
                 // $serviceactivities['service_levels'] = $service_levels;
                 // $serviceprogra = DB::table('service_programs')->where('service_id', $val->id)->get();
                 // $serviceactivities['service_programs'] = $serviceprogra;
-                if ($val->status == '0') {
-                    $status = 'Pending';
-                } else if ($val->status == '1') {
-                    $status = 'approval';
-                } else {
-                    $status == 'Rejected';
-                }
+                // if ($val->status == '0') {
+                //     $status = 'Pending';
+                // } else if ($val->status == '1') {
+                //     $status = 'approval';
+                // } else {
+                //     $status == 'Rejected';
+                // }
                 $url = asset('public');
                 $serviceuser = DB::table('users')->where('id', $val->owner)->first();
-                $servicesname['id'] = $val->id;
-                $servicesname['adventure_name'] = $val->adventure_name;
-                $servicesname['status'] = $val->status;
-                $servicesname['cost_incclude'] = $val->cost_inc;
-                $servicesname['cost_exclude'] = $val->cost_exc;
-                $servicesname['currency'] = $val->currency;
-                $servicesname['service_plan'] = $val->service_plan;
-                $servicesname['available_seats'] = $val->available_seats;
-                $servicesname['specific_address'] = $val->specific_address;
-                $servicesname['duration'] = $val->duration;
-                $servicesname['start_date'] = $val->start_date;
-                $servicesname['end_date'] = $val->end_date;
-                $servicesname['write_information'] = $val->write_information;
-                $servicesname['terms_conditions'] = $val->terms_conditions;
-                $servicesname['pre_requisites'] = $val->pre_requisites;
-                $servicesname['minimum_requirements'] = $val->minimum_requirements;
-                $servicesname['descreption'] = $val->descreption;
-                $servicesname['provider_image'] = $url . $serviceuser->profile_image;
+                $services[$key]->id = $val->id;
+                $services[$key]->adventure_name = $val->adventure_name;
+                $services[$key]->provider_id = $val->owner;
+                $services[$key]->status = $val->status;
+                $services[$key]->cost_incclude = $val->cost_inc;
+                $services[$key]->cost_exclude = $val->cost_exc;
+                $services[$key]->currency = $val->currency;
+                $services[$key]->service_plan = $val->service_plan;
+                $services[$key]->available_seats = $val->available_seats;
+                $services[$key]->specific_address = $val->specific_address;
+                $services[$key]->duration = $val->duration;
+                $services[$key]->start_date = $val->start_date;
+                $services[$key]->end_date = $val->end_date;
+                $services[$key]->write_information = $val->write_information;
+                $services[$key]->terms_conditions = $val->terms_conditions;
+                $services[$key]->pre_requisites = $val->pre_requisites;
+                $services[$key]->minimum_requirements = $val->minimum_requirements;
+                $services[$key]->descreption = $val->descreption;
+                $services[$key]->provider_image = $url . $serviceuser->profile_image;
+                if ($val->service_plan == '1') {
+                    $availability = DB::table('service_plan_day_date as spdd')
+                        ->select(['spdd.id', 'wkd.day'])
+                        ->join('weekdays as wkd', 'wkd.id', '=', 'spdd.day')
+                        ->where('spdd.service_id', $val->id)
+                        ->get()
+                        ->toArray();
+                    $services[$key]->availability = $availability ?? [];
+                } else {
+                    //dd("Hello Here");
+                     $services[$key]->availability = array(
+                        // 'start_date'=>$val->start_date,
+                        // 'end_date'=>$val->end_date
+                    );;
+                    
+                }
                 //$servicesname['status'] = $status;
-
-                $servicesname1[] = array_merge(
-                    $servicesname,
-                    $serviceactivities,
-                );
+//dd($servicesname);
+                // $servicesname1[] = array_merge(
+                //     $servicesname,
+                //     $serviceactivities,
+                // );
             }
 
-            return $this->sendResponse('Services data found successfully', $servicesname1, 200);
+            return $this->sendResponse('Services data found successfully', $services, 200);
         }
     }
     public function hillclimblingdelete(Request $request)
@@ -2290,6 +2502,16 @@ public function getExtensionSize($file)
                                 DB::table('service_plan_day_date')->insert($pd_data);
                             }
                             $service = Service::find($service_id);
+                            $notiData=array(
+                                'sender_id'=>'1',
+                                'user_id'=>$request->customer_id,
+                                'title'=>'Activities',
+                                'message'=>'Your activity has been created successfully ',
+                                'notification_type'=>'1',
+                                
+                                );
+                                DB::table('notifications')->insert($notiData);
+                            
                             return $this->sendResponse('Service Created Successfully!', $service, 200);
                             return $this->sendResponse('Service Created Successfully!', 200);
                         } else {
@@ -2667,12 +2889,11 @@ public function getExtensionSize($file)
             }
             return $this->sendError(implode(',', array_values($validation)), [], 401);
         } else {
-
-
             $services = DB::table('bookings as bkng')
                 ->select([
                     'bkng.id as booking_id',
                     'bkng.user_id as booking_user',
+                    'srvc.owner as provider_id',
                     'usr.profile_image as profile_image',
                     'usr.email',
                     'usr.nationality_id',
