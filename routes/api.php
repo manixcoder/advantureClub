@@ -1,4 +1,4 @@
-<?php
+       <?php
 
 use Illuminate\Http\Request;
 
@@ -43,7 +43,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/get_profile', 'Api\V1\UsersController@userProfile');
     Route::get('/serviceProviderProfile/{id?}', 'Api\V1\UsersController@serviceProviderProfile')->where(['id' => '[0-9]+']);
 
-    Route::post('/banners', 'Api\V1\BannersController@get');
+    Route::post('/banners', 'Api\V1\ServicesController@getBanners');
     Route::get('/services/{id?}', 'Api\V1\ServicesController@get')->where(['id' => '[0-9]+']);
     Route::post('/get_allservices', 'Api\V1\ServicesController@get_all');
     Route::get('/categories/{id?}', 'Api\V1\CategoriesController@get')->where(['id' => '[0-9]+']);
@@ -51,6 +51,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/like_service', 'Api\V1\ServicesController@likeService');
     Route::post('/myServicereview', 'Api\V1\ServicesController@myServicereview');
     Route::post('/add_review', 'Api\V1\ServicesController@addReview');
+     Route::post('/add_review_location', 'Api\V1\ServicesController@addReviewLocation');
     Route::post('/create_service', 'Api\V1\ServicesController@create_service');
     Route::post('/edit_service', 'Api\V1\ServicesController@editService');
     Route::get('/get_service_sector', 'Api\V1\ServicesController@getservice_sector');
@@ -94,9 +95,11 @@ Route::prefix('v1')->group(function () {
     Route::post('/read_notification', 'Api\V1\UsersController@readNotification');
    // Route::post('/createnotification', 'Api\V1\UsersController@createnotification');
     Route::post('/get_reviews', 'Api\V1\ServicesController@getReviews');
+    Route::post('/get_location_reviews', 'Api\V1\ServicesController@getLocationReviews');
     Route::post('/booking_delete', 'Api\V1\ServicesController@bookingDelete');
     Route::post('/servicesImage', 'Api\V1\ServicesController@servicesImage');
-     Route::post('/updateCountry', 'Api\V1\ServicesController@updateCountry');
+    Route::post('/updateCountry', 'Api\V1\ServicesController@updateCountry');
+    Route::post('/transaction', 'Api\V1\ServicesController@storeTransaction');
 });
 
 Route::group(['middleware' => 'api_auth:api'], function () {

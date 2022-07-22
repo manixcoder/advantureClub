@@ -32,12 +32,12 @@
                      <tbody>
                        
                         @foreach($usersdata as $data)
-					<?php //die('-------');					
-                         //echo"<pre>";print_r($data);die; 
+					<?php 
+					$usersData = DB::table('users')->where('id', $data->user_id)->first();
                          ?>	
                         <tr class="gradeX">
-                           <td>#{{ $data->id }}</td>
-                           <td>{{ $data->username }}</td>
+                           <td>#{{ $data->transaction_id }}</td>
+                           <td>{{ $usersData->name }}</td>
                            <td>{{ $data->type }}</td>
                            <td>{{ $data->transaction_type }}</td>
                            <td>{{ $data->create_at}}</td>
@@ -60,7 +60,7 @@
 						   
                            <td >
                               <p class="mb-0">
-                                 <span id="statusText_{{$data->id}}" class="badge <?php echo $class;?>">{{ $status }}</span>
+                                 <span id="statusText_{{$data->id}}" class="badge <?php echo $class;?>">{{ $data->status }}</span>
                               </p>
                            </td>
 						   <td>{{ $data->price}}</td>

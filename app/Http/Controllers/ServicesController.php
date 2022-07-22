@@ -718,6 +718,7 @@ class ServicesController extends MyController
     public function acceptService(Request $request, $id)
     {
         $service = Service::find($id);
+       // dd($service);
         if ($service) {
             $service->status = '1';
             $service->save();
@@ -726,7 +727,7 @@ class ServicesController extends MyController
                 'sender_id' => '1',
                 'user_id' => $service->owner,
                 'title' => 'Activities',
-                'message' => 'Your service has Been approved',
+                'message' => "Your Service: ".$service->adventure_name." has been approved.",
                 'notification_type' => '1',
             );
             DB::table('notifications')->insert($notiData);
@@ -740,13 +741,13 @@ class ServicesController extends MyController
     {
         $service = Service::find($id);
         if ($service) {
-            $service->status = '2';
+           $service->status = '2';
             $service->save();
             $notiData = array(
                 'sender_id' => '1',
                 'user_id' => $service->owner,
                 'title' => 'Activities',
-                'message' => 'Service has been rejected',
+                'message' => "Your service: ".$service->adventure_name." has been rejected.",
                 'notification_type' => '1',
             );
             DB::table('notifications')->insert($notiData);
@@ -819,7 +820,8 @@ class ServicesController extends MyController
         if ($id) {
             $where .= ' && srvc.id = ' . $id;
         }
-        $services = DB::table('services as srvc')->select([
+        $services = DB::table('services as srvc')
+        ->select([
             'srvc.*',
             'usr.name as provider_name',
             'usr.id as user_id',
@@ -841,8 +843,10 @@ class ServicesController extends MyController
             ->leftJoin('service_levels as slvl', 'slvl.id', '=', 'srvc.service_level')
             ->where([
                 'srvc.deleted_at' => NULL,
-                'srvc.status' => '0'
+                
             ])
+            ->where('srvc.status','!=', '1')
+            ->where('srvc.status','!=', '2')
            // ->whereRaw($where)
             ->orderBy('srvc.id', 'DESC')
             ->get();

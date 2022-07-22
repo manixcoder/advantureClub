@@ -58,7 +58,7 @@ class ServiceOffersController extends MyController
 
     public function addServiceOffers(Request $request)
     {
-        // echo"<pre>";print_r($request->all());exit;
+      // echo"<pre>";print_r($request->all());exit;
         if ($request->post()) {
             $validator = Validator::make($request->all(), [
                 'adventure_name'    => 'required|unique:services',
@@ -76,9 +76,11 @@ class ServiceOffersController extends MyController
                 }
                 $data['validation'] = $errors;
             } else {
+                $adventureData = DB::table('services')->select(['*' ])->where(['id' => $request->adventure_name])->first();
                 $user_data = array(
                     'service_id'        => $request->adventure_name,
                     'name'              => $request->name,
+                    'country_id'        => $adventureData->country,
                     'start_date'        => $request->start_date,
                     'end_date'          => $request->end_date,
                     //'status'          => ($request->status == 2) ? '0' : '1',

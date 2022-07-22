@@ -39,13 +39,21 @@ class MyController extends Controller
     {
         $response = [
             'success' => false,
+            'data' => $errors,
             'message' => $message,
+            'status' => $code
+        ];
+        
+        /*$response = [
+            'success' => false,
+            'message' => $message,
+           
         ];
 
         if (!empty($errors)) {
             $response['data'] = $errors;
         }
-        $response['status'] = $code;
+        $response['status'] = $code;*/
 
         return response()->json($response, $code);
     }

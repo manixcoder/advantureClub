@@ -34,7 +34,7 @@ class TransactionsController extends MyController
 
     function list_transactions()
     {
-        $usersdata          =  DB::table('transactions')->get();
+        $usersdata          =  DB::table('transactions')->orderBy('id', 'DESC')->get();
         $data['content']    = 'admin.transactions.list_transaction_users';
         return view('layouts.content', compact('data'))->with(['usersdata' => $usersdata]);
     }
